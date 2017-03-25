@@ -1,54 +1,36 @@
 #include "DS1820.h"
 
 #ifdef TARGET_STM
-//STM targets use opendrain mode since their GPIO code is too bad to be used like the others
+//STM targets use opendrain mode since their switching between input and output is slow
     #define ONEWIRE_INPUT(pin)  pin->write(1)
     #define ONEWIRE_OUTPUT(pin) 
     #define ONEWIRE_INIT(pin)   pin->output(); pin->mode(OpenDrain)
-    
-    // TEMP, remove once STM fixed their stuff
-// Enable GPIO clock and return GPIO base address 
-static uint32_t Set_GPIO_Clock(uint32_t port_idx) { 
-    uint32_t gpio_add = 0; 
-    switch (port_idx) { 
-        case PortA: 
-           gpio_add = GPIOA_BASE; 
-           __GPIOA_CLK_ENABLE();  // HAL Legasy
-           break; 
-        case PortB: 
-            gpio_add = GPIOB_BASE; 
-            __GPIOB_CLK_ENABLE(); 
-            break; 
-#if defined(GPIOC_BASE) 
-        case PortC: 
-            gpio_add = GPIOC_BASE; 
-            __GPIOC_CLK_ENABLE(); 
-            break; 
-#endif 
-#if defined(GPIOD_BASE) 
-       case PortD: 
-           gpio_add = GPIOD_BASE; 
-            __GPIOD_CLK_ENABLE(); 
-            break; 
-#endif 
-#if defined(GPIOF_BASE) 
-        case PortF: 
-            gpio_add = GPIOF_BASE; 
-            __GPIOF_CLK_ENABLE(); 
-            break; 
-#endif 
-      default: 
-           error("Pinmap error: wrong port number."); 
-           break; 
-   } 
-   return gpio_add; 
-} 
-
-
 #else
     #define ONEWIRE_INPUT(pin)  pin->input()
     #define ONEWIRE_OUTPUT(pin) pin->output()
     #define ONEWIRE_INIT(pin)
+#endif
+
+#ifdef TARGET_NORDIC
+//NORDIC targets (NRF) use software delays since their ticker uses a 32kHz clock
+    static uint32_t loops_per_us = 0;
+    
+    #define INIT_DELAY      init_soft_delay()
+    #define ONEWIRE_DELAY_US(value) for(int cnt = 0; cnt < (value * loops_per_us) >> 5; cnt++) {__NOP(); __NOP(); __NOP();}
+    
+void init_soft_delay( void ) {
+    if (loops_per_us == 0) {
+        loops_per_us = 1;
+        Timer timey; 
+        timey.start();
+        ONEWIRE_DELAY_US(320000);                     
+        timey.stop();
+        loops_per_us = (320000 + timey.read_us() / 2) / timey.read_us();  
+    }
+}
+#else
+    #define INIT_DELAY
+    #define ONEWIRE_DELAY_US(value) wait_us(value)
 #endif
 
 LinkedList<node> DS1820::probes;
@@ -64,18 +46,7 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _dat
         RAM[byte_counter] = 0x00;
     
     ONEWIRE_INIT((&_datapin));
-    // Temp code since the above doesn't actually do anything in mbed revisions up to 133
-    #ifdef TARGET_STM
-    
-    uint32_t port_index = STM_PORT(data_pin); // STM_PORT - mabed/target/pinnames
-    uint32_t pin_index  = STM_PIN(data_pin); 
-    
-    // Enable GPIO clock 
-    uint32_t gpio_add = Set_GPIO_Clock(port_index); 
-    GPIO_TypeDef *gpio = (GPIO_TypeDef *)gpio_add;  // GPIO_TypeDef - mabed/target/
-
-    gpio->OTYPER |= (uint32_t)(1 << pin_index); 
-    #endif
+    INIT_DELAY;
     
     if (!unassignedProbe(&_datapin, _ROM))
         error("No unassigned DS1820 found!\n");
@@ -102,26 +73,26 @@ bool DS1820::onewire_reset(DigitalInOut *pin) {
     bool presence=false;
     ONEWIRE_OUTPUT(pin);
     pin->write(0);          // bring low for 500 us
-    wait_us(500);
+    ONEWIRE_DELAY_US(500);
     ONEWIRE_INPUT(pin);       // let the data line float high
-    wait_us(90);            // wait 90us
+    ONEWIRE_DELAY_US(90);            // wait 90us
     if (pin->read()==0) // see if any devices are pulling the data line low
         presence=true;
-    wait_us(410);
+    ONEWIRE_DELAY_US(410);
     return presence;
 }
  
 void DS1820::onewire_bit_out (DigitalInOut *pin, bool bit_data) {
     ONEWIRE_OUTPUT(pin);
     pin->write(0);
-    wait_us(3);                 // DXP modified from 5
+    ONEWIRE_DELAY_US(3);                 // DXP modified from 5
     if (bit_data) {
         pin->write(1); // bring data line high
-        wait_us(55);
+        ONEWIRE_DELAY_US(55);
     } else {
-        wait_us(55);            // keep data line low
+        ONEWIRE_DELAY_US(55);            // keep data line low
         pin->write(1);
-        wait_us(10);            // DXP added to allow bus to float high before next bit_out
+        ONEWIRE_DELAY_US(10);            // DXP added to allow bus to float high before next bit_out
     }
 }
  
@@ -137,11 +108,11 @@ bool DS1820::onewire_bit_in(DigitalInOut *pin) {
     bool answer;
     ONEWIRE_OUTPUT(pin);
     pin->write(0);
-    wait_us(3);                 // DXP modofied from 5
+    ONEWIRE_DELAY_US(3);                 // DXP modofied from 5
     ONEWIRE_INPUT(pin);
-    wait_us(10);                // DXP modified from 5
+    ONEWIRE_DELAY_US(10);                // DXP modified from 5
     answer = pin->read();
-    wait_us(45);                // DXP modified from 50
+    ONEWIRE_DELAY_US(45);                // DXP modified from 50
     return answer;
 }
  
@@ -159,18 +130,7 @@ char DS1820::onewire_byte_in() { // read byte, least sig byte first
 bool DS1820::unassignedProbe(PinName pin) {
     DigitalInOut _pin(pin);
     ONEWIRE_INIT((&_pin));
-    // Temp code since the above doesn't actually do anything in mbed revisions up to 133
-    #ifdef TARGET_STM
-    
-    uint32_t port_index = STM_PORT(pin); 
-    uint32_t pin_index  = STM_PIN(pin); 
-    
-    // Enable GPIO clock 
-    uint32_t gpio_add = Set_GPIO_Clock(port_index); 
-    GPIO_TypeDef *gpio = (GPIO_TypeDef *)gpio_add; 
-
-    gpio->OTYPER |= (uint32_t)(1 << pin_index); 
-    #endif
+    INIT_DELAY;
     char ROM_address[8];
     return search_ROM_routine(&_pin, 0xF0, ROM_address);
 }

@@ -16,13 +16,13 @@
 #ifndef MBED_H
 #define MBED_H
 
-#define MBED_LIBRARY_VERSION 133
+#define MBED_LIBRARY_VERSION 138
 
 #if MBED_CONF_RTOS_PRESENT
 // RTOS present, this is valid only for mbed OS 5
 #define MBED_MAJOR_VERSION 5
-#define MBED_MINOR_VERSION 3
-#define MBED_PATCH_VERSION 2
+#define MBED_MINOR_VERSION 4
+#define MBED_PATCH_VERSION 1
 
 #else
 // mbed 2
@@ -47,8 +47,13 @@
 #include "events/mbed_events.h"
 #endif
 
-#include "platform/toolchain.h"
+#if MBED_CONF_FILESYSTEM_PRESENT
+#include "filesystem/mbed_filesystem.h"
+#endif
+
+#include "platform/mbed_toolchain.h"
 #include "platform/platform.h"
+#include "platform/mbed_application.h"
 
 // Useful C libraries
 #include <math.h>
@@ -80,6 +85,7 @@
 #include "drivers/Ethernet.h"
 #include "drivers/CAN.h"
 #include "drivers/RawSerial.h"
+#include "drivers/FlashIAP.h"
 
 // mbed Internal components
 #include "drivers/Timer.h"
@@ -90,9 +96,10 @@
 #include "drivers/LowPowerTimer.h"
 #include "drivers/LocalFileSystem.h"
 #include "drivers/InterruptIn.h"
-#include "platform/wait_api.h"
+#include "platform/mbed_wait_api.h"
 #include "hal/sleep_api.h"
-#include "platform/rtc_time.h"
+#include "platform/mbed_sleep.h"
+#include "platform/mbed_rtc_time.h"
 
 // mbed Non-hardware components
 #include "platform/Callback.h"
