@@ -13,7 +13,7 @@ static uint32_t Set_GPIO_Clock(uint32_t port_idx) {
     switch (port_idx) { 
         case PortA: 
            gpio_add = GPIOA_BASE; 
-           __GPIOA_CLK_ENABLE(); 
+           __GPIOA_CLK_ENABLE();  // HAL Legasy
            break; 
         case PortB: 
             gpio_add = GPIOB_BASE; 
@@ -67,12 +67,12 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _dat
     // Temp code since the above doesn't actually do anything in mbed revisions up to 133
     #ifdef TARGET_STM
     
-    uint32_t port_index = STM_PORT(data_pin); 
+    uint32_t port_index = STM_PORT(data_pin); // STM_PORT - mabed/target/pinnames
     uint32_t pin_index  = STM_PIN(data_pin); 
     
     // Enable GPIO clock 
     uint32_t gpio_add = Set_GPIO_Clock(port_index); 
-    GPIO_TypeDef *gpio = (GPIO_TypeDef *)gpio_add; 
+    GPIO_TypeDef *gpio = (GPIO_TypeDef *)gpio_add;  // GPIO_TypeDef - mabed/target/
 
     gpio->OTYPER |= (uint32_t)(1 << pin_index); 
     #endif
