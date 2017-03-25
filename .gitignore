@@ -1,2 +1,7 @@
 BUILD/
-*.uvguix.yura
+*.uvguix.*
+*.uvgui.*
+*.lst
+*.uvopt
+*.uvoptx
+RTE/
