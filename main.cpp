@@ -9,7 +9,7 @@
 
 #define MAX_PROBES      16
  
-DS1820* probe[MAX_PROBES];
+DS1820 *probe[MAX_PROBES];
  
 int main() {  
     // Initialize the probe array to DS1820 objects
