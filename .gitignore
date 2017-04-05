@@ -1,7 +1,10 @@
-BUILD/
+# Keil
 *.uvguix.*
 *.uvgui.*
 *.lst
 *.uvopt
 *.uvoptx
+# Keil STM32
 RTE/
+BUILD/
+*.d
