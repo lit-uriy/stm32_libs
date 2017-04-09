@@ -46,7 +46,7 @@ public:
     OneWire(DigitalInOut apin);
 
     // ROM function commands - Network layer
-protected:
+public:
     enum LineStatus {
         StatusPresence = 0,
         StatusShortCircuit,
@@ -93,17 +93,17 @@ private:
 
     inline bool pin()
     {
-        return _pin->read();
+        return _pin.read();
     }
 
     inline void pinLow()
     {
-        _pin->write(0);
+        _pin.write(0);
     }
 
     inline void pinRelease()
     {
-        _pin->write(1);
+        _pin.write(1);
     }
 
     inline void deleyUs(int us)

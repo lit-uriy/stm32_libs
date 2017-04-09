@@ -7,7 +7,7 @@ OneWire::OneWire(DigitalInOut apin)
 
 }
 
-LineStatus OneWire::reset()
+OneWire::LineStatus OneWire::reset()
 {
     // в начале на шине должна быть "1"
     if (!pin())
@@ -55,17 +55,17 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
         deleyUs(TimeSyncro);
 
         // если "1" в данных, то отпускаем линию, слэйв прочитает "1"
-        if((*x) & 0x01)
+        if((*byte) & 0x01)
             pinRelease();
 
         // следующий бит данных
-        (*x)>>=1; // (*x) = (*x) >> 1;
+        (*byte)>>=1; // (*x) = (*x) >> 1;
 
         deleyUs(TimeSyncro);
 
         // читаем, что нам слэйв выставил, если мы пишем, то слэйв линию не трогает, она в "1"
         if (pin())
-            (*x) |=0x80;
+            (*byte) |=0x80;
 
         deleyUs(TimeSlot-(2*TimeSyncro));
 
@@ -97,17 +97,17 @@ cnt=8;
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
 void OneWire::readROM()
 {
-    unsigned char tmp = CommandReadRom;
+    unsigned char temp = CommandReadRom;
     unsigned char i = 0;
     unsigned char crc = 0;
 
-    if (readWriteByte(&tmp) != StatusPresence)
+    if (readWriteByte(&temp) != StatusPresence)
         return; // что-то пошло не так, например, устройство отключили
 
-    tmp = 0xFF; // будем читать из слэйва
+    temp = 0xFF; // будем читать из слэйва
     for(i=0; i<8; i++)
     {
-        if (readWriteByte(&tmp) != StatusPresence)
+        if (readWriteByte(&temp) != StatusPresence)
             return; // что-то пошло не так, например, устройство отключили
 
         crc = crc8(temp, crc);
