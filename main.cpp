@@ -19,7 +19,7 @@ int main() {
 
     printf("\r\n----------------------------\r\n");
 
-
+char rom[2*8+1]; // в два раза больше символов + замыкающий нуль
 
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
@@ -31,11 +31,13 @@ int main() {
 
         dev.readROM();
 
-        char rom[2*8+1]; // в два раза больше символов + замыкающий нуль
+
         bool ok = dev.romCode(rom);
         rom[2*8] = 0x00;
 
         printf("ROM status: %d, code = %s\r\n", int(ok), rom);
+		
+		ok = false;
 
     }else{
 
@@ -44,8 +46,10 @@ int main() {
         // Initialize the probe array to DS1820 objects
         int num_devices = 0;
         while(DS1820::unassignedProbe(DATA_PIN)) {
-            printf("Found %d device\r\n\n", num_devices+1);
-            probe[num_devices] = new DS1820(DATA_PIN);
+            DS1820 *dev = new DS1820(DATA_PIN);
+            probe[num_devices] = dev;
+			dev->romCode(rom);
+            printf("Found %d device, ROM=%s\r\n\n", num_devices+1, rom);
             num_devices++;
             if (num_devices == MAX_PROBES)
                 break;
