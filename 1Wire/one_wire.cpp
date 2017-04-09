@@ -2,6 +2,7 @@
 
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
+    , _valid(false)
 {
 
 }
@@ -19,7 +20,7 @@ LineStatus OneWire::reset()
     // снимаем "Reset pulse"
     pinRelease();
     // ждем возврата линии "0"->"1" (слэйв подождёт TimePdh, а затем выставит Presence на время TimePdl)
-    deleyUs(TimeRelease);
+    deleyUs(TimeRelease); // здесь можно сделать измерение времени восстановления
     // на шине должна стать "1"
     if (!pin())
         return StatusShortCircuit;
@@ -40,10 +41,83 @@ LineStatus OneWire::reset()
     return StatusPresence;
 }
 
-// 0x33 или 0x0F - старая таблетка DS1990 (без буквы А)
+OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
+{
+    unsigned char j;
+
+    for(j=0;j<8;j++)
+    {
+        // должна быть "1"
+        if (!pin())
+            return StatusShortCircuit;
+        //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
+        pinLow();
+        deleyUs(TimeSyncro);
+
+        // если "1" в данных, то отпускаем линию, слэйв прочитает "1"
+        if((*x) & 0x01)
+            pinRelease();
+
+        // следующий бит данных
+        (*x)>>=1; // (*x) = (*x) >> 1;
+
+        deleyUs(TimeSyncro);
+
+        // читаем, что нам слэйв выставил, если мы пишем, то слэйв линию не трогает, она в "1"
+        if (pin())
+            (*x) |=0x80;
+
+        deleyUs(TimeSlot-(2*TimeSyncro));
+
+        // если в данных был "0", то линия вернётся в исходное
+        pinRelease();
+
+        deleyUs(2*TimeSyncro);
+    }
+    return StatusPresence;
+}
+
+
+unsigned char OneWire::crc8(unsigned char data, unsigned char crc8val)
+{
+unsigned char cnt;
+cnt=8;
+    do{
+        if ((data^crc8val)&0x01){
+            crc8val^=0x18; //0x18-Полином:0b00011000=>X^8+X^5+X^4+1
+            crc8val>>=1;
+            crc8val|=0x80;}
+        else {crc8val>>=1;}
+        data>>=1;
+    }while (--cnt);
+    return crc8val;
+}
+
+
+// 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
 void OneWire::readROM()
 {
+    unsigned char tmp = CommandReadRom;
+    unsigned char i = 0;
+    unsigned char crc = 0;
 
+    if (readWriteByte(&tmp) != StatusPresence)
+        return; // что-то пошло не так, например, устройство отключили
+
+    tmp = 0xFF; // будем читать из слэйва
+    for(i=0; i<8; i++)
+    {
+        if (readWriteByte(&tmp) != StatusPresence)
+            return; // что-то пошло не так, например, устройство отключили
+
+        crc = crc8(temp, crc);
+        TMbuf[i] = temp;
+    }
+    // проверяем CRC
+    if (crc)
+        _valid = false; // CRC не совпала
+
+    _valid = true;
 }
 
 // 0x55

@@ -72,6 +72,8 @@ protected:
     void searchROM(); // 0xF0
     void skipROM(); // 0xCC
 
+    bool isValid();
+
     enum Times {
         // из "Book of iButton Standards (AN937)"
         TimeSlot = 60,
@@ -79,12 +81,15 @@ protected:
         TimePdl = 2*TimeSlot,
         TimeReset = 8*TimeSlot,
         // расчётное/подобранное
-        TimeRelease = 2*TimeSlot/5,
-        TimePresence = 4*TimeSlot
+        TimeRelease = 2*TimeSlot/5, // 24 мкс
+        TimePresence = 4*TimeSlot, // Верно ли?
+        TimeSyncro = TimeSlot/6, // <15 мкс
     };
 
 private:
     DigitalInOut _pin;
+    bool _valid;
+    unsigned char TMbuf[8];
 
     inline bool pin()
     {
@@ -106,6 +111,8 @@ private:
         wait_us(us);
     }
 
+    LineStatus readWriteByte(unsigned char *byte);
+    unsigned char crc8(unsigned char data, unsigned char crc8val);
 
 };
 
