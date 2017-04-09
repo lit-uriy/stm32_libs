@@ -127,6 +127,11 @@ cnt=8;
     return crc8val;
 }
 
+bool OneWire::isValid()
+{
+    return _valid;
+}
+
 
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
 void OneWire::readROM()

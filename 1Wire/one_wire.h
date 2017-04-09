@@ -46,6 +46,7 @@ public:
     OneWire(DigitalInOut apin);
 
     bool romCode(char *buff);
+    bool isValid();
 
     // ROM function commands - Network layer
 public:
@@ -74,7 +75,6 @@ public:
     void searchROM(); // 0xF0
     void skipROM(); // 0xCC
 
-    bool isValid();
 
     enum Times {
         // из "Book of iButton Standards (AN937)"
