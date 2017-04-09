@@ -32,8 +32,9 @@ char rom[2*8+1]; // в два раза больше символов + замы�
         dev.readROM();
 
 
-        bool ok = dev.romCode(rom);
+        dev.romCode(rom);
         rom[2*8] = 0x00;
+        bool ok = dev.isValid();
 
         printf("ROM status: %d, code = %s\r\n", int(ok), rom);
 		
