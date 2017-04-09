@@ -136,27 +136,29 @@ bool OneWire::isValid()
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
 void OneWire::readROM()
 {
+    _valid = false;
     unsigned char temp = CommandReadRom;
     unsigned char i = 0;
     unsigned char crc = 0;
 
-    if (readWriteByte(&temp) != StatusPresence)
+    if (readWriteByte(&temp) != StatusPresence){
+        printf("Error ocured on write comand \"Read ROM\"\r\n");
         return; // что-то пошло не так, например, устройство отключили
+    }
 
     temp = 0xFF; // будем читать из слэйва
-    for(i=0; i<8; i++)
-    {
-        if (readWriteByte(&temp) != StatusPresence)
+    for(i=0; i<8; i++){
+        if (readWriteByte(&temp) != StatusPresence){
+            printf("Error ocured on read ROM cod\r\n");
             return; // что-то пошло не так, например, устройство отключили
+        }
 
         crc = crc8(temp, crc);
         _romCode[i] = temp;
     }
     // проверяем CRC
-    if (crc)
-        _valid = false; // CRC не совпала
-
-    _valid = true;
+    if (!crc)
+         _valid = true; // CRC совпала
 }
 
 // 0x55
