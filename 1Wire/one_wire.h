@@ -45,6 +45,8 @@ class OneWire
 public:
     OneWire(DigitalInOut apin);
 
+    bool romCode(char *buf);
+
     // ROM function commands - Network layer
 public:
     enum LineStatus {

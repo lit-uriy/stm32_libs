@@ -29,6 +29,14 @@ int main() {
 
         printf("Device status: %d\r\n", int(status));
 
+        dev.readROM();
+
+        char rom[2*8+1]; // в два раза больше символов + замыкающий нуль
+        bool ok = dev.romCode(rom);
+        rom[2*8] = 0x00;
+
+        printf("ROM status: %d, code = %s\r\n", int(ok), rom);
+
     }else{
 
         printf("Finding devices...\r\n");
