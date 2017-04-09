@@ -72,6 +72,7 @@ OneWire::LineStatus OneWire::reset()
         return StatusShortCircuit;
 
     // нормальный "Presence pulse" был
+    _valid = true;
     return StatusPresence;
 }
 
