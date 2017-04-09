@@ -7,6 +7,8 @@
 #include "mbed.h"
 #include "DS1820.h"
 
+#include "1Wire/one_wire.h"
+
 #define MAX_PROBES      16
  
 DS1820 *probe[MAX_PROBES];
@@ -15,11 +17,17 @@ DigitalIn mybutton(USER_BUTTON);
  
 int main() {  
 
-	printf("\r\n----------------------------\r\n");
+    printf("\r\n----------------------------\r\n");
+
 
 
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
+
+        OneWire dev(DATA_PIN);
+        OneWire::LineStatus status = dev.reset();
+
+        printf("Device status: %d\r\n", int(status));
 
     }else{
 
