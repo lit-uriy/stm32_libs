@@ -4,8 +4,12 @@ OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
 {
+    printf("[1] Line state: %d\r\n", int(pin())); // [1] Line state: 1
     _pin.output();
     _pin.mode(OpenDrain);
+    printf("[2] Line state: %d\r\n", int(pin())); // [2] Line state: 0
+    pinRelease();
+    printf("[3] Line state: %d\r\n", int(pin())); // [3] Line state: 1
 }
 
 OneWire::LineStatus OneWire::reset()
@@ -13,6 +17,7 @@ OneWire::LineStatus OneWire::reset()
     // в начале на шине должна быть "1"
     if (!pin())
         return StatusShortCircuit;
+
     // выставляем "Reset pulse"
     pinLow();
     // выдержваем в течении TRSTL
