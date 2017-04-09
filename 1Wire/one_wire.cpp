@@ -4,7 +4,8 @@ OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
 {
-
+    _pin.output();
+    _pin.mode(OpenDrain);
 }
 
 OneWire::LineStatus OneWire::reset()
