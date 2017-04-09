@@ -45,7 +45,7 @@ class OneWire
 public:
     OneWire(DigitalInOut apin);
 
-    bool romCode(char *buf);
+    bool romCode(char *buff);
 
     // ROM function commands - Network layer
 public:
