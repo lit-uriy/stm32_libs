@@ -26,10 +26,10 @@ char rom[2*8+1]; // в два раза больше символов + замы�
 
         OneWire dev(DATA_PIN);
         OneWire::LineStatus status = dev.reset();
+        dev.readROM();
 
         printf("Device status: %d\r\n", int(status));
 
-        dev.readROM();
 
 
         dev.romCode(rom);
