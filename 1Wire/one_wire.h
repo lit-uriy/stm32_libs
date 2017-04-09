@@ -89,7 +89,7 @@ public:
 private:
     DigitalInOut _pin;
     bool _valid;
-    unsigned char TMbuf[8];
+    unsigned char _romCode[8];
 
     inline bool pin()
     {

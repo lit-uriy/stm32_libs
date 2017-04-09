@@ -115,7 +115,7 @@ void OneWire::readROM()
             return; // что-то пошло не так, например, устройство отключили
 
         crc = crc8(temp, crc);
-        TMbuf[i] = temp;
+        _romCode[i] = temp;
     }
     // проверяем CRC
     if (crc)
