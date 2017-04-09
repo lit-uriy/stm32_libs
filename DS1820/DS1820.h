@@ -105,7 +105,9 @@ public:
       * @param a number between 9 and 12 to specify resolution
       * @returns true if successful
       */ 
-    bool setResolution(unsigned int resolution);       
+    bool setResolution(unsigned int resolution);
+
+    void romCode(char *buff);
 
 private:
     bool _parasite_power;

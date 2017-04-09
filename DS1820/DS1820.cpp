@@ -67,6 +67,34 @@ DS1820::~DS1820 (void) {
     }
 }
 
+void DS1820::romCode(char *buff)
+{
+    unsigned char i;
+
+    for(i=0; i<8; i++){
+        char cl = _ROM[i] & 0x0F;
+        char cm = _ROM[i] >> 4;
+        char resl = 0;
+        char resm = 0;
+
+        if (cm >= 0 & cm <= 9){ // числами
+            resm = 0x30 + cm;
+        }else{ // буквами
+            resm = 55 + cm;
+        }
+
+        buff[2*i] = resm;
+
+        if (cl >= 0 & cl <= 9){ // числами
+            resl = 0x30 + cl;
+        }else{ // буквами
+            resl = 0x37 + cl;
+        }
+
+        buff[2*i+1] = resl;
+    }
+}
+
  
 bool DS1820::onewire_reset(DigitalInOut *pin) {
 // This will return false if no devices are present on the data bus
@@ -132,7 +160,8 @@ bool DS1820::unassignedProbe(PinName pin) {
     ONEWIRE_INIT((&_pin));
     INIT_DELAY;
     char ROM_address[8];
-    return search_ROM_routine(&_pin, 0xF0, ROM_address);
+    bool ret = search_ROM_routine(&_pin, 0xF0, ROM_address);
+	return ret;
 }
  
 bool DS1820::unassignedProbe(DigitalInOut *pin, char *ROM_address) {
