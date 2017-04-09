@@ -82,8 +82,10 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
     for(j=0;j<8;j++)
     {
         // должна быть "1"
-        if (!pin())
+        if (!pin()) {
+            printf("Error ocured on before syncro front\r\n");
             return StatusShortCircuit;
+        }
         //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
         pinLow();
         deleyUs(TimeSyncro);
