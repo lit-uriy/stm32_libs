@@ -40,7 +40,7 @@ bool OneWire::romCode(char *buff)
 		
 		buff[2*i+1] = resl;
     }
-	
+    buff[8*2] = 0x00;
     return _valid;
 }
 
