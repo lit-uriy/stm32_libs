@@ -85,9 +85,11 @@ public:
         TimePdl = 2*TimeSlot,
         TimeReset = 8*TimeSlot,
         // расчётное/подобранное
-        TimeRelease = 2*TimeSlot/5, // 24 мкс
+        TimeRelease = 2*TimeSlot/5, // 24 мкс, в документации написано 15 мкс - номинал
         TimePresence = 4*TimeSlot, // Верно ли?
-        TimeSyncro = TimeSlot/6, // <15 мкс
+        TimeSyncro = TimeSlot/20, // 3 мкс
+        Time15 = 15,
+        Time10 = 10
     };
 
 private:

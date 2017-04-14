@@ -94,29 +94,36 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
             return StatusShortCircuit;
         }
         //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
+        syncroPin.write(1 & test);
         pinLow();
         deleyUs(TimeSyncro);
 
-        // если "1" в данных, то отпускаем линию, слэйв прочитает "1"
+        // WR: если "1" в данных, то отпускаем линию, слэйв прочитает "1"
+        // RD: каждый входной бит у byte в "1", соответственно линию отпускаем
         if((*byte) & 0x01)
             pinRelease();
 
-        // следующий бит данных
+        // WR: следующий бит данных
+        // RD: готовим очередной бит для приёма
         (*byte)>>=1; // (*x) = (*x) >> 1;
 
-        deleyUs(TimeSyncro);
+        deleyUs(10);
+
+        // RD: до сюда должно быть меньше 15 мкс
 
         // читаем, что нам слэйв выставил, если мы пишем, то слэйв линию не трогает, она в "1"
         if (pin())
             (*byte) |=0x80;
 
+        syncroPin.write(0);
         deleyUs(TimeSlot-(2*TimeSyncro));
 
         // если в данных был "0", то линия вернётся в исходное
         pinRelease();
 
-        deleyUs(2*TimeSyncro);
+        deleyUs(Time10);
     }
+    syncroPin.write(0);
     return StatusPresence;
 }
 
@@ -152,14 +159,14 @@ void OneWire::readROM()
     unsigned char i = 0;
     unsigned char crc = 0;
 
-    syncroPin.write(1);
+//    syncroPin.write(1);
 
     if (readWriteByte(&temp) != StatusPresence){
         printf("Error ocured on write comand \"Read ROM\"\r\n");
         return; // что-то пошло не так, например, устройство отключили
     }
 
-    syncroPin.write(0);
+    test = true;
 
     temp = 0xFF; // будем читать из слэйва
     for(i=0; i<8; i++){
