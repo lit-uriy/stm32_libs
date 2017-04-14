@@ -6,6 +6,8 @@ OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
 {
+    syncroPin.write(0);
+
     // Line state: 1
     _pin.output();
     _pin.mode(OpenDrain); // Line state: 0
@@ -148,10 +150,14 @@ void OneWire::readROM()
     unsigned char i = 0;
     unsigned char crc = 0;
 
+    syncroPin.write(1);
+
     if (readWriteByte(&temp) != StatusPresence){
         printf("Error ocured on write comand \"Read ROM\"\r\n");
         return; // что-то пошло не так, например, устройство отключили
     }
+
+    syncroPin.write(0);
 
     temp = 0xFF; // будем читать из слэйва
     for(i=0; i<8; i++){
