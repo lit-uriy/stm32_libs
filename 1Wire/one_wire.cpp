@@ -77,6 +77,8 @@ OneWire::LineStatus OneWire::reset()
     if (!pin())
         return StatusShortCircuit;
 
+    deleyUs(TimeReset - TimePresence); // общая выдержка в отпущенном состоянии не менее TimeReset
+
     // нормальный "Presence pulse" был
     _valid = true;
     return StatusPresence;
