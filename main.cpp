@@ -45,6 +45,11 @@ char rom[2*8+1]; // в два раза больше символов + замы�
 
         printf("Finding devices...\r\n");
 
+        DS1820 dev(DATA_PIN);
+        dev.romCode(rom);
+        printf("ROM code = %s\r\n", rom);
+
+        while(1){wait(1);};
         // Initialize the probe array to DS1820 objects
         int num_devices = 0;
         while(DS1820::unassignedProbe(DATA_PIN)) {

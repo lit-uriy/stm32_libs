@@ -33,6 +33,8 @@ void init_soft_delay( void ) {
     #define ONEWIRE_DELAY_US(value) wait_us(value)
 #endif
 
+#define TEST_READ 1
+
 LinkedList<node> DS1820::probes;
  
  
@@ -47,8 +49,17 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _dat
     
     ONEWIRE_INIT((&_datapin));
     INIT_DELAY;
-    
-    if (!unassignedProbe(&_datapin, _ROM))
+
+    syncroPin.write(0);
+	
+	bool ok = true;
+#ifdef TEST_READ
+    onewire_reset(&_datapin);
+    readRom();
+#else
+    bool ok = unassignedProbe(&_datapin, _ROM);
+#endif
+    if (!ok)
         error("No unassigned DS1820 found!\n");
     else {
         _datapin.input();
@@ -165,6 +176,34 @@ bool DS1820::unassignedProbe(PinName pin) {
 	return ret;
 }
  
+bool DS1820::readRom()
+{
+    printf("DS1820::readRom()\r\n");
+    char temp = 0x33;
+    unsigned char i = 0;
+    unsigned char crc = 0;
+
+    onewire_byte_out(temp);
+
+    test = true;
+
+    temp = 0xFF; // будем читать из слэйва
+    for(i=0; i<8; i++){
+        temp = onewire_byte_in();
+
+        crc = CRC_byte(crc, temp);
+        _ROM[i] = temp;
+    }
+    // проверяем CRC
+    if (!crc)
+         return true; // CRC совпала
+
+    printf("Error ocured on CRC check\r\n");
+    return false;
+}
+
+
+
 bool DS1820::unassignedProbe(DigitalInOut *pin, char *ROM_address) {
     return search_ROM_routine(pin, 0xF0, ROM_address);
 }

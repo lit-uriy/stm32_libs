@@ -130,6 +130,8 @@ private:
     void write_scratchpad(int data);
     bool read_power_supply(devices device=this_device);
 
+    bool readRom();
+
     DigitalInOut _datapin;
     DigitalOut _parasitepin;
     
