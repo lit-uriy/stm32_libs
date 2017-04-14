@@ -164,6 +164,8 @@ void OneWire::readROM()
     // проверяем CRC
     if (!crc)
          _valid = true; // CRC совпала
+    else
+        printf("Error ocured on CRC check\r\n");
 }
 
 // 0x55
