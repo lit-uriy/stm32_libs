@@ -2,6 +2,8 @@
 
 extern DigitalOut syncroPin;
 
+extern bool test;
+
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
