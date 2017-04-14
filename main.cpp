@@ -14,6 +14,8 @@
 DS1820 *probe[MAX_PROBES];
 
 DigitalIn mybutton(USER_BUTTON);
+
+DigitalOut syncroPin(A1);
  
 int main() {  
 

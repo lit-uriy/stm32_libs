@@ -1,5 +1,7 @@
 #include "one_wire.h"
 
+extern DigitalOut syncroPin;
+
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
