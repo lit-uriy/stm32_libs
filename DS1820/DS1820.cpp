@@ -49,8 +49,6 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _dat
     
     ONEWIRE_INIT((&_datapin));
     INIT_DELAY;
-
-    syncroPin.write(0);
 	
 	bool ok = true;
 #ifdef TEST_READ
@@ -184,8 +182,6 @@ bool DS1820::readRom()
     unsigned char crc = 0;
 
     onewire_byte_out(temp);
-
-    test = true;
 
     temp = 0xFF; // будем читать из слэйва
     for(i=0; i<8; i++){
