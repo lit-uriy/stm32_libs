@@ -191,7 +191,19 @@ void OneWire::readROM()
 // 0x55
 void OneWire::matchROM()
 {
-
+    unsigned char temp = CommandMatchRom;
+    int i;
+    reset();
+    if (readWriteByte(&temp) != StatusPresence){
+        printf("Error ocured on write comand \"Match ROM\"\r\n");
+        return; // что-то пошло не так, например, устройство отключили
+    }
+    for (i=0;i<8;i++) {
+        if (readWriteByte(&_romCode[i]) != StatusPresence){
+                printf("Error ocured on read answer on \"Match ROM\"\r\n");
+                return; // что-то пошло не так, например, устройство отключили
+        }
+    }
 }
 
 // 0xF0
@@ -203,6 +215,11 @@ void OneWire::searchROM()
 // 0xCC
 void OneWire::skipROM()
 {
-
+    unsigned char temp = CommandSkipRom;
+    reset();
+    if (readWriteByte(&temp) != StatusPresence){
+        printf("Error ocured on write comand \"Skip ROM\"\r\n");
+        return; // что-то пошло не так, например, устройство отключили
+    }
 }
 
