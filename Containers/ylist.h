@@ -5,7 +5,7 @@
 #include <iostream>
 
 #ifndef UNI_ASSERT
-#define UNI_ASSERT(cond, place, message) assert(cond);
+#define Y_ASSERT(cond, place, message) assert(cond);
 #endif
 
 template<typename T>
@@ -163,7 +163,7 @@ template <typename T>
 T& YList<T>::operator[] (int i)
 {
     std::out << "T& operator[]" << std::endl;
-    UNI_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
+    Y_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
     T &out = d[i];
     return out;
 }
@@ -172,7 +172,7 @@ template <typename T>
 const T YList<T>::operator[] (int i) const
 {
     std::out << "const T operator[]" << std::endl;
-    UNI_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
+    Y_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
     const T out = d[i];
     return out;
 }
