@@ -145,8 +145,6 @@ OneWire::LineStatus OneWire::readByte(unsigned char *byte)
             return StatusShortCircuit;
         }
         //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
-        bool bit = false;
-
         pinLow();
 
         deleyUs(3);
@@ -156,12 +154,11 @@ OneWire::LineStatus OneWire::readByte(unsigned char *byte)
         deleyUs(10);
 
         // RD: до сюда должно быть меньше 15 мкс
-        bit = pin();
+        if (pin())
+            (*byte) |=0x80;
 
         deleyUs(45);
 
-        if (bit)
-            (*byte) |=0x80;
     }
 
     return StatusPresence;
