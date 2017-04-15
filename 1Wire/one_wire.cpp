@@ -134,22 +134,29 @@ OneWire::LineStatus OneWire::readByte(unsigned char *byte)
 {
     unsigned char j;
 
+    printf("readByte(%02x)\r\n", *byte);
+
     for(j=0;j<8;j++)
     {
-        // RD: готовим очередной бит для приёма
-        (*byte)>>=1; // (*x) = (*x) >> 1;
+
 
         // должна быть "1"
         if (!pin()) {
             printf("Error ocured on before syncro front\r\n");
             return StatusShortCircuit;
         }
+
         //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
         pinLow();
+        deleyUs(TimeSyncro);
 
-        deleyUs(3);
+        if((*byte) & 0x01){
+            pinRelease();
+        }
 
-        pinRelease();
+
+        // RD: готовим очередной бит для приёма
+        (*byte)>>=1; // (*x) = (*x) >> 1;
 
         deleyUs(10);
 
@@ -160,7 +167,6 @@ OneWire::LineStatus OneWire::readByte(unsigned char *byte)
         deleyUs(45);
 
     }
-
     return StatusPresence;
 }
 
