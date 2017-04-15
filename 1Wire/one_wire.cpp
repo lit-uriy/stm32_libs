@@ -26,7 +26,7 @@ bool OneWire::romCode(char *buff)
 		char resl = 0;
 		char resm = 0;
 
-        if (cm >= 0 & cm <= 9){ // числами
+        if (cm <= 9){ // числами
             resm = 0x30 + cm;
         }else{ // буквами
             resm = 55 + cm;
@@ -34,7 +34,7 @@ bool OneWire::romCode(char *buff)
 		
 		buff[2*i] = resm;
 
-        if (cl >= 0 & cl <= 9){ // числами
+        if (cl <= 9){ // числами
             resl = 0x30 + cl;
         }else{ // буквами
             resl = 0x37 + cl;
