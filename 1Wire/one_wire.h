@@ -118,7 +118,6 @@ private:
     }
 
     LineStatus readWriteByte(unsigned char *byte);
-    LineStatus readByte(unsigned char *byte);
     unsigned char crc8(unsigned char data, unsigned char crc8val);
 
 };
