@@ -64,7 +64,7 @@ YList<T>::YList()
 template <typename T>
 YList<T>::YList(const YList<T> &other )
 {
-    std::cerr << "Copy constructor" << std::endl;
+    std::out << "Copy constructor" << std::endl;
     rezerve = other.size();
     d = new T[rezerve];
     actual = 0;
@@ -78,7 +78,7 @@ YList<T>::YList(const YList<T> &other )
 template <typename T>
 YList<T>& YList<T>::operator=(const YList<T> &other)
 {
-    std::cerr << "operator=" << std::endl;
+    std::out << "operator=" << std::endl;
     if (d != other.d){
         delete d;
         d = other.d;
@@ -162,7 +162,7 @@ int	YList<T>::indexOf(const T &value, int from) const
 template <typename T>
 T& YList<T>::operator[] (int i)
 {
-    std::cerr << "T& operator[]" << std::endl;
+    std::out << "T& operator[]" << std::endl;
     UNI_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
     T &out = d[i];
     return out;
@@ -171,7 +171,7 @@ T& YList<T>::operator[] (int i)
 template <typename T>
 const T YList<T>::operator[] (int i) const
 {
-    std::cerr << "const T operator[]" << std::endl;
+    std::out << "const T operator[]" << std::endl;
     UNI_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
     const T out = d[i];
     return out;
