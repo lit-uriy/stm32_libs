@@ -6,6 +6,7 @@
 
 #include "mbed.h"
 #include "DS1820.h"
+#include "Containers/ylist.h"
 
 #include "1Wire/one_wire.h"
 
@@ -42,6 +43,22 @@ char rom[2*8+1]; // в два раза больше символов + замы�
         }else{
             printf("Device status after Reset: %d, validity = %d\r\n", int(status), dev.isValid());
         }
+
+        OneWire *dev1 = new OneWire(DATA_PIN);
+        OneWire *dev2 = new OneWire(DATA_PIN);
+        OneWire *dev3 = new OneWire(DATA_PIN);
+
+        YList<OneWire*> list;
+        printf("list create; size = %d\r\n", list.size());
+        list.append(dev1);
+        list.append(dev2);
+        list.append(dev3);
+        printf("list populate; size = %d\r\n", list.size());
+        int index = list.indexOf(dev2);
+        printf("list index of dev2 item: %d\r\n", index);
+        index += 1;
+        bool eq = list[index] == dev3;
+        printf("list index %d, equal dev3?: %d\r\n", index, eq);
 
     }else{
 
