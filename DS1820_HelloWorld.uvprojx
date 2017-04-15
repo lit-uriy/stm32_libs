@@ -1933,6 +1933,21 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>Containers</GroupName>
+          <Files>
+            <File>
+              <FileName>ylist.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Containers\ylist.h</FilePath>
+            </File>
+            <File>
+              <FileName>ylist.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Containers\ylist.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>
