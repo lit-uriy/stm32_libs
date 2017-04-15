@@ -87,7 +87,7 @@ public:
         // расчётное/подобранное
         TimeRelease = 2*TimeSlot/5, // 24 мкс, в документации написано 15 мкс - номинал
         TimePresence = 4*TimeSlot, // Верно ли?
-        TimeSyncro = TimeSlot/20, // 3 мкс
+        TimeSyncro = 2, // 3 мкс
         Time15 = 15,
         Time10 = 10
     };
@@ -118,6 +118,7 @@ private:
     }
 
     LineStatus readWriteByte(unsigned char *byte);
+    LineStatus readByte(unsigned char *byte);
     unsigned char crc8(unsigned char data, unsigned char crc8val);
 
 };

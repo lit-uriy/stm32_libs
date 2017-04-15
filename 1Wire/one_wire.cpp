@@ -96,7 +96,7 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
             return StatusShortCircuit;
         }
         //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
-        syncroPin.write(1 & test);
+
         pinLow();
         deleyUs(TimeSyncro);
 
@@ -109,7 +109,7 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
         // RD: готовим очередной бит для приёма
         (*byte)>>=1; // (*x) = (*x) >> 1;
 
-        deleyUs(10);
+        deleyUs(Time10);
 
         // RD: до сюда должно быть меньше 15 мкс
 
@@ -117,15 +117,53 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
         if (pin())
             (*byte) |=0x80;
 
-        syncroPin.write(0);
-        deleyUs(TimeSlot-(2*TimeSyncro));
+        deleyUs(TimeSlot-(TimeSyncro + Time10));
 
         // если в данных был "0", то линия вернётся в исходное
         pinRelease();
 
         deleyUs(Time10);
     }
-    syncroPin.write(0);
+
+    return StatusPresence;
+}
+
+
+
+OneWire::LineStatus OneWire::readByte(unsigned char *byte)
+{
+    unsigned char j;
+
+    for(j=0;j<8;j++)
+    {
+        // RD: готовим очередной бит для приёма
+        (*byte)>>=1; // (*x) = (*x) >> 1;
+
+        // должна быть "1"
+        if (!pin()) {
+            printf("Error ocured on before syncro front\r\n");
+            return StatusShortCircuit;
+        }
+        //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
+        bool bit = false;
+
+        pinLow();
+
+        deleyUs(3);
+
+        pinRelease();
+
+        deleyUs(10);
+
+        // RD: до сюда должно быть меньше 15 мкс
+        bit = pin();
+
+        deleyUs(45);
+
+        if (bit)
+            (*byte) |=0x80;
+    }
+
     return StatusPresence;
 }
 
@@ -171,8 +209,9 @@ void OneWire::readROM()
     test = true;
 
     temp = 0xFF; // будем читать из слэйва
+    syncroPin.write(1);
     for(i=0; i<8; i++){
-        if (readWriteByte(&temp) != StatusPresence){
+        if (readByte(&temp) != StatusPresence){
             printf("Error ocured on read ROM cod\r\n");
             return; // что-то пошло не так, например, устройство отключили
         }
@@ -180,6 +219,7 @@ void OneWire::readROM()
         crc = crc8(temp, crc);
         _romCode[i] = temp;
     }
+    syncroPin.write(0);
     // проверяем CRC
     if (!crc)
          _valid = true; // CRC совпала
