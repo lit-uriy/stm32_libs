@@ -205,9 +205,9 @@ void OneWire::readROM()
 
     test = true;
 
-    temp = 0xFF; // будем читать из слэйва
     syncroPin.write(1);
     for(i=0; i<8; i++){
+        temp = 0xFF; // будем читать из слэйва
         if (readByte(&temp) != StatusPresence){
             printf("Error ocured on read ROM cod\r\n");
             return; // что-то пошло не так, например, устройство отключили
