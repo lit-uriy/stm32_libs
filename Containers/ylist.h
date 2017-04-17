@@ -13,11 +13,11 @@ class YList
 {
 public:
     YList();
+    ~YList();
 
     YList(const YList<T> &other );
     YList<T>& operator=(const YList<T> &other);
 
-    ~YList(){ delete d;}
 
     void append(const T &value);
     void append(const YList<T> & values);
@@ -58,6 +58,13 @@ YList<T>::YList()
     ,actual(0)
 {
     d = new T[100]; // сразу резервируем места под 100 элементов
+}
+
+
+template <typename T>
+YList<T>::~YList()
+{
+    delete[] d;
 }
 
 
