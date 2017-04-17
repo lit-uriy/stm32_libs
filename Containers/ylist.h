@@ -15,7 +15,7 @@ public:
     YList();
 
     YList(const YList<T> &other );
-    YList<T> &operator=(const YList<T> &other);
+    YList<T>& operator=(const YList<T> &other);
 
     ~YList(){ delete d;}
 
