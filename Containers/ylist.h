@@ -73,7 +73,7 @@ YList<T>::YList(const YList<T> &other )
 {
     std::cout << "Copy constructor" << std::endl;
     rezerve = other.size();
-    d = new T[rezerve];
+    d = new T[rezerve];// NOTE: буфер ещё не инициализирован
     actual = 0;
     //скопируем элементы входного списка
     for (int i = 0; i < rezerve; ++i) {
