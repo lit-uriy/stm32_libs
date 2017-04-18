@@ -53,6 +53,8 @@ public:
     bool isValid();
 
     bool addDevice(OneWireDevice *dev);
+    void removeDevice(OneWireDevice *dev);
+    YList<OneWireDevice *> devices();
 
     // ROM function commands - Network layer
 public:
