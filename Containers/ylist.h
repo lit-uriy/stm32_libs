@@ -15,6 +15,7 @@ public:
     YList(int areserve = 10);
     ~YList();
 
+    // WARNING: шаг резервирования места не копируется
     YList(const YList<T> &other );
     YList<T>& operator=(const YList<T> &other);
 
