@@ -48,6 +48,7 @@ private:
 
 
     void addSpace(int addsize);
+    void copyData(const YList<T> &other);
 };
 
 //----------------------------------------
@@ -72,13 +73,7 @@ template <typename T>
 YList<T>::YList(const YList<T> &other )
 {
     std::cout << "Copy constructor" << std::endl;
-    rezerve = other.size();
-    d = new T[rezerve];// NOTE: буфер ещё не инициализирован
-    actual = 0;
-    //скопируем элементы входного списка
-    for (int i = 0; i < rezerve; ++i) {
-        d[actual++] = other.d[i];
-    }
+    copyData(other);
 }
 
 
@@ -88,12 +83,23 @@ YList<T>& YList<T>::operator=(const YList<T> &other)
     std::cout << "operator=" << std::endl;
     if (d != other.d){
         delete d;
-        d = other.d;
-        rezerve = other.rezerve;
-        actual = other.actual;
-        //FIXME: копирование элементов случайно удалил
+        copyData(other);
     }
     return *this;
+}
+
+
+
+template <typename T>
+void  YList<T>::copyData(const YList<T> &other)
+{
+    actual = other.actual;
+    rezerve = other.rezerve;
+    d = new T[rezerve];// NOTE: буфер ещё не инициализирован
+    //скопируем элементы входного списка
+    for (int i = 0; i < actual; ++i) {
+        d[i] = other.d[i];
+    }
 }
 
 
