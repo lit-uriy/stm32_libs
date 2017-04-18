@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-#ifndef UNI_ASSERT
+#ifndef Y_ASSERT
 #define Y_ASSERT(cond, place, message) assert(cond);
 #endif
 
