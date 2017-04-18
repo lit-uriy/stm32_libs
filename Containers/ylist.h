@@ -82,7 +82,7 @@ YList<T>& YList<T>::operator=(const YList<T> &other)
 {
     std::cout << "operator=" << std::endl;
     if (d != other.d){
-        delete d;
+        delete[] d;
         copyData(other);
     }
     return *this;
@@ -133,7 +133,7 @@ void YList<T>::append(const YList<T> & values)
 template <typename T>
 void YList<T>::clear()
 {
-    delete d;
+    delete[] d;
     actual = 0;
     rezerve = 100;
     d = new T[rezerve];
@@ -150,7 +150,7 @@ void YList<T>::removeAt(int i)
         if (i != oi)
             d[ni++] = old[oi];
     }
-    delete old;
+    delete[] old;
     actual--;
 }
 
@@ -199,7 +199,7 @@ void YList<T>::addSpace(int addsize)
     for (int i = 0; i < actual; ++i) {
         d[i] = old[i];
     }
-    delete old;
+    delete[] old;
 
 }
 
