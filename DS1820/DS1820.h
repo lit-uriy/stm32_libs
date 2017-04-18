@@ -105,7 +105,9 @@ public:
       * @param a number between 9 and 12 to specify resolution
       * @returns true if successful
       */ 
-    bool setResolution(unsigned int resolution);       
+    bool setResolution(unsigned int resolution);
+
+    void romCode(char *buff);
 
 private:
     bool _parasite_power;
@@ -127,6 +129,8 @@ private:
     static bool unassignedProbe(DigitalInOut *pin, char *ROM_address);
     void write_scratchpad(int data);
     bool read_power_supply(devices device=this_device);
+
+    bool readRom();
 
     DigitalInOut _datapin;
     DigitalOut _parasitepin;

@@ -212,7 +212,7 @@
             <AdsLsun>1</AdsLsun>
             <AdsLven>1</AdsLven>
             <AdsLsxf>1</AdsLsxf>
-            <RvctClst>0</RvctClst>
+            <RvctClst>1</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M0"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
@@ -1915,6 +1915,36 @@
               <FileName>wait_api.h</FileName>
               <FileType>5</FileType>
               <FilePath>mbed/platform/wait_api.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>1Wire</GroupName>
+          <Files>
+            <File>
+              <FileName>one_wire.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\1Wire\one_wire.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>one_wire.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\1Wire\one_wire.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Containers</GroupName>
+          <Files>
+            <File>
+              <FileName>ylist.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Containers\ylist.h</FilePath>
+            </File>
+            <File>
+              <FileName>ylist.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Containers\ylist.cpp</FilePath>
             </File>
           </Files>
         </Group>
