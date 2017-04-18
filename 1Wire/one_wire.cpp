@@ -46,6 +46,11 @@ bool OneWire::romCode(char *buff)
     return _valid;
 }
 
+bool OneWire::isValid()
+{
+    return _valid;
+}
+
 OneWire::LineStatus OneWire::reset()
 {
     // в начале на шине должна быть "1"
@@ -144,11 +149,6 @@ unsigned char OneWire::crc8(unsigned char data, unsigned char crc8val)
         data>>=1;
     }while (--cnt);
     return crc8val;
-}
-
-bool OneWire::isValid()
-{
-    return _valid;
 }
 
 
