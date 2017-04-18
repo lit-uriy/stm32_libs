@@ -38,9 +38,9 @@ public:
     int length() const {return actual;}
 
     T& operator[] (int i);
-    const T operator[] (int i) const;
+    const T& operator[] (int i) const;
 //    const T& operator[] (int i) const; // TODO
-//    const T& at(int i) const; // TODO
+    const T& at(int i) const;
 private:
     T *d;
     int rezerve; // кол-во места под элементы контейнера
@@ -182,11 +182,20 @@ T& YList<T>::operator[] (int i)
 }
 
 template <typename T>
-const T YList<T>::operator[] (int i) const
+const T& YList<T>::operator[] (int i) const
 {
     std::cout << "const T operator[]" << std::endl;
     Y_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
-    const T out = d[i];
+    const T &out = d[i];
+    return out;
+}
+
+template <typename T>
+const T& YList<T>::at(int i) const
+{
+    std::cout << "const T operator[]" << std::endl;
+    Y_ASSERT(i >= 0 && i < actual, "YList<T>::at[]", "index out of range");
+    const T &out = d[i];
     return out;
 }
 
