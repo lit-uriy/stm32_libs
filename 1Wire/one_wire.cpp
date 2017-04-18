@@ -1,5 +1,7 @@
 #include "one_wire.h"
 
+#include "1Wire/one_wire_device.h"
+
 extern DigitalOut syncroPin;
 
 extern bool test;
@@ -7,6 +9,7 @@ extern bool test;
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
+    , _devices(16)
 {
     syncroPin.write(0);
 
@@ -49,6 +52,12 @@ bool OneWire::romCode(char *buff)
 bool OneWire::isValid()
 {
     return _valid;
+}
+
+
+bool OneWire::addDevice(OneWireDevice *dev)
+{
+    _devices.append(dev);
 }
 
 OneWire::LineStatus OneWire::reset()

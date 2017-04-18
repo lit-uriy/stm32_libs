@@ -3,6 +3,8 @@
 
 #include "mbed.h"
 
+#include "Containers/ylist.h"
+
 //-------------------------
 //  ID термометра: 28 FF 55 9D 6F 14 04 3F
 //
@@ -39,7 +41,7 @@
 //-------------------------
 
 
-
+class OneWireDevice;
 
 
 class OneWire
@@ -49,6 +51,8 @@ public:
 
     bool romCode(char *buff);
     bool isValid();
+
+    bool addDevice(OneWireDevice *dev);
 
     // ROM function commands - Network layer
 public:
@@ -96,6 +100,8 @@ private:
     DigitalInOut _pin;
     bool _valid;
     unsigned char _romCode[8];
+
+    YList<OneWireDevice *> _devices;
 
     inline bool pin()
     {
