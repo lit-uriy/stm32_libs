@@ -12,7 +12,7 @@ template<typename T>
 class YList
 {
 public:
-    YList();
+    YList(int areserve = 10);
     ~YList();
 
     YList(const YList<T> &other );
@@ -46,6 +46,7 @@ private:
     int rezerve; // кол-во места под элементы контейнера
     int actual; // реальное кол-во элементов в контейнере
 
+    const int ReserveStep;
 
     void addSpace(int addsize);
     void copyData(const YList<T> &other);
@@ -54,11 +55,12 @@ private:
 //----------------------------------------
 
 template <typename T>
-YList<T>::YList()
-    :rezerve(100)
+YList<T>::YList(int areserve)
+    :rezerve(areserve)
     ,actual(0)
+    ,ReserveStep(areserve)
 {
-    d = new T[100]; // сразу резервируем места под 100 элементов
+    d = new T[rezerve]; // сразу резервируем места под 100 элементов
 }
 
 
@@ -108,7 +110,7 @@ void YList<T>::append(const T &value)
 {
     if (actual >= rezerve){
         // место кончилось - добавим ещё
-        addSpace(100);
+        addSpace(ReserveStep);
     }
     d[actual++] = value;
 }
@@ -121,7 +123,7 @@ void YList<T>::append(const YList<T> & values)
     int rez = rezerve - actual;
     if (rez <= addsize){
         // места не хватает - добавим с запасиком
-        addSpace(rez + addsize + 100);
+        addSpace(addsize - rez + ReserveStep);
     }
     //скопируем элементы входного списка
     for (int i = 0; i < addsize; ++i) {
@@ -135,7 +137,7 @@ void YList<T>::clear()
 {
     delete[] d;
     actual = 0;
-    rezerve = 100;
+    rezerve = ReserveStep;
     d = new T[rezerve];
 }
 
