@@ -8,3 +8,5 @@
 RTE/
 BUILD/
 *.d
+# Qt Creator
+*.user
