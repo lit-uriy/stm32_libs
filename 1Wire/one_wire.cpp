@@ -55,7 +55,7 @@ bool OneWire::isValid()
 }
 
 
-bool OneWire::addDevice(OneWireDevice *dev)
+void OneWire::addDevice(OneWireDevice *dev)
 {
     _devices.append(dev);
 }

@@ -52,7 +52,7 @@ public:
     bool romCode(char *buff);
     bool isValid();
 
-    bool addDevice(OneWireDevice *dev);
+    void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
     YList<OneWireDevice *> devices();
 
