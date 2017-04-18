@@ -15,8 +15,8 @@ public:
     YList(int areserve = 10);
     ~YList();
 
-    // WARNING: шаг резервирования места не копируется
     YList(const YList<T> &other );
+    // WARNING: шаг резервирования места не копируется
     YList<T>& operator=(const YList<T> &other);
 
 
@@ -74,6 +74,7 @@ YList<T>::~YList()
 
 template <typename T>
 YList<T>::YList(const YList<T> &other )
+    :ReserveStep(other.ReserveStep)
 {
     std::cout << "Copy constructor" << std::endl;
     copyData(other);
