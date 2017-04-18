@@ -60,6 +60,19 @@ void OneWire::addDevice(OneWireDevice *dev)
     _devices.append(dev);
 }
 
+void OneWire::removeDevice(OneWireDevice *dev)
+{
+    int index = _devices.indexOf(dev);
+    if (!index)
+        return;
+    _devices.removeAt(index);
+}
+
+YList<OneWireDevice *> OneWire::devices()
+{
+    return _devices;
+}
+
 OneWire::LineStatus OneWire::reset()
 {
     // в начале на шине должна быть "1"
