@@ -9,6 +9,7 @@
 #include "Containers/ylist.h"
 
 #include "1Wire/one_wire.h"
+#include "1Wire/y_ds1820.h"
 
 #define MAX_PROBES      16
  
