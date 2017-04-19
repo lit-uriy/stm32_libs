@@ -47,7 +47,17 @@ class OneWireDevice;
 class OneWire
 {
 public:
+    enum LineStatus {
+        StatusPresence = 0,
+        StatusShortCircuit,
+        StatusAbsent,
+        StatusUnknown,
+    };
+
+
     OneWire(DigitalInOut apin);
+
+    LineStatus status();
 
     bool romCode(char *buff);
     bool isValid();
@@ -58,11 +68,6 @@ public:
 
     // ROM function commands - Network layer
 public:
-    enum LineStatus {
-        StatusPresence = 0,
-        StatusShortCircuit,
-        StatusAbsent,
-    };
 
 
     /**
@@ -101,6 +106,7 @@ public:
 private:
     DigitalInOut _pin;
     bool _valid;
+    LineStatus _status;
     unsigned char _romCode[8];
 
     YList<OneWireDevice *> _devices;

@@ -9,6 +9,7 @@ extern bool test;
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _valid(false)
+    , _status(StatusUnknown)
     , _devices(16)
 {
     syncroPin.write(0);
@@ -76,8 +77,10 @@ YList<OneWireDevice *> OneWire::devices()
 OneWire::LineStatus OneWire::reset()
 {
     // в начале на шине должна быть "1"
-    if (!pin())
-        return StatusShortCircuit;
+    if (!pin()){
+        _status = StatusShortCircuit;
+        return _status;
+    }
 
     // выставляем "Reset pulse"
     pinLow();
@@ -89,26 +92,33 @@ OneWire::LineStatus OneWire::reset()
     // ждем возврата линии "0"->"1" (слэйв подождёт TimePdh, а затем выставит Presence на время TimePdl)
     deleyUs(TimeRelease); // здесь можно сделать измерение времени восстановления
     // на шине должна стать "1"
-    if (!pin())
-        return StatusShortCircuit;
+    if (!pin()){
+        _status = StatusShortCircuit;
+        return _status;
+    }
 
     // подождем время, за которое слэйв гарантировано выставит "Presence pulse"
     deleyUs(TimeSlot);
     // проверим наличие "Presence pulse"
-    if (pin())
-        return StatusAbsent;
+    if (pin()){
+        _status = StatusAbsent;
+        return _status;
+    }
 
     //ждем завершения "Presence pulse" "0"->"1"
     deleyUs(TimePresence);
     // на шине должна стать "1"
-    if (!pin())
-        return StatusShortCircuit;
+    if (!pin()){
+        _status = StatusShortCircuit;
+        return _status;
+    }
 
     deleyUs(TimeReset - TimePresence); // общая выдержка в отпущенном состоянии не менее TimeReset
 
     // нормальный "Presence pulse" был
     _valid = true;
-    return StatusPresence;
+    _status = StatusPresence;
+    return _status;
 }
 
 OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
@@ -120,7 +130,8 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
         // должна быть "1"
         if (!pin()) {
             printf("Error ocured on before syncro front\r\n");
-            return StatusShortCircuit;
+            _status = StatusShortCircuit;
+            return _status;
         }
         //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
 
@@ -152,7 +163,8 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
         deleyUs(Time10);
     }
 
-    return StatusPresence;
+    _status = StatusPresence;
+    return _status;
 }
 
 
