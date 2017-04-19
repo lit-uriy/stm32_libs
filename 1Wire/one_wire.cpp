@@ -187,7 +187,7 @@ unsigned char OneWire::crc8(unsigned char data, unsigned char crc8val)
 
 
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
-void OneWire::readROM()
+bool OneWire::readROM()
 {
     _valid = false;
     unsigned char temp = CommandReadRom;
@@ -198,7 +198,7 @@ void OneWire::readROM()
 
     if (readWriteByte(&temp) != StatusPresence){
         printf("Error ocured on write comand \"Read ROM\"\r\n");
-        return; // что-то пошло не так, например, устройство отключили
+        return false; // что-то пошло не так, например, устройство отключили
     }
 
     test = true;
@@ -208,7 +208,7 @@ void OneWire::readROM()
         temp = 0xFF; // будем читать из слэйва
         if (readWriteByte(&temp) != StatusPresence){
             printf("Error ocured on read ROM cod\r\n");
-            return; // что-то пошло не так, например, устройство отключили
+            return false; // что-то пошло не так, например, устройство отключили
         }
 
         crc = crc8(temp, crc);
@@ -216,10 +216,12 @@ void OneWire::readROM()
     }
     syncroPin.write(0);
     // проверяем CRC
-    if (!crc)
-         _valid = true; // CRC совпала
-    else
+    if (crc){
         printf("Error ocured on CRC check\r\n");
+        return false; // CRC НЕ совпала
+    }
+
+    return true;
 }
 
 // 0x55
