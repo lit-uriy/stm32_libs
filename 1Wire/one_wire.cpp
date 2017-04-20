@@ -8,7 +8,6 @@ extern bool test;
 
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
-    , _valid(false)
     , _status(StatusUnknown)
     , _devices(16)
 {
@@ -47,12 +46,7 @@ bool OneWire::romCode(char *buff)
 		buff[2*i+1] = resl;
     }
     buff[8*2] = 0x00;
-    return _valid;
-}
-
-bool OneWire::isValid()
-{
-    return _valid;
+    return true;
 }
 
 
@@ -116,7 +110,6 @@ OneWire::LineStatus OneWire::reset()
     deleyUs(TimeReset - TimePresence); // общая выдержка в отпущенном состоянии не менее TimeReset
 
     // нормальный "Presence pulse" был
-    _valid = true;
     _status = StatusPresence;
     return _status;
 }

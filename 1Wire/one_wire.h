@@ -105,7 +105,6 @@ public:
 
 private:
     DigitalInOut _pin;
-    bool _valid;
     LineStatus _status;
     unsigned char _romCode[8];
 
