@@ -54,13 +54,14 @@ public:
         StatusUnknown,
     };
 
+    typedef unsigned char RomCode[8];
+
 
     OneWire(DigitalInOut apin);
 
     LineStatus status();
 
     bool romCode(char *buff);
-    bool isValid();
 
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
@@ -83,7 +84,7 @@ public:
         CommandSkipRom = 0xCC,
     };
 
-    bool readROM(); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
+    bool readROM(RomCode *aRomCode); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
     void matchROM(); // 0x55
     void searchROM(); // 0xF0
     void skipROM(); // 0xCC
@@ -106,7 +107,7 @@ public:
 private:
     DigitalInOut _pin;
     LineStatus _status;
-    unsigned char _romCode[8];
+//    unsigned char _romCode[8];
 
     YList<OneWireDevice *> _devices;
 
