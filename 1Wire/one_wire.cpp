@@ -24,7 +24,7 @@ OneWire::LineStatus OneWire::status()
     return _status;
 }
 
-bool OneWire::romCode(OneWire::RomCode code, OneWire::RomString buff)
+bool OneWire::romCode(unsigned char code[], OneWire::RomString buff)
 {
     unsigned char i;
 
@@ -185,7 +185,7 @@ unsigned char OneWire::crc8(unsigned char data, unsigned char crc8val)
 
 
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
-bool OneWire::readROM(OneWire::RomCode *aRomCode)
+bool OneWire::readROM(unsigned char aRomCode[])
 {
     unsigned char temp = CommandReadRom;
     unsigned char i = 0;
@@ -209,7 +209,7 @@ bool OneWire::readROM(OneWire::RomCode *aRomCode)
         }
 
         crc = crc8(temp, crc);
-        (*aRomCode)[i] = temp;
+        aRomCode[i] = temp;
     }
     syncroPin.write(0);
     // проверяем CRC
@@ -222,7 +222,7 @@ bool OneWire::readROM(OneWire::RomCode *aRomCode)
 }
 
 // 0x55
-void OneWire::matchROM(const OneWire::RomCode aRomCode)
+void OneWire::matchROM(const unsigned char aRomCode[])
 {
     unsigned char temp = CommandMatchRom;
     int i;

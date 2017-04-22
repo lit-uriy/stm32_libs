@@ -26,7 +26,7 @@ int main() {
 
 char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
-OneWire::RomCode romCode;
+unsigned char romCode[8];
 
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
@@ -38,7 +38,7 @@ OneWire::RomCode romCode;
             exit(-1);
         }
 
-        bool ok = wire.readROM(&romCode);
+        bool ok = wire.readROM(romCode);
         if (!ok){
             printf("Device status after Read ROM: %d\r\n", int(wire.status()));
             exit(-1);

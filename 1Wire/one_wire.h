@@ -54,7 +54,6 @@ public:
         StatusUnknown,
     };
 
-    typedef unsigned char RomCode[8];
     typedef char RomString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
 
@@ -62,7 +61,7 @@ public:
 
     LineStatus status();
 
-    bool romCode(OneWire::RomCode code, OneWire::RomString buff);
+    bool romCode(unsigned char code[], OneWire::RomString buff);
 
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
@@ -85,8 +84,8 @@ public:
         CommandSkipRom = 0xCC,
     };
 
-    bool readROM(OneWire::RomCode *aRomCode); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
-    void matchROM(const RomCode aRomCode); // 0x55
+    bool readROM(unsigned char aRomCode[]); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
+    void matchROM(const unsigned char aRomCode[]); // 0x55
     void searchROM(); // 0xF0
     void skipROM(); // 0xCC
 
