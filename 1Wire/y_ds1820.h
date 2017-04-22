@@ -22,6 +22,18 @@ public:
     float temperature(char scale='c');
 
     bool setResolution(unsigned int resolution);
+
+
+    enum DeviceCommands {
+        CommandAlarmSearch = 0xEC, // числится как ROM-команда в PDF-нике, но не в книге по iButton
+        // DS18B20 Function Commands
+        CommandConvertT = 0x44,
+        CommandWriteScratchpad = 0x4E,
+        CommandReadScratchpad = 0xBE,
+        CommandCopyScratchpad = 0x48,
+        CommandRecallEeprom = 0xB8,
+        CommandReadPowerSupply = 0xB4,
+    };
 };
 
 #endif // YDS1820_H

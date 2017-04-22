@@ -58,6 +58,7 @@ bool OneWire::romCode(unsigned char code[], char buff[])
 void OneWire::addDevice(OneWireDevice *dev)
 {
     _devices.append(dev);
+    dev->wire = this;
 }
 
 void OneWire::removeDevice(OneWireDevice *dev)
@@ -66,6 +67,7 @@ void OneWire::removeDevice(OneWireDevice *dev)
     if (!index)
         return;
     _devices.removeAt(index);
+    dev->wire = 0;
 }
 
 YList<OneWireDevice *> OneWire::devices()

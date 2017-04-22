@@ -101,12 +101,23 @@ public:
         Time10 = 10
     };
 
-private:
-    DigitalInOut _pin;
-    LineStatus _status;
-//    unsigned char _romCode[8];
 
-    YList<OneWireDevice *> _devices;
+    // Memory function commands - Transport layer
+public:
+    enum MemoryCommands {
+        CommandReadRam = 0xF0,
+        CommandReadEeprom = 0xA5,
+        CommandReadSubkey = 0x66, // для старой таблетки DS1991
+        CommandWriteScratchpad = 0x0F, // 0x96 - для старой таблетки DS1991
+        CommandReadScratchpad = 0xAA, // 0x69 - для старой таблетки DS1991
+        CommandCopyScratchpad = 0x55, // 0x3C - для старой таблетки DS1991
+        CommandWriteSubkey = 0x99, // для старой таблетки DS1991
+        CommandWritePassword = 0x5A, // для старой таблетки DS1991
+        CommandWriteEeprom = 0x0F,
+        CommandWriteStatus = 0x55,
+        CommandReadStatus = 0xAA,
+    };
+
 
     inline bool pin()
     {
@@ -131,6 +142,15 @@ private:
     LineStatus readWriteByte(unsigned char *byte);
     unsigned char crc8(unsigned char data, unsigned char crc8val);
 
+
+private:
+    friend class OneWireDevice;
+
+    DigitalInOut _pin;
+    LineStatus _status;
+//    unsigned char _romCode[8];
+
+    YList<OneWireDevice *> _devices;
 };
 
 #endif // ONEWIRE_H
