@@ -86,7 +86,7 @@ public:
     };
 
     bool readROM(OneWire::RomCode *aRomCode); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
-    void matchROM(); // 0x55
+    void matchROM(RomCode aRomCode); // 0x55
     void searchROM(); // 0xF0
     void skipROM(); // 0xCC
 

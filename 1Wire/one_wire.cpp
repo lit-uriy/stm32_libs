@@ -217,7 +217,7 @@ bool OneWire::readROM(OneWire::RomCode *aRomCode)
 }
 
 // 0x55
-void OneWire::matchROM()
+void OneWire::matchROM(OneWire::RomCode aRomCode)
 {
     unsigned char temp = CommandMatchRom;
     int i;
@@ -227,7 +227,8 @@ void OneWire::matchROM()
         return; // что-то пошло не так, например, устройство отключили
     }
     for (i=0;i<8;i++) {
-        if (readWriteByte(&_romCode[i]) != StatusPresence){
+        temp = aRomCode[i];
+        if (readWriteByte(&temp) != StatusPresence){
                 printf("Error ocured on read answer on \"Match ROM\"\r\n");
                 return; // что-то пошло не так, например, устройство отключили
         }
