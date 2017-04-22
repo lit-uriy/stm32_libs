@@ -55,13 +55,14 @@ public:
     };
 
     typedef unsigned char RomCode[8];
+    typedef char RomString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
 
     OneWire(DigitalInOut apin);
 
     LineStatus status();
 
-    bool romCode(char *buff);
+    bool romCode(OneWire::RomCode code, OneWire::RomString buff);
 
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);

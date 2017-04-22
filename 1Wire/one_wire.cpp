@@ -19,13 +19,13 @@ OneWire::OneWire(DigitalInOut apin)
     pinRelease(); // Line state: 1
 }
 
-bool OneWire::romCode(char *buff)
+bool OneWire::romCode(OneWire::RomCode code, OneWire::RomString buff)
 {
     unsigned char i;
 
     for(i=0; i<8; i++){
-        char cl = _romCode[i] & 0x0F;
-        char cm = _romCode[i] >> 4;
+        char cl = code[i] & 0x0F;
+        char cm = code[i] >> 4;
 		char resl = 0;
 		char resm = 0;
 
