@@ -180,7 +180,7 @@ unsigned char OneWire::crc8(unsigned char data, unsigned char crc8val)
 
 
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
-bool OneWire::readROM(RomCode *aRomCode)
+bool OneWire::readROM(OneWire::RomCode *aRomCode)
 {
     unsigned char temp = CommandReadRom;
     unsigned char i = 0;
