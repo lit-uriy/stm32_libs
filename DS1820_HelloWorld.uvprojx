@@ -1931,6 +1931,16 @@
               <FileType>5</FileType>
               <FilePath>.\1Wire\one_wire.h</FilePath>
             </File>
+            <File>
+              <FileName>one_wire_device.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\1Wire\one_wire_device.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>one_wire_device.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\1Wire\one_wire_device.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
