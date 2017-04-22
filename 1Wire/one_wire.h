@@ -47,10 +47,21 @@ class OneWireDevice;
 class OneWire
 {
 public:
+    enum LineStatus {
+        StatusPresence = 0,
+        StatusShortCircuit,
+        StatusAbsent,
+        StatusUnknown,
+    };
+
+    typedef unsigned char RomCode[8];
+
+
     OneWire(DigitalInOut apin);
 
+    LineStatus status();
+
     bool romCode(char *buff);
-    bool isValid();
 
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
@@ -58,11 +69,6 @@ public:
 
     // ROM function commands - Network layer
 public:
-    enum LineStatus {
-        StatusPresence = 0,
-        StatusShortCircuit,
-        StatusAbsent,
-    };
 
 
     /**
@@ -78,7 +84,7 @@ public:
         CommandSkipRom = 0xCC,
     };
 
-    void readROM(); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
+    bool readROM(RomCode *aRomCode); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
     void matchROM(); // 0x55
     void searchROM(); // 0xF0
     void skipROM(); // 0xCC
@@ -100,8 +106,8 @@ public:
 
 private:
     DigitalInOut _pin;
-    bool _valid;
-    unsigned char _romCode[8];
+    LineStatus _status;
+//    unsigned char _romCode[8];
 
     YList<OneWireDevice *> _devices;
 

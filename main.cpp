@@ -9,6 +9,7 @@
 #include "Containers/ylist.h"
 
 #include "1Wire/one_wire.h"
+#include "1Wire/y_ds1820.h"
 
 #define MAX_PROBES      16
  
@@ -28,20 +29,20 @@ char rom[2*8+1]; // в два раза больше символов + замы�
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
 
-        OneWire dev(DATA_PIN);
-        OneWire::LineStatus status = dev.reset();
+        OneWire wire(DATA_PIN);
+        OneWire::LineStatus status = wire.reset();
         if (status == OneWire::StatusPresence){
-            dev.readROM();
-            printf("Device validity = %d, after Read ROM\r\n", dev.isValid());
+            wire.readROM();
+            printf("Device validity = %d, after Read ROM\r\n", wire.isValid());
 
-            dev.romCode(rom);
-            bool ok = dev.isValid();
+            wire.romCode(rom);
+            bool ok = wire.isValid();
 
             printf("ROM status: %d, code = %s\r\n", int(ok), rom);
 
             ok = false;
         }else{
-            printf("Device status after Reset: %d, validity = %d\r\n", int(status), dev.isValid());
+            printf("Device status after Reset: %d, validity = %d\r\n", int(status), wire.isValid());
         }
 
         OneWire *dev1 = new OneWire(DATA_PIN);
