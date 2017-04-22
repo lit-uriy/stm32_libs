@@ -204,7 +204,7 @@ bool OneWire::readROM(OneWire::RomCode *aRomCode)
         }
 
         crc = crc8(temp, crc);
-        aRomCode[i] = temp;
+        *aRomCode[i] = temp;
     }
     syncroPin.write(0);
     // проверяем CRC
