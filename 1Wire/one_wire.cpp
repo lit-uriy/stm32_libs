@@ -217,7 +217,7 @@ bool OneWire::readROM(OneWire::RomCode *aRomCode)
 }
 
 // 0x55
-void OneWire::matchROM(OneWire::RomCode aRomCode)
+void OneWire::matchROM(const OneWire::RomCode aRomCode)
 {
     unsigned char temp = CommandMatchRom;
     int i;
