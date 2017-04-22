@@ -1,6 +1,6 @@
 #include "one_wire_device.h"
 
-OneWireDevice::OneWireDevice()
+OneWireDevice::OneWireDevice(unsigned char *aRomCode)
 {
 
 }

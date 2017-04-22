@@ -24,7 +24,7 @@ int main() {
 
     printf("\r\n----------------------------\r\n");
 
-char rom[2*8+1]; // в два раза больше символов + замыкающий нуль
+char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
 OneWire::RomCode romCode;
 
@@ -44,9 +44,18 @@ OneWire::RomCode romCode;
             exit(-1);
         }
 
-        wire.romCode(romCode, rom);
-        printf("ROM code = %s\r\n", rom);
+        wire.romCode(romCode, romString);
+        printf("ROM code = %s\r\n", romString);
 
+        Yds1820 probe(romCode);
+        wire.addDevice(&probe);
+
+        while(1) {
+            probe.convertTemperature(true, Yds1820::DevicesAll);         //Start temperature conversion, wait until ready
+            printf("Device %s returns %3.1f %sC\r\n", romString, probe.temperature(), (char*)(248));
+            printf("\r\n");
+            wait(1);
+        }
 
 
     }else{
@@ -62,8 +71,8 @@ OneWire::RomCode romCode;
         while(DS1820::unassignedProbe(DATA_PIN)) {
             DS1820 *dev = new DS1820(DATA_PIN);
             probe[num_devices] = dev;
-			dev->romCode(rom);
-            printf("Found %d device, ROM=%s\r\n\n", num_devices+1, rom);
+            dev->romCode(romString);
+            printf("Found %d device, ROM=%s\r\n\n", num_devices+1, romString);
             num_devices++;
             if (num_devices == MAX_PROBES)
                 break;

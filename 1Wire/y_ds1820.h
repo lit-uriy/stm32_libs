@@ -6,7 +6,22 @@
 class Yds1820: public OneWireDevice
 {
 public:
-    Yds1820();
+    enum Devices{
+        DeviceThis,     // command applies to only this device
+        DevicesAll   // command applies to all devices
+    };
+
+    enum {
+        invalid_conversion = -1000
+    };
+
+    Yds1820(unsigned char *aRomCode = 0);
+
+    int convertTemperature(bool wait, Devices device=DevicesAll);
+
+    float temperature(char scale='c');
+
+    bool setResolution(unsigned int resolution);
 };
 
 #endif // YDS1820_H

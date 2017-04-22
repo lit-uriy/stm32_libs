@@ -5,7 +5,7 @@
 class OneWireDevice
 {
 public:
-    OneWireDevice();
+    OneWireDevice(unsigned char *aRomCode = 0);
 };
 
 #endif // ONEWIREDEVICE_H
