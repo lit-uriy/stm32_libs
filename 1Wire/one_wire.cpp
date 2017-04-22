@@ -24,7 +24,7 @@ OneWire::LineStatus OneWire::status()
     return _status;
 }
 
-bool OneWire::romCode(unsigned char code[], OneWire::RomString buff)
+bool OneWire::romCode(unsigned char code[], char buff[])
 {
     unsigned char i;
 
