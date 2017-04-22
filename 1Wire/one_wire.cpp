@@ -19,6 +19,11 @@ OneWire::OneWire(DigitalInOut apin)
     pinRelease(); // Line state: 1
 }
 
+OneWire::LineStatus OneWire::status()
+{
+    return _status;
+}
+
 bool OneWire::romCode(OneWire::RomCode code, OneWire::RomString buff)
 {
     unsigned char i;
