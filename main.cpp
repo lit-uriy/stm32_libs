@@ -33,17 +33,22 @@ OneWire::RomCode romCode;
 
         OneWire wire(DATA_PIN);
         OneWire::LineStatus status = wire.reset();
-        if (status == OneWire::StatusPresence){
-            bool ok = wire.readROM(&romCode);
-
-            wire.romCode(romCode, rom);
-
-            printf("ROM status: %d, code = %s\r\n", int(ok), rom);
-
-            ok = false;
-        }else{
+        if (status != OneWire::StatusPresence){
             printf("Device status after Reset: %d\r\n", int(status));
+            exit(-1);
         }
+
+        bool ok = wire.readROM(&romCode);
+        if (!ok){
+            printf("Device status after Read ROM: %d\r\n", int(wire.status()));
+            exit(-1);
+        }
+
+        wire.romCode(romCode, rom);
+        printf("ROM code = %s\r\n", rom);
+
+
+
     }else{
 
         printf("Finding devices...\r\n");
