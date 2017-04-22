@@ -1941,6 +1941,16 @@
               <FileType>5</FileType>
               <FilePath>.\1Wire\one_wire_device.h</FilePath>
             </File>
+            <File>
+              <FileName>y_ds1820.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\1Wire\y_ds1820.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>y_ds1820.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\1Wire\y_ds1820.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
