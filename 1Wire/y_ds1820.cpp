@@ -16,9 +16,9 @@
  * 9A 01 55 00 7F FF 7F 10
  */
 
-Yds1820::Yds1820(unsigned char *aRomCode)
-    : OneWireDevice(aRomCode)
-    , _parasetPower(true)
+Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
+    : OneWireDevice(aRomCode, awire)
+    , _parasitePower(true)
 {
     for (int i = 0; i < 9; ++i) {
         _ram.byte[i] = 0;
@@ -36,8 +36,8 @@ bool Yds1820::readPowerSupply(Devices device)
         printf("Error ocured on write comand \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
-    _parasetPower = !wire()->pin();
-    return _parasetPower;
+    _parasitePower = !wire()->pin();
+    return _parasitePower;
 }
 
 bool Yds1820::ramString(char buff[])
@@ -71,16 +71,42 @@ bool Yds1820::ramString(char buff[])
     return true;
 }
 
-int Yds1820::convertTemperature(bool wait, Devices device)
+// статическая, для всех термометров на проволоке
+int Yds1820::convertTemperature(OneWire *awire)
+{
+    // Convert temperature into scratchpad RAM for all devices at once
+    int delay_time = 750; // Default delay time
+
+    skipROM(awire);
+    if (awire->status() != OneWire::StatusPresence)
+        return -1;
+    // собственно запуск преобразования
+    unsigned char temp = CommandConvertT;
+    if (awire->readWriteByte(&temp) != OneWire::StatusPresence){
+        printf("Error ocured on write comand \"Convert T\", status: %d\r\n", awire->status());
+        return -1; // что-то пошло не так, например, устройство отключили
+    }
+
+    // считаем что все устройства с паразитным питанием
+    awire->setStrongPullup(true);
+    wait_ms(delay_time);
+    awire->setStrongPullup(false);
+    delay_time = 0;
+
+    return delay_time;
+}
+
+
+// индивидуальная функция экземпляра / устройства
+int Yds1820::convertTemperature()
 {
     // Convert temperature into scratchpad RAM for all devices at once
     int delay_time = 750; // Default delay time
     char resolution;
 
 
-    if (matchROM()){
+    if (matchROM())
         return -1; // что-то пошло не так, например, устройство отключили
-    }
 
     resolution = _ram.config & 0x60;
     if (resolution == 0x00) // 9 bits
@@ -93,20 +119,21 @@ int Yds1820::convertTemperature(bool wait, Devices device)
     // собственно запуск преобразования
     unsigned char temp = CommandConvertT;
     if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
-        printf("Error ocured on write comand \"Convert T\"\r\n");
+        printf("Error ocured on write comand \"Convert T\", status: %d\r\n", wire()->status());
         return -1; // что-то пошло не так, например, устройство отключили
     }
 
 
-    if (_parasetPower){
-        // TODO: тут надо выставить жёсткую "1" на линию
-        wait_ms(delay_time);
-    }else{
-        if (wait) {
-            wait_ms(delay_time);
-            delay_time = 0;
-        }
-    }
+    if (_parasitePower)
+        wire()->setStrongPullup(true);
+
+    wait_ms(delay_time);
+
+    if (_parasitePower)
+        wire()->setStrongPullup(false);
+
+    wait_ms(delay_time);
+    delay_time = 0;
 
     return delay_time;
 }

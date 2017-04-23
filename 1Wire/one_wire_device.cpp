@@ -20,7 +20,7 @@ bool OneWireDevice::readROM()
     if (!_wire)
         return false;
     //--
-    unsigned char temp = CommandReadRom;
+    unsigned char temp = OneWire::CommandReadRom;
     unsigned char i = 0;
     unsigned char crc = 0;
 
@@ -54,7 +54,7 @@ bool OneWireDevice::matchROM()
     if (!_wire)
         return false;
     //--
-    unsigned char temp = CommandMatchRom;
+    unsigned char temp = OneWire::CommandMatchRom;
     int i;
     _wire->reset();
     if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
@@ -83,12 +83,17 @@ void OneWireDevice::skipROM()
     if (!_wire)
         return;
     //--
-    unsigned char temp = CommandSkipRom;
+    unsigned char temp = OneWire::CommandSkipRom;
     _wire->reset();
     if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Skip ROM\", status: %d\r\n", _wire->status());
         return; // что-то пошло не так, например, устройство отключили
     }
+}
+
+void OneWireDevice::skipROM(OneWire *awire)
+{
+    awire->skipROM();
 }
 
 bool OneWireDevice::romString(char buff[])

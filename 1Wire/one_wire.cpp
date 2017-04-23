@@ -116,14 +116,14 @@ bool OneWire::readROM(OneWireRomCode *romCode)
     unsigned char i = 0;
     unsigned char crc = 0;
 
-    if (readWriteByte(&temp) != OneWire::StatusPresence){
+    if (readWriteByte(&temp) != StatusPresence){
         printf("Error ocured on write comand \"Read ROM\", status: %d\r\n", _status);
         return false; // что-то пошло не так, например, устройство отключили
     }
 
     for(i=0; i<8; i++){
         temp = 0xFF; // будем читать из слэйва
-        if (readWriteByte(&temp) != OneWire::StatusPresence){
+        if (readWriteByte(&temp) != StatusPresence){
             printf("Error ocured on read ROM cod, status: %d\r\n", _status);
             return false; // что-то пошло не так, например, устройство отключили
         }
@@ -144,6 +144,16 @@ bool OneWire::readROM(OneWireRomCode *romCode)
 void OneWire::searchROM()
 {
     // FIXME: не реализовано
+}
+
+void OneWire::skipROM()
+{
+    unsigned char temp = CommandSkipRom;
+    reset();
+    if (readWriteByte(&temp) != StatusPresence){
+        printf("Error ocured on write comand \"Skip ROM\", status: %d\r\n", _status);
+        return; // что-то пошло не так, например, устройство отключили
+    }
 }
 
 OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)

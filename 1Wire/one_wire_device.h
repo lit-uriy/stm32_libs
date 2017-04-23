@@ -17,16 +17,11 @@ public:
     bool matchROM();
     void searchROM();
     void skipROM();
+    static void skipROM(OneWire *awire);
 
     bool romString(char buff[]);
 
 protected:
-    enum RomCommands {
-        CommandReadRom = 0x33,
-        CommandMatchRom = 0x55,
-        CommandSearchRom = 0xF0,
-        CommandSkipRom = 0xCC,
-    };
 
     OneWireRomCode _romCode;
 

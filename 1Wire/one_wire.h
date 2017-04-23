@@ -77,6 +77,14 @@ public:
         StatusAbsent,
     };
 
+
+    enum RomCommands {
+        CommandReadRom = 0x33,
+        CommandMatchRom = 0x55,
+        CommandSearchRom = 0xF0,
+        CommandSkipRom = 0xCC,
+    };
+
     OneWire(DigitalInOut apin);
 
     LineStatus status();
@@ -99,6 +107,7 @@ public:
 protected:
     bool readROM(OneWireRomCode *romCode);
     void searchROM();
+    void skipROM();
 
 private:
     enum Times {
@@ -146,6 +155,15 @@ public:
     inline void pinRelease()
     {
         _pin.write(1);
+    }
+
+    // FIXME: Не реализовано
+    inline void setStrongPullup(bool strong)
+    {
+        if (strong)
+            ;
+        else
+            ;
     }
 
     inline void deleyUs(int us)

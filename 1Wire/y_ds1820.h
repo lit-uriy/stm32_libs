@@ -21,9 +21,10 @@ public:
         FamilyDs1822 = 0x22,
     };
 
-    Yds1820(unsigned char *aRomCode = 0);
+    Yds1820(OneWireRomCode aRomCode, OneWire *awire = 0);
 
-    int convertTemperature(bool wait, Devices device=DevicesAll);
+    int convertTemperature();
+    static int convertTemperature(OneWire *awire);
 
     float temperature(char scale='c');
 
@@ -61,7 +62,7 @@ private:
         char byte[9];
     }_ram;
 
-    bool _parasetPower;
+    bool _parasitePower;
 };
 
 #endif // YDS1820_H

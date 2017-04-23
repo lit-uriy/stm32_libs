@@ -19,6 +19,12 @@ DigitalIn mybutton(USER_BUTTON);
 
 DigitalOut syncroPin(A1);
 bool test = false;
+
+void test1();
+void test2();
+float test3();
+void test4();
+void test5();
  
 int main() {  
 
@@ -31,46 +37,51 @@ char romString[2*8+1]; // в два раза больше символов + з�
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
 
-        OneWire wire(DATA_PIN);
-        OneWire::LineStatus status = wire.reset();
-        if (status != OneWire::StatusPresence){
-            printf("Device status after Reset: %d\r\n", int(status));
-            exit(-1);
-        }
+//        OneWire wire(DATA_PIN);
+//        OneWire::LineStatus status = wire.reset();
+//        if (status != OneWire::StatusPresence){
+//            printf("Device status after Reset: %d\r\n", int(status));
+//            exit(-1);
+//        }
 
-        OneWireRomCode romCode = wire.findSingleDevice();
+//        OneWireRomCode romCode = wire.findSingleDevice();
 
-        Yds1820 probe(romCode);
-        wire.addDevice(&probe);
+//        Yds1820 probe(romCode);
+//        wire.addDevice(&probe);
 		
-		bool ok = probe.readROM();
-        if (!ok){
-            printf("Device status after Read ROM: %d\r\n", int(wire.status()));
-            exit(-1);
-        }
-        probe.romString(romString);
-        printf("ROM code = %s\r\n", romString);
+//		bool ok = probe.readROM();
+//        if (!ok){
+//            printf("Device status after Read ROM: %d\r\n", int(wire.status()));
+//            exit(-1);
+//        }
+//        probe.romString(romString);
+//        printf("ROM code = %s\r\n", romString);
 
-        bool power = probe.readPowerSupply();
-        printf("Device %s power %d\r\n", romString, power);
+//        bool power = probe.readPowerSupply();
+//        printf("Device %s power %d\r\n", romString, power);
 
-        char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
-        ok = probe.readRam();
-        probe.ramString(ramString);
-        printf("Device %s RAM: %s\r\n", romString, ramString);
+//        char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
+//        ok = probe.readRam();
+//        probe.ramString(ramString);
+//        printf("Device %s RAM: %s\r\n", romString, ramString);
 
-        while(1) {
-            probe.ramString(ramString);
-            printf("Device %s RAM: %s\r\n", romString, ramString);
+//        while(1) {
+//            probe.ramString(ramString);
+//            printf("Device %s RAM: %s\r\n", romString, ramString);
 
-            probe.convertTemperature(true, Yds1820::DevicesAll);         //Start temperature conversion, wait until ready
+//            probe.convertTemperature(true, Yds1820::DevicesAll);         //Start temperature conversion, wait until ready
 
-            float temp = probe.temperature();
-            printf("Device %s returns %3.1f %sC\r\n", romString, temp, (char*)(248));
-            printf("\r\n");
-            wait(1);
-        }
+//            float temp = probe.temperature();
+//            printf("Device %s returns %3.1f %sC\r\n", romString, temp, (char*)(248));
+//            printf("\r\n");
+//            wait(1);
+//        }
 
+        test1();
+        test2();
+        test3();
+        test4();
+        test5();
 
     }else{
 
@@ -165,7 +176,7 @@ float test3()
     if (romCode.isNull())
         return -1;
     // инициализируем термометр полученным ROM-кодом
-    Yds1820 thermo(wire, romCode); // 1-ый способ инициализации
+    Yds1820 thermo(romCode, &wire); // 1-ый способ инициализации
     // запускаем преобразование температуры у этого термометра
     thermo.convertTemperature();
     float temp = thermo.temperature();
@@ -192,7 +203,7 @@ void test4()
     }
     // запускаем преобразование температуры сразу у всех термометров
     // сидящих на одной проволоке
-    Yds1820::convertTemperature(wire);
+    Yds1820::convertTemperature(&wire);
     // печатаем тепературу каждого термометра
     YList<OneWireDevice *> devices = wire.devices();
     for (int i = 0; i < devices.count(); ++i) {
@@ -228,7 +239,7 @@ void test5()
                 continue;
             // запускаем преобразование температуры сразу у всех термометров
             // сидящих на одной проволоке
-            Yds1820::convertTemperature(wire);
+            Yds1820::convertTemperature(&wire);
             // печатаем тепературу каждого термометра
             YList<OneWireDevice *> devices = wire.devices();
             for (int i = 0; i < devices.count(); ++i) {
