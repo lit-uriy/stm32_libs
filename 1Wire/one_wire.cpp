@@ -58,7 +58,7 @@ bool OneWire::romCode(unsigned char code[], char buff[])
 void OneWire::addDevice(OneWireDevice *dev)
 {
     _devices.append(dev);
-    dev->wire = this;
+    dev->_wire = this;
 }
 
 void OneWire::removeDevice(OneWireDevice *dev)
@@ -67,7 +67,7 @@ void OneWire::removeDevice(OneWireDevice *dev)
     if (!index)
         return;
     _devices.removeAt(index);
-    dev->wire = 0;
+    dev->_wire = 0;
 }
 
 YList<OneWireDevice *> OneWire::devices()
@@ -224,22 +224,23 @@ bool OneWire::readROM(unsigned char aRomCode[])
 }
 
 // 0x55
-void OneWire::matchROM(const unsigned char aRomCode[])
+bool OneWire::matchROM(const unsigned char aRomCode[])
 {
     unsigned char temp = CommandMatchRom;
     int i;
     reset();
     if (readWriteByte(&temp) != StatusPresence){
         printf("Error ocured on write comand \"Match ROM\"\r\n");
-        return; // что-то пошло не так, например, устройство отключили
+        return false; // что-то пошло не так, например, устройство отключили
     }
     for (i=0;i<8;i++) {
         temp = aRomCode[i];
         if (readWriteByte(&temp) != StatusPresence){
-                printf("Error ocured on read answer on \"Match ROM\"\r\n");
-                return; // что-то пошло не так, например, устройство отключили
+            printf("Error ocured on read answer on \"Match ROM\"\r\n");
+            return false; // что-то пошло не так, например, устройство отключили
         }
     }
+    return true;
 }
 
 // 0xF0

@@ -49,10 +49,22 @@ unsigned char romCode[8];
 
         Yds1820 probe(romCode);
         wire.addDevice(&probe);
+        bool power = probe.readPowerSupply();
+        printf("Device %s power %d\r\n", romString, power);
+
+        char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
+        ok = probe.readRam();
+        probe.ramString(ramString);
+        printf("Device %s RAM: %s\r\n", romString, ramString);
 
         while(1) {
+            probe.ramString(ramString);
+            printf("Device %s RAM: %s\r\n", romString, ramString);
+
             probe.convertTemperature(true, Yds1820::DevicesAll);         //Start temperature conversion, wait until ready
-            printf("Device %s returns %3.1f %sC\r\n", romString, probe.temperature(), (char*)(248));
+
+            float temp = probe.temperature();
+            printf("Device %s returns %3.1f %sC\r\n", romString, temp, (char*)(248));
             printf("\r\n");
             wait(1);
         }

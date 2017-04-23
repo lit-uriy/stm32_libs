@@ -1,43 +1,57 @@
 #include "one_wire_device.h"
 
 OneWireDevice::OneWireDevice(unsigned char *aRomCode)
-    : wire(0)
+    : _romCode(aRomCode)
+    , _wire(0)
 {
 
 }
 
+unsigned char OneWireDevice::familyCode()
+{
+    return _romCode[0];
+}
 
 bool OneWireDevice::readROM(unsigned char aRomCode[])
 {
-    if (!wire)
+    if (!_wire)
         return false;
-    return wire->readROM(aRomCode);
+    return _wire->readROM(aRomCode);
 }
 
-void OneWireDevice::matchROM(const unsigned char aRomCode[])
+bool OneWireDevice::matchROM(const unsigned char aRomCode[])
 {
-    if (!wire)
-        return;
-    wire->matchROM(aRomCode);
+    if (!_wire)
+        return false;
+    return _wire->matchROM(aRomCode);
 }
 
 void OneWireDevice::searchROM()
 {
-    if (!wire)
+    if (!_wire)
         return;
-    wire->searchROM();
+    _wire->searchROM();
 }
 
 void OneWireDevice::skipROM()
 {
-    if (!wire)
+    if (!_wire)
         return;
-    wire->skipROM();
+    _wire->skipROM();
 }
 
 OneWire::LineStatus OneWireDevice::readWriteByte(unsigned char *byte)
 {
-    if (!wire)
+    if (!_wire)
         return OneWire::StatusUnknown;
-    return wire->readWriteByte(byte);
+    return _wire->readWriteByte(byte);
 }
+
+
+unsigned char OneWireDevice::crc8(unsigned char data, unsigned char crc8val)
+{
+    if (!_wire)
+        return 0xFF;
+    return _wire->crc8(data, crc8val);
+}
+
