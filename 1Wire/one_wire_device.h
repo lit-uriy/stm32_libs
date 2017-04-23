@@ -8,7 +8,8 @@
 class OneWireDevice
 {
 public:
-    OneWireDevice(unsigned char *aRomCode = 0);
+    OneWireDevice(OneWireRomCode aRomCode, OneWire *awire = 0);
+    virtual ~OneWireDevice(){}
 
     unsigned char familyCode();
 
@@ -27,7 +28,7 @@ protected:
         CommandSkipRom = 0xCC,
     };
 
-    unsigned char *_romCode;
+    OneWireRomCode _romCode;
 
     OneWire* wire() {return _wire;}
 

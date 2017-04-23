@@ -1,16 +1,17 @@
 #include "one_wire_device.h"
 
 #include "../utils/crc.h"
-OneWireDevice::OneWireDevice(unsigned char *aRomCode)
+
+OneWireDevice::OneWireDevice(OneWireRomCode aRomCode, OneWire *awire)
     : _romCode(aRomCode)
-    , _wire(0)
+    , _wire(awire)
 {
 
 }
 
 unsigned char OneWireDevice::familyCode()
 {
-    return _romCode[0];
+    return _romCode.bytes[0];
 }
 
 // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
@@ -36,7 +37,7 @@ bool OneWireDevice::readROM()
         }
 
         crc = crc8(temp, crc);
-        _romCode[i] = temp;
+        _romCode.bytes[i] = temp;
     }
 
     // проверяем CRC
@@ -61,7 +62,7 @@ bool OneWireDevice::matchROM()
         return false; // что-то пошло не так, например, устройство отключили
     }
     for (i=0;i<8;i++) {
-        temp = _romCode[i];
+        temp = _romCode.bytes[i];
         if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
             printf("Error ocured on read answer on \"Match ROM\", status: %d\r\n", _wire->status());
             return false; // что-то пошло не так, например, устройство отключили
@@ -95,8 +96,8 @@ bool OneWireDevice::romString(char buff[])
     unsigned char i;
 
     for(i=0; i<8; i++){
-        char cl = _romCode[i] & 0x0F;
-        char cm = _romCode[i] >> 4;
+        char cl = _romCode.bytes[i] & 0x0F;
+        char cm = _romCode.bytes[i] >> 4;
         char resl = 0;
         char resm = 0;
 

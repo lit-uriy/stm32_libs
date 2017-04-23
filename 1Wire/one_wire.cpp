@@ -1,6 +1,6 @@
 #include "one_wire.h"
 
-#include "1Wire/one_wire_device.h"
+#include "one_wire_device.h"
 #include "../utils/crc.h"
 
 extern DigitalOut syncroPin;
@@ -26,9 +26,21 @@ OneWire::LineStatus OneWire::status()
 }
 
 
-int OneWire::findSingleDevices()
+OneWireRomCode OneWire::findSingleDevice()
 {
-    return 1; // FIXME: сделать реальную Search ROM
+    OneWireRomCode rom;
+    bool ok = readROM(&rom);
+    if (ok)
+        return rom;
+    return OneWireRomCode(); // вернём пустышку
+}
+
+// FIXME: Не реализовано
+YList<OneWireRomCode> OneWire::findMultipleDevices()
+{
+    YList<OneWireRomCode> roms;
+
+    return roms; // вернём пустышку
 }
 
 // FIXME: надо проверять сидит ли устройство на другой проволоке или нет
@@ -97,6 +109,41 @@ OneWire::LineStatus OneWire::reset()
     // нормальный "Presence pulse" был
     _status = StatusPresence;
     return _status;
+}
+bool OneWire::readROM(OneWireRomCode *romCode)
+{
+    unsigned char temp = CommandReadRom;
+    unsigned char i = 0;
+    unsigned char crc = 0;
+
+    if (readWriteByte(&temp) != OneWire::StatusPresence){
+        printf("Error ocured on write comand \"Read ROM\", status: %d\r\n", _status);
+        return false; // что-то пошло не так, например, устройство отключили
+    }
+
+    for(i=0; i<8; i++){
+        temp = 0xFF; // будем читать из слэйва
+        if (readWriteByte(&temp) != OneWire::StatusPresence){
+            printf("Error ocured on read ROM cod, status: %d\r\n", _status);
+            return false; // что-то пошло не так, например, устройство отключили
+        }
+
+        crc = crc8(temp, crc);
+        romCode->bytes[i] = temp;
+    }
+
+    // проверяем CRC
+    if (crc){
+        printf("Error ocured on readROM() CRC check\r\n");
+        return false; // CRC НЕ совпала
+    }
+
+    return true;
+}
+
+void OneWire::searchROM()
+{
+    // FIXME: не реализовано
 }
 
 OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)

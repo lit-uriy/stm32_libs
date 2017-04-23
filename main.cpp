@@ -132,8 +132,12 @@ void test1()
     bool programmingMode = true;
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
-    while (!(romCode = wire.findSingleDevice()) && programmingMode) {}
-    if (!romCode || ! programmingMode)
+	bool buttonPresent = false;
+    while (!buttonPresent && programmingMode){
+		romCode = wire.findSingleDevice();
+		buttonPresent = !romCode.isNull();
+	}
+    if (romCode.isNull() || !programmingMode)
         return;
     // сохраняем код таблетки в БД
 }
@@ -145,7 +149,7 @@ void test2()
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
     romCode = wire.findSingleDevice();
-    if (!romCode)
+    if (romCode.isNull())
         return;
     // проверяем, есть ли такая таблетка в БД, если есть то открываем дверь
 }
@@ -158,8 +162,8 @@ float test3()
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
     romCode = wire.findSingleDevice();
-    if (!romCode)
-        return;
+    if (romCode.isNull())
+        return -1;
     // инициализируем термометр полученным ROM-кодом
     Yds1820 thermo(wire, romCode); // 1-ый способ инициализации
     // запускаем преобразование температуры у этого термометра
@@ -192,7 +196,8 @@ void test4()
     // печатаем тепературу каждого термометра
     YList<OneWireDevice *> devices = wire.devices();
     for (int i = 0; i < devices.count(); ++i) {
-        float temp = devices.at(i).temperature();
+        Yds1820 *thermo = static_cast<Yds1820 *>(devices.at(i));
+        float temp = thermo->temperature();
         printf("Device %d returns %3.1f %sC\r\n", i, temp, (char*)(248));
     }
 }
@@ -225,9 +230,10 @@ void test5()
             // сидящих на одной проволоке
             Yds1820::convertTemperature(wire);
             // печатаем тепературу каждого термометра
-            YList<OneWireDevice *> devices = wire->devices();
+            YList<OneWireDevice *> devices = wire.devices();
             for (int i = 0; i < devices.count(); ++i) {
-                float temp = devices.at(i).temperature();
+                Yds1820 *thermo = static_cast<Yds1820 *>(devices.at(i));
+                float temp = thermo->temperature();
                 printf("Device %d returns %3.1f %sC\r\n", i, temp, (char*)(248));
             }
         }

@@ -54,6 +54,13 @@ public:
         }
     }
 
+    bool isNull()
+    {
+        for (int i = 0; i < 8; ++i) {
+            if (bytes[i]) return false;
+        }
+        return true;
+    }
 
     unsigned char bytes[8];
 };
@@ -81,16 +88,17 @@ public:
     void removeDevice(OneWireDevice *dev);
     YList<OneWireDevice *> devices();
 
-    // ROM function commands - Network layer
+
 public:
-
-
     /**
      * @brief reset
      * @return признак присутствия на шине
      */
     LineStatus reset();
 
+protected:
+    bool readROM(OneWireRomCode *romCode);
+    void searchROM();
 
 private:
     enum Times {
@@ -153,7 +161,6 @@ private:
 
     DigitalInOut _pin;
     LineStatus _status;
-//    unsigned char _romCode[8];
 
     YList<OneWireDevice *> _devices;
 };
