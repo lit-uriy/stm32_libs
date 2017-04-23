@@ -30,6 +30,8 @@ int OneWire::findSingleDevices()
     return 1; // FIXME: сделать реальную Search ROM
 }
 
+// FIXME: надо проверять сидит ли устройство на другой проволоке или нет
+// если сидит, то сначала снять
 void OneWire::addDevice(OneWireDevice *dev)
 {
     _devices.append(dev);
