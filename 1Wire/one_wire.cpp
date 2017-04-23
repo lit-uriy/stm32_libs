@@ -1,6 +1,7 @@
 #include "one_wire.h"
 
 #include "1Wire/one_wire_device.h"
+#include "../utils/crc.h"
 
 extern DigitalOut syncroPin;
 
