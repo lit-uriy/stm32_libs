@@ -19,9 +19,6 @@ public:
 
     bool romString(char buff[]);
 
-    unsigned char crc8(unsigned char data, unsigned char crc8val);
-
-
 protected:
     enum RomCommands {
         CommandReadRom = 0x33,
