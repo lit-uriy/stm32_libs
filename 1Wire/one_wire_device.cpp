@@ -23,14 +23,14 @@ bool OneWireDevice::readROM()
     unsigned char crc = 0;
 
     if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
-        printf("Error ocured on write comand \"Read ROM\"\r\n");
+        printf("Error ocured on write comand \"Read ROM\", status: %d\r\n", _wire->status());
         return false; // что-то пошло не так, например, устройство отключили
     }
 
     for(i=0; i<8; i++){
         temp = 0xFF; // будем читать из слэйва
         if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
-            printf("Error ocured on read ROM cod\r\n");
+            printf("Error ocured on read ROM cod, status: %d\r\n", _wire->status());
             return false; // что-то пошло не так, например, устройство отключили
         }
 
@@ -56,13 +56,13 @@ bool OneWireDevice::matchROM()
     int i;
     _wire->reset();
     if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
-        printf("Error ocured on write comand \"Match ROM\"\r\n");
+        printf("Error on write comand \"Match ROM\", status: %d\r\n", _wire->status());
         return false; // что-то пошло не так, например, устройство отключили
     }
     for (i=0;i<8;i++) {
         temp = _romCode[i];
         if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
-            printf("Error ocured on read answer on \"Match ROM\"\r\n");
+            printf("Error ocured on read answer on \"Match ROM\", status: %d\r\n", _wire->status());
             return false; // что-то пошло не так, например, устройство отключили
         }
     }
@@ -84,7 +84,7 @@ void OneWireDevice::skipROM()
     unsigned char temp = CommandSkipRom;
     _wire->reset();
     if (_wire->readWriteByte(&temp) != OneWire::StatusPresence){
-        printf("Error ocured on write comand \"Skip ROM\"\r\n");
+        printf("Error ocured on write comand \"Skip ROM\", status: %d\r\n", _wire->status());
         return; // что-то пошло не так, например, устройство отключили
     }
 }

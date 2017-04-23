@@ -30,12 +30,7 @@ bool Yds1820::readPowerSupply(Devices device)
     if (!matchROM()){
         return false;
     }
-	
-    if(!wire()){
-        printf("Error ocured on write comand \"Read Power Supply\"; wire notassign\r\n");
-        return false;
-    }
-	
+
     unsigned char temp = CommandReadPowerSupply;
     if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Read Power Supply\"\r\n");
