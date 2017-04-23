@@ -1,6 +1,6 @@
 #include "crc.h"
 
-unsigned char OneWireDevice::crc8(unsigned char data, unsigned char crc8val)
+unsigned char crc8(unsigned char data, unsigned char crc8val)
 {
     unsigned char cnt;
     cnt=8;
