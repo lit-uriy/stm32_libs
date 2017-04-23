@@ -44,6 +44,21 @@
 class OneWireDevice;
 
 
+class OneWireRomCode
+{
+public:
+    OneWireRomCode()
+    {
+        for (int i = 0; i < 8; ++i) {
+            bytes[i] = 0;
+        }
+    }
+
+
+    unsigned char bytes[8];
+};
+
+
 class OneWire
 {
 public:
@@ -59,6 +74,9 @@ public:
 
     LineStatus status();
 
+    // собирает информацию об устройствах
+    OneWireRomCode findSingleDevice(); // по сути Read Rom
+    YList<OneWireRomCode> findMultipleDevices(); // по сути Search Rom
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
     YList<OneWireDevice *> devices();

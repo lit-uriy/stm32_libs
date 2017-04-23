@@ -25,6 +25,11 @@ OneWire::LineStatus OneWire::status()
 }
 
 
+int OneWire::findSingleDevices()
+{
+    return 1; // FIXME: сделать реальную Search ROM
+}
+
 void OneWire::addDevice(OneWireDevice *dev)
 {
     _devices.append(dev);

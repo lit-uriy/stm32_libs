@@ -26,7 +26,7 @@ int main() {
 
 char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
-unsigned char romCode[8];
+
 
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
@@ -38,6 +38,7 @@ unsigned char romCode[8];
             exit(-1);
         }
 
+        OneWireRomCode romCode = wire.findSingleDevice();
 
         Yds1820 probe(romCode);
         wire.addDevice(&probe);
@@ -123,3 +124,74 @@ int main() {
 }
 
 #endif
+
+
+// как может выглядеть ожидание таблетки для программирования в БД
+void test1()
+{
+    bool programmingMode = true;
+    OneWire wire(DATA_PIN);
+    OneWireRomCode romCode;
+    while (!(romCode = wire.findSingleDevice()) && programmingMode) {}
+    if (!romCode || ! programmingMode)
+        return;
+    // сохраняем код таблетки в БД
+}
+
+// как может выглядеть ожидание таблетки, для открытия двери
+// предполагается, что эта функция вызывается регулярно
+void test2()
+{
+    OneWire wire(DATA_PIN);
+    OneWireRomCode romCode;
+    romCode = wire.findSingleDevice();
+    if (!romCode)
+        return;
+    // проверяем, есть ли такая таблетка в БД, если есть то открываем дверь
+}
+
+// как может выглядеть чтение температуры, с одного единственного датчика
+// который иногда отваливается.
+// предполагается, что эта функция вызывается регулярно
+float test3()
+{
+    OneWire wire(DATA_PIN);
+    OneWireRomCode romCode;
+    romCode = wire.findSingleDevice();
+    if (!romCode)
+        return;
+    // инициализируем термометр полученным ROM-кодом
+    Yds1820 thermo(wire, romCode); // 1-ый способ инициализации
+    thermo.convertTemperature(Yds1820::DeviceThis);
+    float temp = thermo.temperature();
+    return temp;
+}
+
+
+// как может выглядеть непрервное чтение температуры, с произвольного числа датчиков
+// которые никогда НЕ отваливаются.
+// предполагается, что эта функция вызывается только раз
+void test3()
+{
+    OneWire wire(DATA_PIN);
+    YList<OneWireRomCode> romCodes;
+    romCodes = wire.findMultipleDevices();
+    if (!romCodes.isEmpty())
+        return;
+    // инициализируем термометры полученными ROM-кодами
+    for (int i = 0; i < romCodes.count(); ++i) {
+        OneWireRomCode rom = romCodes.at(i);
+        // второй способ инициализации термометра и связывания его с проволокой
+        Yds1820 *thermo = new Yds1820(rom);
+        wire.addDevice(thermo);
+    }
+    // запускаем преобразование температуры сразу у всех термометров
+    // сидящих на одной проволоке
+    thermo.convertTemperature(Yds1820::DevicesAll);
+    // печатаем тепературу каждого термометра
+    YList<OneWireDevice *> devices = wire.devices();
+    for (int i = 0; i < devices.count(); ++i) {
+        float temp = devices.at(i).temperature();
+        printf("Device %d returns %3.1f %sC\r\n", i, temp, (char*)(248));
+    }
+}
