@@ -38,17 +38,18 @@ unsigned char romCode[8];
             exit(-1);
         }
 
-        bool ok = wire.readROM(romCode);
+
+        Yds1820 probe(romCode);
+        wire.addDevice(&probe);
+		
+		bool ok = probe.readROM();
         if (!ok){
             printf("Device status after Read ROM: %d\r\n", int(wire.status()));
             exit(-1);
         }
-
-        wire.romCode(romCode, romString);
+        probe.romString(romString);
         printf("ROM code = %s\r\n", romString);
 
-        Yds1820 probe(romCode);
-        wire.addDevice(&probe);
         bool power = probe.readPowerSupply();
         printf("Device %s power %d\r\n", romString, power);
 

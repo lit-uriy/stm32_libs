@@ -48,17 +48,16 @@ class OneWire
 {
 public:
     enum LineStatus {
-        StatusPresence = 0,
+        StatusUnknown = 0,
+        StatusPresence,
+        StatusAlarming,
         StatusShortCircuit,
         StatusAbsent,
-        StatusUnknown,
     };
 
     OneWire(DigitalInOut apin);
 
     LineStatus status();
-
-    bool romCode(unsigned char code[], char buff[]);
 
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
@@ -74,19 +73,8 @@ public:
      */
     LineStatus reset();
 
-    enum RomCommands {
-        CommandReadRom = 0x33,
-        CommandMatchRom = 0x55,
-        CommandSearchRom = 0xF0,
-        CommandSkipRom = 0xCC,
-    };
 
-    bool readROM(unsigned char aRomCode[]); // 0x33 (или 0x0F - старая таблетка DS1990, без буквы А)
-    bool matchROM(const unsigned char aRomCode[]); // 0x55
-    void searchROM(); // 0xF0
-    void skipROM(); // 0xCC
-
-
+private:
     enum Times {
         // из "Book of iButton Standards (AN937)"
         TimeSlot = 60,
@@ -140,7 +128,6 @@ public:
     }
 
     LineStatus readWriteByte(unsigned char *byte);
-    unsigned char crc8(unsigned char data, unsigned char crc8val);
 
 
 private:

@@ -12,14 +12,23 @@ public:
 
     unsigned char familyCode();
 
-protected:
-    bool readROM(unsigned char aRomCode[]);
-    bool matchROM(const unsigned char aRomCode[]);
+    bool readROM();
+    bool matchROM();
     void searchROM();
     void skipROM();
 
-    OneWire::LineStatus readWriteByte(unsigned char *byte);
+    bool romString(char buff[]);
+
     unsigned char crc8(unsigned char data, unsigned char crc8val);
+
+
+protected:
+    enum RomCommands {
+        CommandReadRom = 0x33,
+        CommandMatchRom = 0x55,
+        CommandSearchRom = 0xF0,
+        CommandSkipRom = 0xCC,
+    };
 
     unsigned char *_romCode;
 

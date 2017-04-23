@@ -27,17 +27,19 @@ Yds1820::Yds1820(unsigned char *aRomCode)
 
 bool Yds1820::readPowerSupply(Devices device)
 {
-    if (!matchROM(_romCode)){
+    if (!matchROM()){
         return false;
     }
-    unsigned char temp = CommandReadPowerSupply;
-    if (readWriteByte(&temp) != OneWire::StatusPresence){
-        printf("Error ocured on write comand \"Read Power Supply\"\r\n");
-        return false; // что-то пошло не так, например, устройство отключили
-    }
+	
     if(!wire()){
         printf("Error ocured on write comand \"Read Power Supply\"; wire notassign\r\n");
         return false;
+    }
+	
+    unsigned char temp = CommandReadPowerSupply;
+    if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
+        printf("Error ocured on write comand \"Read Power Supply\"\r\n");
+        return false; // что-то пошло не так, например, устройство отключили
     }
     _parasetPower = !wire()->pin();
     return _parasetPower;
@@ -81,7 +83,7 @@ int Yds1820::convertTemperature(bool wait, Devices device)
     char resolution;
 
 
-    if (matchROM(_romCode)){
+    if (matchROM()){
         return -1; // что-то пошло не так, например, устройство отключили
     }
 
@@ -95,7 +97,7 @@ int Yds1820::convertTemperature(bool wait, Devices device)
 
     // собственно запуск преобразования
     unsigned char temp = CommandConvertT;
-    if (readWriteByte(&temp) != OneWire::StatusPresence){
+    if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Convert T\"\r\n");
         return -1; // что-то пошло не так, например, устройство отключили
     }
@@ -154,11 +156,11 @@ bool Yds1820::setResolution(unsigned int resolution)
 
 bool Yds1820::readRam()
 {
-    if (!matchROM(_romCode)){
+    if (!matchROM()){
         return false;
     }
     unsigned char temp = CommandReadScratchpad;
-    if (readWriteByte(&temp) != OneWire::StatusPresence){
+    if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Read Scratchpad\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
@@ -166,7 +168,7 @@ bool Yds1820::readRam()
     unsigned char crc = 0;
     for (int i = 0; i < 9; ++i) {
         temp = 0xFF;
-        if (readWriteByte(&temp) != OneWire::StatusPresence){
+        if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
             printf("Error ocured on read scratchpad\r\n");
             return false; // что-то пошло не так, например, устройство отключили
         }
