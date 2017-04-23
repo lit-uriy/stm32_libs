@@ -30,6 +30,7 @@ public:
     bool isEmpty() const {return !actual;}
 
     void removeAt(int i);
+    T take(int i);
 
     bool contains( const T &value ) const;
     int	indexOf(const T &value, int from = 0) const;
@@ -156,6 +157,16 @@ void YList<T>::removeAt(int i)
     }
     delete[] old;
     actual--;
+}
+
+template <typename T>
+T YList<T>::take(int i)
+{
+    std::cout << "T& take()" << std::endl;
+    Y_ASSERT(i >= 0 && i < actual, "YList<T>::take()", "index out of range");
+    T out = d[i];
+    removeAt(i);
+    return out;
 }
 
 
