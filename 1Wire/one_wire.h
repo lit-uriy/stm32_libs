@@ -129,6 +129,7 @@ public:
         ErrorQueryMatchRom = 0x50,
         ErrorAnswerMatchRom = 0x60,
         ErrorCrcMatchRom = 0x70,
+        ErrorOnReset = 0x80,
     };
     OneWire(DigitalInOut apin);
 

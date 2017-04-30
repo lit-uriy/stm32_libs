@@ -33,10 +33,11 @@ int OneWire::errorCode()
 
 OneWireRomCode OneWire::findSingleDevice()
 {
+    _errorCode = ErrorNon;
     OneWireRomCode rom;
     OneWire::LineStatus status = reset();
     if (status != OneWire::StatusPresence){
-        printf("Device status after Reset: %d\r\n", int(status));
+        _errorCode = ErrorOnReset | _errorCode;
         return OneWireRomCode(); // вернём пустышку
     }
 
