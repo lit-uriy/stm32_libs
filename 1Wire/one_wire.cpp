@@ -13,6 +13,7 @@ OneWire::OneWire(DigitalInOut apin)
     , _devices(16)
 {
     pinInit();
+    syncroPin.write(0);
 }
 
 OneWire::LineStatus OneWire::status()
