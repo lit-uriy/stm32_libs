@@ -135,7 +135,6 @@ int Yds1820::convertTemperature()
     if (_parasitePower)
         wire()->setStrongPullup(false);
 
-    wait_ms(delay_time);
     delay_time = 0;
 
     return delay_time;
