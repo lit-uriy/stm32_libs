@@ -123,7 +123,7 @@ int Yds1820::convertTemperature()
     unsigned char temp = CommandConvertT;
     if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Convert T\", status: %d\r\n", wire()->status());
-        return -1; // что-то пошло не так, например, устройство отключили
+        return -2; // что-то пошло не так, например, устройство отключили
     }
 
 
