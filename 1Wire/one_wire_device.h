@@ -13,11 +13,6 @@ public:
 
     unsigned char familyCode();
 
-    bool readROM();
-    bool matchROM();
-    void searchROM();
-    void skipROM();
-    static void skipROM(OneWire *awire);
 
     bool romString(char buff[]);
 

@@ -27,7 +27,7 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
 
 bool Yds1820::readPowerSupply(Devices device)
 {
-    if (!matchROM()){
+    if (!wire()->matchROM(_romCode)){
         return false;
     }
 
@@ -106,8 +106,10 @@ int Yds1820::convertTemperature()
     char resolution;
 
 
-    if (matchROM())
+    if (!wire()->matchROM(_romCode)){
+        printf("Error ocured on convertTemperature() -> \"Match ROM\"\r\n");
         return -1; // что-то пошло не так, например, устройство отключили
+    }
 
     resolution = _ram.config & 0x60;
     if (resolution == 0x00) // 9 bits
@@ -178,7 +180,8 @@ bool Yds1820::setResolution(unsigned int resolution)
 
 bool Yds1820::readRam()
 {
-    if (!matchROM()){
+    if (!wire()->matchROM(_romCode)){
+        printf("Error ocured on comand \"Match ROM\"\r\n");
         return false;
     }
     unsigned char temp = CommandReadScratchpad;

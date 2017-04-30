@@ -162,6 +162,38 @@ void OneWire::skipROM()
     }
 }
 
+bool OneWire::matchROM(const OneWireRomCode romCode)
+{
+    int i;
+    _errorCode = ErrorNon;
+
+//    syncroPin.write(1);
+
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
+        _errorCode = ErrorResetMatchRom | _errorCode;
+//        syncroPin.write(0);
+        return false;
+    }
+
+    unsigned char temp = OneWire::CommandMatchRom;
+    if (readWriteByte(&temp) != OneWire::StatusPresence){
+        _errorCode = ErrorQueryMatchRom | _errorCode;
+//        syncroPin.write(0);
+        return false; // что-то пошло не так, например, устройство отключили
+    }
+    for (i=0;i<8;i++) {
+        temp = romCode.bytes[i];
+        if (readWriteByte(&temp) != OneWire::StatusPresence){
+            _errorCode = ErrorAnswerMatchRom | _errorCode;
+//            syncroPin.write(0);
+            return false; // что-то пошло не так, например, устройство отключили
+        }
+    }
+//    syncroPin.write(0);
+    return true;
+}
+
 OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
 {
     unsigned char j;

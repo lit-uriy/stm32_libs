@@ -138,6 +138,7 @@ public:
     bool readROM(OneWireRomCode *romCode);
     void searchROM();
     void skipROM();
+    bool matchROM(const OneWireRomCode romCode);
 
 private:
     enum Times {
