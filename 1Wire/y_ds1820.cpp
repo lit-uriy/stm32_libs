@@ -26,6 +26,8 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
     for (int i = 0; i < 9; ++i) {
         _ram.byte[i] = 0;
     }
+    readPowerSupply();
+	
 }
 
 bool Yds1820::readPowerSupply()
@@ -123,7 +125,7 @@ int Yds1820::convertTemperature(OneWire *awire)
 
     // считаем что все устройства с паразитным питанием
     // и им нужна жёсткая подтяжка к питанию, на время преобразования
-    awire->setStrongPullup(true);
+    awire->setStrongPullup(true);// TODO: это не должно быть функцией проволоки
     wait_ms(delay_time);
     awire->setStrongPullup(false);
     delay_time = 0;
@@ -160,7 +162,10 @@ int Yds1820::convertTemperature()
         return -2; // что-то пошло не так, например, устройство отключили
     }
 
-    syncroPin.write(1);
+
+    delay_time = 750;
+	
+//    syncroPin.write(1);
     if (_parasitePower)
         wire()->setStrongPullup(true);
 
@@ -168,11 +173,11 @@ int Yds1820::convertTemperature()
 
     if (_parasitePower)
         wire()->setStrongPullup(false);
-    syncroPin.write(0);
+//    syncroPin.write(0);
 
     delay_time = 0;
 
-    return delay_time;
+    return resolution;
 }
 
 float Yds1820::temperature(char scale)
