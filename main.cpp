@@ -165,7 +165,7 @@ void test3()
             continue;
         }
         float temp = thermo.temperature();
-        printf("Device %s, T=%3.1f, resolution=%d\r", romCode.romString(), temp, ret);
+        printf("Device %s, T=%3.1f, resolution=%d\r", romCode.romString(), temp, thermo.resolution());
 //        wait(1);
     }
 }

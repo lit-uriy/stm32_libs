@@ -28,7 +28,8 @@ public:
 
     float temperature(char scale='c');
 
-    bool setResolution(unsigned int resolution);
+    unsigned int resolution();
+    bool setResolution(unsigned int res);
 
     bool readPowerSupply();
     static bool readPowerSupply(OneWire *awire);

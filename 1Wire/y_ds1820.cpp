@@ -212,8 +212,14 @@ float Yds1820::temperature(char scale)
     return answer;
 }
 
-bool Yds1820::setResolution(unsigned int resolution)
+unsigned int Yds1820::resolution()
 {
+    return (_ram.config & 0x60) >> 5;
+}
+
+bool Yds1820::setResolution(unsigned int res)
+{
+    // TODO: Не реализовано.
     return false;
 }
 
