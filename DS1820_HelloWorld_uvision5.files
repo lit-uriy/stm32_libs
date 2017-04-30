@@ -224,3 +224,5 @@ Containers/ylist.h
 Containers/ylist.cpp
 utils/crc.c
 utils/crc.h
+utils/bin2hex.c
+utils/bin2hex.h

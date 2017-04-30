@@ -1981,6 +1981,16 @@
               <FileType>5</FileType>
               <FilePath>.\utils\crc.h</FilePath>
             </File>
+            <File>
+              <FileName>bin2hex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\utils\bin2hex.c</FilePath>
+            </File>
+            <File>
+              <FileName>bin2hex.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils\bin2hex.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
