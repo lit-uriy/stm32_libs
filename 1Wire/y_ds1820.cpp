@@ -139,20 +139,25 @@ int Yds1820::convertTemperature()
 {
     // Convert temperature into scratchpad RAM for all devices at once
     int delay_time = 750; // Default delay time
-    char resolution;
-
 
     if (!wire()->matchROM(_romCode)){
         return -1; // что-то пошло не так, например, устройство отключили
     }
 
-    resolution = _ram.config & 0x60;
-    if (resolution == 0x00) // 9 bits
+    switch (resolution()) {
+    case 0: // 9 bits
         delay_time = 94;
-    if (resolution == 0x20) // 10 bits
+        break;
+    case 1: // 10 bits
         delay_time = 188;
-    if (resolution == 0x40) // 11 bits. Note 12bits uses the 750ms default
+        break;
+    case 2: // 11 bits
         delay_time = 375;
+        break;
+    default: // 12 bits uses the 750ms default
+        delay_time = 750;
+        break;
+    }
 
     // собственно запуск преобразования
     unsigned char temp = CommandConvertT;
