@@ -4,16 +4,15 @@
 
 /*
  *
- * Error ocured on before syncro front
- * Error ocured on write comand "Match ROM"
- * Device 28FF559D6F14043F returns -1000.0 C
- *
- *
- * сначала в ОЗУ почему-то по нулям, кроме конфигурации:
- * 00 00 00 00 08 00 00 00
- *
- * а потом, после запуска преобразования так:
- * 9A 01 55 00 7F FF 7F 10
+Button is pressed
+test3
+Found device 28FF559D6F14043F
+RAM: config=127 (0b0111 1111), temp=429
+Device 28FF559D6F14043F, is parasite powered: true
+Device 28FF559D6F14043F, T=26.8, resolution=96
+
+
+
  */
 
 
@@ -27,7 +26,8 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
         _ram.byte[i] = 0;
     }
     readPowerSupply();
-	
+    readRam();
+    printf("RAM: config=%d, temp=%d\r\n", _ram.config, _ram.currentTemp);
 }
 
 bool Yds1820::readPowerSupply()
