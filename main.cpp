@@ -22,7 +22,7 @@ bool test = false;
 
 void test1();
 void test2();
-float test3();
+void test3();
 void test4();
 void test5();
  
@@ -166,21 +166,26 @@ void test2()
 }
 
 // как может выглядеть чтение температуры, с одного единственного датчика
-// который иногда отваливается.
-// предполагается, что эта функция вызывается регулярно
-float test3()
+// который никогда НЕ отваливаются.
+// предполагается, что эта функция вызывается только раз
+void test3()
 {
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
     romCode = wire.findSingleDevice();
-    if (romCode.isNull())
-        return -1;
+    if (romCode.isNull()){
+        printf("Device not found\r\n");
+        return;
+    }
     // инициализируем термометр полученным ROM-кодом
     Yds1820 thermo(romCode, &wire); // 1-ый способ инициализации
-    // запускаем преобразование температуры у этого термометра
-    thermo.convertTemperature();
-    float temp = thermo.temperature();
-    return temp;
+    while (1) {
+        // запускаем преобразование температуры у этого термометра
+        thermo.convertTemperature();
+        float temp = thermo.temperature();
+        printf("Device %s, T=%d\r\n\n", romCode.romString(), temp);
+        wait(1);
+    }
 }
 
 
