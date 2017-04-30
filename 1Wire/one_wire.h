@@ -157,13 +157,15 @@ public:
         _pin.write(1);
     }
 
-    // FIXME: Не реализовано
+
     inline void setStrongPullup(bool strong)
     {
-        if (strong)
-            ;
-        else
-            ;
+        if (strong){
+            _pin.mode(PushPullNoPull);
+            _pin.write(1);
+        }else{
+            _pin.mode(OpenDrain);
+        }
     }
 
     inline void deleyUs(int us)
