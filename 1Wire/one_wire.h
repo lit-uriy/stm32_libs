@@ -130,6 +130,8 @@ public:
         ErrorAnswerMatchRom = 0x60,
         ErrorCrcMatchRom = 0x70,
         ErrorOnReset = 0x80,
+        ErrorResetSkipRom = 0x90,
+        ErrorQuerySkipRom = 0xA0,
     };
     OneWire(DigitalInOut apin);
 
@@ -153,7 +155,7 @@ public:
 
     bool readROM(OneWireRomCode *romCode);
     void searchROM();
-    void skipROM();
+    bool skipROM();
     bool matchROM(const OneWireRomCode romCode);
 
 private:

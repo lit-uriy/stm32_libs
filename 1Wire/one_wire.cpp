@@ -167,14 +167,21 @@ void OneWire::searchROM()
     // FIXME: не реализовано
 }
 
-void OneWire::skipROM()
+bool OneWire::skipROM()
 {
     unsigned char temp = CommandSkipRom;
-    reset();
-    if (readWriteByte(&temp) != StatusPresence){
-        printf("Error ocured on write comand \"Skip ROM\", status: %d\r\n", _status);
-        return; // что-то пошло не так, например, устройство отключили
+    _errorCode = ErrorNon;
+
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
+        _errorCode = ErrorResetSkipRom | _errorCode;
+        return false;
     }
+    if (readWriteByte(&temp) != StatusPresence){
+        _errorCode = ErrorQuerySkipRom | _errorCode;
+        return false; // что-то пошло не так, например, устройство отключили
+    }
+	return true;
 }
 
 bool OneWire::matchROM(const OneWireRomCode romCode)
