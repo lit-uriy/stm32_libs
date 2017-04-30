@@ -147,7 +147,7 @@ float Yds1820::temperature(char scale)
     // being super acurate, but it does allow for a smooth display in the 1/10ths of a
     // deg C or F scales.
     float answer, remaining_count, count_per_degree;
-    int reading, reading2;
+    int reading;
     if (!readRam())
         // Indicate we got a CRC error
         answer = invalid_conversion;
