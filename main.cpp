@@ -145,6 +145,7 @@ void test3()
         return;
     }else if (wire.errorCode() != OneWire::ErrorNon){
         printf("Finding device ERROR: %d\r\n", wire.errorCode());
+        return;
     }else{
         printf("Found device %s\r\n", romCode.romString());
     }
