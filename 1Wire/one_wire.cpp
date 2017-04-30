@@ -263,6 +263,44 @@ OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
     return _status;
 }
 
+OneWire::LineStatus OneWire::readWriteBit(bool *bit)
+{
+    _errorCode = ErrorNon;
+
+    // должна быть "1"
+    if (!pin()) {
+        _errorCode = ErrorBeforeSyncro;
+        _status = StatusShortCircuit;
+        return _status;
+    }
+    //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
+
+    pinLow();
+    deleyUs(TimeSyncro);
+
+    // WR: если "1" в данных, то отпускаем линию, слэйв прочитает "1"
+    // RD: каждый входной бит у byte в "1", соответственно линию отпускаем
+    if(*bit)
+        pinRelease();
+
+    deleyUs(Time10);
+
+    // RD: до сюда должно быть меньше 15 мкс
+
+    // читаем, что нам слэйв выставил, если мы пишем, то слэйв линию не трогает, она в "1"
+    *bit = pin();
+
+    deleyUs(TimeSlot-(TimeSyncro + Time10));
+
+    // если в данных был "0", то линия вернётся в исходное
+    pinRelease();
+
+    deleyUs(Time10);
+
+    _status = StatusPresence;
+    return _status;
+}
+
 
 
 

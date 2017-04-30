@@ -231,6 +231,9 @@ public:
     }
 
     LineStatus readWriteByte(unsigned char *byte);
+    LineStatus readWriteBit(bool *bit);
+
+
 
 
 private:
