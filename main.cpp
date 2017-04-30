@@ -23,6 +23,7 @@ bool test = false;
 void test1();
 void test2();
 void test3();
+void test3_1();
 void test4();
 void test5();
  
@@ -37,51 +38,14 @@ char romString[2*8+1]; // в два раза больше символов + з�
     if (mybutton == 0) { // Button is pressed
         printf("Button is pressed\r\n");
 
-//        OneWire wire(DATA_PIN);
-//        OneWire::LineStatus status = wire.reset();
-//        if (status != OneWire::StatusPresence){
-//            printf("Device status after Reset: %d\r\n", int(status));
-//            exit(-1);
-//        }
 
-//        OneWireRomCode romCode = wire.findSingleDevice();
 
-//        Yds1820 probe(romCode);
-//        wire.addDevice(&probe);
-		
-//		bool ok = probe.readROM();
-//        if (!ok){
-//            printf("Device status after Read ROM: %d\r\n", int(wire.status()));
-//            exit(-1);
-//        }
-//        probe.romString(romString);
-//        printf("ROM code = %s\r\n", romString);
-
-//        bool power = probe.readPowerSupply();
-//        printf("Device %s power %d\r\n", romString, power);
-
-//        char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
-//        ok = probe.readRam();
-//        probe.ramString(ramString);
-//        printf("Device %s RAM: %s\r\n", romString, ramString);
-
-//        while(1) {
-//            probe.ramString(ramString);
-//            printf("Device %s RAM: %s\r\n", romString, ramString);
-
-//            probe.convertTemperature(true, Yds1820::DevicesAll);         //Start temperature conversion, wait until ready
-
-//            float temp = probe.temperature();
-//            printf("Device %s returns %3.1f %sC\r\n", romString, temp, (char*)(248));
-//            printf("\r\n");
-//            wait(1);
-//        }
-
-        test1();
-        test2();
+//        test1();
+//        test2();
         test3();
-        test4();
-        test5();
+//        test3_1();
+//        test4();
+//        test5();
 
     }else{
 
@@ -140,6 +104,7 @@ int main() {
 // как может выглядеть ожидание таблетки для программирования в БД
 void test1()
 {
+    printf("test1\r\n");
     bool programmingMode = true;
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
@@ -157,6 +122,7 @@ void test1()
 // предполагается, что эта функция вызывается регулярно
 void test2()
 {
+    printf("test2\r\n");
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
     romCode = wire.findSingleDevice();
@@ -170,20 +136,65 @@ void test2()
 // предполагается, что эта функция вызывается только раз
 void test3()
 {
+    printf("test3\r\n");
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
     romCode = wire.findSingleDevice();
-    if (romCode.isNull()){
+    if (romCode.isNull() && (wire.errorCode() == OneWire::ErrorNon)){
         printf("Device not found\r\n");
         return;
+    }else if (wire.errorCode() != OneWire::ErrorNon){
+        printf("Finding device ERROR: %d\r\n", wire.errorCode());
+    }else{
+        printf("Found device %s\r\n", romCode.romString());
     }
     // инициализируем термометр полученным ROM-кодом
     Yds1820 thermo(romCode, &wire); // 1-ый способ инициализации
     while (1) {
         // запускаем преобразование температуры у этого термометра
-        thermo.convertTemperature();
+        int ret = thermo.convertTemperature();
+        if (ret < 0){
+            printf("Device %s, convert temperature ERROR, ret=%d\r\n", romCode.romString(), ret);
+            printf("\t, wire ERROR, code=%d, status=%d\r\n", wire.errorCode(), wire.status());
+            continue;
+        }
+        printf("Device %s, converted temperature, time deleay =%d\r\n", romCode.romString(), ret);
         float temp = thermo.temperature();
-        printf("Device %s, T=%d\r\n\n", romCode.romString(), temp);
+        printf("Device %s, T=%3.1f\r\n\n", romCode.romString(), temp);
+//        wait(1);
+    }
+}
+
+// как может выглядеть чтение температуры, с одного единственного датчика
+// который никогда НЕ отваливается.
+// предполагается, что эта функция вызывается только раз
+void test3_1()
+{
+    printf("test3_1\r\n");
+    OneWire wire(DATA_PIN);
+    OneWireRomCode romCode;
+    romCode = wire.findSingleDevice();
+    if (romCode.isNull() && (wire.errorCode() == OneWire::ErrorNon)){
+        printf("Device not found\r\n");
+        return;
+    }else if (wire.errorCode() != OneWire::ErrorNon){
+        printf("Finding device ERROR: %d\r\n", wire.errorCode());
+    }else{
+        printf("Found device %s\r\n", romCode.romString());
+    }
+    // инициализируем термометр полученным ROM-кодом
+    Yds1820 thermo(romCode, &wire); // 1-ый способ инициализации
+    while (1) {
+//        syncroPin.write(1);
+        // запускаем преобразование температуры у этого термометра
+        int ret = thermo.convertTemperature();
+//        syncroPin.write(0);
+        if (ret < 0){
+            printf("Device %s, convert temperature ERROR, ret=%d\r\n", romCode.romString(), ret);
+            printf("\t, wire ERROR, code=%d, status=%d\r\n", wire.errorCode(), wire.status());
+            continue;
+        }
+        printf("Device %s, converted temperature, time deleay =%d\r\n", romCode.romString(), ret);
         wait(1);
     }
 }
@@ -194,6 +205,7 @@ void test3()
 // предполагается, что эта функция вызывается только раз
 void test4()
 {
+    printf("test4\r\n");
     OneWire wire(DATA_PIN);
     YList<OneWireRomCode> romCodes;
     romCodes = wire.findMultipleDevices();
@@ -224,6 +236,7 @@ void test4()
 // предполагается, что эта функция вызывается только раз
 void test5()
 {
+    printf("test5\r\n");
     OneWire wire(DATA_PIN);
     YList<OneWireRomCode> romCodes;
 
