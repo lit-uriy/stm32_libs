@@ -163,12 +163,9 @@ void test3()
             printf("Device %s, convert temperature ERROR, ret=%d\r\n", romCode.romString(), ret);
             printf("\t, wire ERROR, code=%d, status=%d\r\n", wire.errorCode(), wire.status());
             continue;
-        }else{
-            printf("Device %s, convert temperature OK, resolution=%d\r\n", romCode.romString(), ret);
         }
-//        printf("Device %s, converted temperature, time deleay =%d\r\n", romCode.romString(), ret);
         float temp = thermo.temperature();
-        printf("Device %s, T=%3.1f\r\n\n", romCode.romString(), temp);
+        printf("Device %s, T=%3.1f, resolution=%d\r", romCode.romString(), temp, ret);
 //        wait(1);
     }
 }
