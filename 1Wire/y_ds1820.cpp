@@ -34,16 +34,21 @@ bool Yds1820::readPowerSupply()
 		printf("Error ocured on matchROM / \"Read Power Supply\"\r\n");
         return false;
     }
-
     unsigned char temp = CommandReadPowerSupply;
     if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
-    _parasitePower = !wire()->pin();
-    return _parasitePower;
+    bool flag = true;
+    if (wire()->readWriteBit(&flag) != OneWire::StatusPresence){
+        printf("Error ocured on read answer on \"Read Power Supply\"\r\n");
+        return false; // что-то пошло не так, например, устройство отключили
+    }
+    _parasitePower = !flag;
+    return true;
 }
 
+// NOTE: неясно что возвращает
 bool Yds1820::readPowerSupply(OneWire *awire)
 {
     if (!awire->skipROM()){
@@ -55,8 +60,13 @@ bool Yds1820::readPowerSupply(OneWire *awire)
         printf("Error ocured on write comand \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
+    bool flag = true;
+    if (awire->readWriteBit(&flag) != OneWire::StatusPresence){
+        printf("Error ocured on read answer on \"Read Power Supply\"\r\n");
+        return false; // что-то пошло не так, например, устройство отключили
+    }
 
-    return !awire->pin();
+    return !flag;
 }
 
 bool Yds1820::isParasiticPower()
