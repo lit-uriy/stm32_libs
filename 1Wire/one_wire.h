@@ -104,7 +104,6 @@ public:
      */
     LineStatus reset();
 
-protected:
     bool readROM(OneWireRomCode *romCode);
     void searchROM();
     void skipROM();
