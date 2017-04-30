@@ -153,7 +153,6 @@ float Yds1820::temperature(char scale)
         answer = invalid_conversion;
     else {
         reading = (_ram.byte[1] << 8) + _ram.byte[0];
-        reading2 = _ram.currentTemp;
         if (reading & 0x8000) { // negative degrees C
             reading = 0-((reading ^ 0xffff) + 1); // 2's comp then convert to signed int
         }
