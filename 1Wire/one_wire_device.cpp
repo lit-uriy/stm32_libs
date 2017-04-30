@@ -8,7 +8,7 @@ OneWireDevice::OneWireDevice(OneWireRomCode aRomCode, OneWire *awire)
     : _romCode(aRomCode)
     , _wire(awire)
 {
-    syncroPin.write(0);
+//    syncroPin.write(0);
 }
 
 unsigned char OneWireDevice::familyCode()

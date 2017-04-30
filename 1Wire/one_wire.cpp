@@ -79,11 +79,11 @@ OneWire::LineStatus OneWire::reset()
 {
     _errorCode = ErrorNon;
     // в начале на шине должна быть "1"
-    syncroPin.write(1);
+//    syncroPin.write(1);
     if (!pin()){
         _status = StatusShortCircuit;
         _errorCode = ErrorBeforeSyncro;
-        syncroPin.write(0);
+//        syncroPin.write(0);
         return _status;
     }
 
@@ -100,7 +100,7 @@ OneWire::LineStatus OneWire::reset()
     if (!pin()){
         _status = StatusShortCircuit;
         _errorCode = ErrorBeforePresence;
-        syncroPin.write(0);
+//        syncroPin.write(0);
         return _status;
     }
 
@@ -109,7 +109,7 @@ OneWire::LineStatus OneWire::reset()
     // проверим наличие "Presence pulse"
     if (pin()){
         _status = StatusAbsent;
-        syncroPin.write(0);
+//        syncroPin.write(0);
         return _status;
     }
 
@@ -119,7 +119,7 @@ OneWire::LineStatus OneWire::reset()
     if (!pin()){
         _status = StatusShortCircuit;
         _errorCode = ErrorAfterPresence;
-        syncroPin.write(0);
+//        syncroPin.write(0);
         return _status;
     }
 
@@ -127,7 +127,7 @@ OneWire::LineStatus OneWire::reset()
 
     // нормальный "Presence pulse" был
     _status = StatusPresence;
-    syncroPin.write(0);
+//    syncroPin.write(0);
     return _status;
 }
 bool OneWire::readROM(OneWireRomCode *romCode)
