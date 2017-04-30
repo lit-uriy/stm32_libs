@@ -30,7 +30,9 @@ public:
 
     bool setResolution(unsigned int resolution);
 
-    bool readPowerSupply(Devices device=DevicesAll);
+    bool readPowerSupply();
+    static bool readPowerSupply(OneWire *awire);
+    bool isParasiticPower();
 
     bool readRam();
 

@@ -25,9 +25,10 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
     }
 }
 
-bool Yds1820::readPowerSupply(Devices device)
+bool Yds1820::readPowerSupply()
 {
     if (!wire()->matchROM(_romCode)){
+		printf("Error ocured on matchROM / \"Read Power Supply\"\r\n");
         return false;
     }
 
@@ -37,6 +38,26 @@ bool Yds1820::readPowerSupply(Devices device)
         return false; // что-то пошло не так, например, устройство отключили
     }
     _parasitePower = !wire()->pin();
+    return _parasitePower;
+}
+
+bool Yds1820::readPowerSupply(OneWire *awire)
+{
+    if (!awire->skipROM()){
+        return false;
+    }
+
+    unsigned char temp = CommandReadPowerSupply;
+    if (awire->readWriteByte(&temp) != OneWire::StatusPresence){
+        printf("Error ocured on write comand \"Read Power Supply\"\r\n");
+        return false; // что-то пошло не так, например, устройство отключили
+    }
+
+    return !awire->pin();
+}
+
+bool Yds1820::isParasiticPower()
+{
     return _parasitePower;
 }
 
