@@ -153,7 +153,7 @@ void test3()
     // инициализируем термометр полученным ROM-кодом
     Yds1820 thermo(romCode, &wire); // 1-ый способ инициализации
     bool parasite = thermo.isParasiticPower();
-    printf("Device %s:\r\n"
+    printf("\r\nDevice %s:\r\n"
            "\tis parasite powered: %s\r\n"
            "\tresolution = %d\r\n",
            romCode.romString(),
@@ -165,10 +165,10 @@ void test3()
         int ret = thermo.convertTemperature();
         if (ret < 0){
             if (wire.status() == OneWire::StatusAbsent) {
-                printf("Device unconected\r\n");
-                wait(1);
+                printf("\r\nDevice unconected\r\n");
+                return; // тут нельзя продолжать, без инициализации.
             } else {
-                printf("Device %s:\r\n"
+                printf("\r\nDevice %s:\r\n"
                        "\tconvert temperature ERROR, ret=%d\r\n"
                        "\twire ERROR, code=%d, status=%d\r\n",
                        romCode.romString(),
