@@ -192,7 +192,7 @@ bool OneWire::matchROM(const OneWireRomCode romCode)
     OneWire::LineStatus status = reset();
     if (status != OneWire::StatusPresence){
         _errorCode = ErrorResetMatchRom | _errorCode;
-        syncroPin.write(0);
+//        syncroPin.write(0);
         return false;
     }
 
