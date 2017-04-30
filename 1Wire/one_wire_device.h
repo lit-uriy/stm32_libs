@@ -13,9 +13,6 @@ public:
 
     unsigned char familyCode();
 
-
-    bool romString(char buff[]);
-
 protected:
 
     OneWireRomCode _romCode;
