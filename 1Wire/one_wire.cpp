@@ -29,6 +29,12 @@ OneWire::LineStatus OneWire::status()
 OneWireRomCode OneWire::findSingleDevice()
 {
     OneWireRomCode rom;
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
+        printf("Device status after Reset: %d\r\n", int(status));
+        return OneWireRomCode(); // вернём пустышку
+    }
+
     bool ok = readROM(&rom);
     if (ok)
         return rom;
