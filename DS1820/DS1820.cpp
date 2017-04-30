@@ -36,6 +36,8 @@ void init_soft_delay( void ) {
 #define TEST_READ 1
 
 LinkedList<node> DS1820::probes;
+
+extern DigitalOut syncroPin;
  
  
 DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _datapin(data_pin), _parasitepin(power_pin) {
@@ -386,6 +388,7 @@ int DS1820::convertTemperature(bool wait, devices device) {
     }
     
     onewire_byte_out( 0x44);  // perform temperature conversion
+    syncroPin.write(1);
     if (_parasite_power) {
         if (_power_mosfet) {
             _parasitepin = _power_polarity;     // Parasite power strong pullup
@@ -404,6 +407,7 @@ int DS1820::convertTemperature(bool wait, devices device) {
             delay_time = 0;
         }
     }
+    syncroPin.write(0);
     return delay_time;
 }
  

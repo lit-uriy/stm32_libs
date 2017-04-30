@@ -156,13 +156,15 @@ void test3()
 
     while (1) {
         // запускаем преобразование температуры у этого термометра
-        syncroPin.write(1);
+
         int ret = thermo.convertTemperature();
-        syncroPin.write(0);
+
         if (ret < 0){
             printf("Device %s, convert temperature ERROR, ret=%d\r\n", romCode.romString(), ret);
             printf("\t, wire ERROR, code=%d, status=%d\r\n", wire.errorCode(), wire.status());
             continue;
+        }else{
+            printf("Device %s, convert temperature OK, resolution=%d\r\n", romCode.romString(), ret);
         }
 //        printf("Device %s, converted temperature, time deleay =%d\r\n", romCode.romString(), ret);
         float temp = thermo.temperature();

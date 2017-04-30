@@ -16,6 +16,9 @@
  * 9A 01 55 00 7F FF 7F 10
  */
 
+
+extern DigitalOut syncroPin;
+
 Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
     : OneWireDevice(aRomCode, awire)
     , _parasitePower(true)
@@ -147,7 +150,7 @@ int Yds1820::convertTemperature()
         return -2; // что-то пошло не так, например, устройство отключили
     }
 
-
+    syncroPin.write(1);
     if (_parasitePower)
         wire()->setStrongPullup(true);
 
@@ -155,6 +158,7 @@ int Yds1820::convertTemperature()
 
     if (_parasitePower)
         wire()->setStrongPullup(false);
+    syncroPin.write(0);
 
     delay_time = 0;
 
