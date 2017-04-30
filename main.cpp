@@ -140,11 +140,12 @@ void test3()
     OneWire wire(DATA_PIN);
     OneWireRomCode romCode;
     romCode = wire.findSingleDevice();
-    if (romCode.isNull() && (wire.errorCode() == OneWire::ErrorNon)){
-        printf("Device not found\r\n");
-        return;
-    }else if (wire.errorCode() != OneWire::ErrorNon){
-        printf("Finding device ERROR: %d\r\n", wire.errorCode());
+    if (romCode.isNull()){
+        if (wire.status() == OneWire::StatusAbsent) {
+            printf("Device not found\r\n");
+        } else {
+            printf("Finding device ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
+        }
         return;
     }else{
         printf("Found device %s\r\n", romCode.romString());
@@ -161,12 +162,21 @@ void test3()
 
     while (1) {
         // запускаем преобразование температуры у этого термометра
-
         int ret = thermo.convertTemperature();
-
         if (ret < 0){
-            printf("Device %s, convert temperature ERROR, ret=%d\r\n", romCode.romString(), ret);
-            printf("\t, wire ERROR, code=%d, status=%d\r\n", wire.errorCode(), wire.status());
+            if (wire.status() == OneWire::StatusAbsent) {
+                printf("Device unconected\r\n");
+                wait(1);
+            } else {
+                printf("Device %s:\r\n"
+                       "\tconvert temperature ERROR, ret=%d\r\n"
+                       "\twire ERROR, code=%d, status=%d\r\n",
+                       romCode.romString(),
+                       ret,
+                       wire.errorCode(),
+                       wire.status());
+
+            }
             continue;
         }
         float temp = thermo.temperature();
