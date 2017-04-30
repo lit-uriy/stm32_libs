@@ -95,7 +95,7 @@ OneWire::LineStatus OneWire::reset()
     // снимаем "Reset pulse"
     pinRelease();
     // ждем возврата линии "0"->"1" (слэйв подождёт TimePdh, а затем выставит Presence на время TimePdl)
-    deleyUs(TimeRelease); // здесь можно сделать измерение времени восстановления
+    deleyUs(Time10); // здесь можно сделать измерение времени восстановления
     // на шине должна стать "1"
     if (!pin()){
         _status = StatusShortCircuit;
