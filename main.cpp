@@ -151,6 +151,9 @@ void test3()
     }
     // инициализируем термометр полученным ROM-кодом
     Yds1820 thermo(romCode, &wire); // 1-ый способ инициализации
+    bool parasite = thermo.isParasiticPower();
+    printf("Device %s, parasite is powered: %d\r\n", romCode.romString(), int(parasite));
+
     while (1) {
         // запускаем преобразование температуры у этого термометра
         syncroPin.write(1);
