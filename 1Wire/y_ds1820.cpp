@@ -77,7 +77,7 @@ int Yds1820::convertTemperature(OneWire *awire)
     // Convert temperature into scratchpad RAM for all devices at once
     int delay_time = 750; // Default delay time
 
-    skipROM(awire);
+    awire->skipROM();
     if (awire->status() != OneWire::StatusPresence)
         return -1;
     // собственно запуск преобразования
