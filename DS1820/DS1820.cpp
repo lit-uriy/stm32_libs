@@ -33,7 +33,7 @@ void init_soft_delay( void ) {
     #define ONEWIRE_DELAY_US(value) wait_us(value)
 #endif
 
-#define TEST_READ 1
+//#define TEST_READ 1
 
 LinkedList<node> DS1820::probes;
 
@@ -57,7 +57,7 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _dat
     onewire_reset(&_datapin);
     readRom();
 #else
-    bool ok = unassignedProbe(&_datapin, _ROM);
+    ok = unassignedProbe(&_datapin, _ROM);
 #endif
     if (!ok)
         error("No unassigned DS1820 found!\n");
