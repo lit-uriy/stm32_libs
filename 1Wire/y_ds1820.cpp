@@ -88,6 +88,7 @@ int Yds1820::convertTemperature(OneWire *awire)
     }
 
     // считаем что все устройства с паразитным питанием
+    // и им нужна жёсткая подтяжка к питанию, на время преобразования
     awire->setStrongPullup(true);
     wait_ms(delay_time);
     awire->setStrongPullup(false);
