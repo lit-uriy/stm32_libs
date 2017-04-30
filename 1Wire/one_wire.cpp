@@ -12,10 +12,7 @@ OneWire::OneWire(DigitalInOut apin)
     , _status(StatusUnknown)
     , _devices(16)
 {
-    // Line state: 1
-    _pin.output();
-    _pin.mode(OpenDrain); // Line state: 0
-    pinRelease(); // Line state: 1
+    pinInit();
 }
 
 OneWire::LineStatus OneWire::status()

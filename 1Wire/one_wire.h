@@ -213,13 +213,21 @@ public:
             _pin.mode(PushPullNoPull);
             _pin.write(1);
         }else{
-            _pin.mode(OpenDrain);
+            pinInit();
         }
     }
 
     inline void deleyUs(int us)
     {
         wait_us(us);
+    }
+
+    inline void pinInit()
+    {
+        // Line state: 1
+        _pin.output();
+        _pin.mode(OpenDrain); // Line state: 0
+        pinRelease(); // Line state: 1
     }
 
     LineStatus readWriteByte(unsigned char *byte);
