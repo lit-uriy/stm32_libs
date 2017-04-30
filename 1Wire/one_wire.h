@@ -62,7 +62,38 @@ public:
         return true;
     }
 
+    char* romString()
+    {
+        unsigned char i;
+
+        for(i=0; i<8; i++){
+            char cl = bytes[i] & 0x0F;
+            char cm = bytes[i] >> 4;
+            char resl = 0;
+            char resm = 0;
+
+            if (cm <= 9){ // числами
+                resm = 0x30 + cm;
+            }else{ // буквами
+                resm = 55 + cm;
+            }
+
+            _romString[2*i] = resm;
+
+            if (cl <= 9){ // числами
+                resl = 0x30 + cl;
+            }else{ // буквами
+                resl = 0x37 + cl;
+            }
+
+            _romString[2*i+1] = resl;
+        }
+        _romString[8*2] = 0x00;
+        return _romString;
+    }
+
     unsigned char bytes[8];
+    char _romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 };
 
 
