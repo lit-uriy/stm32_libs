@@ -163,7 +163,7 @@ int Yds1820::convertTemperature()
     }
 
 
-    delay_time = 750;
+//    delay_time = 750;
 	
 //    syncroPin.write(1);
     if (_parasitePower)
@@ -177,7 +177,7 @@ int Yds1820::convertTemperature()
 
     delay_time = 0;
 
-    return resolution;
+    return delay_time;
 }
 
 float Yds1820::temperature(char scale)
