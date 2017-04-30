@@ -116,9 +116,24 @@ public:
         CommandSkipRom = 0xCC,
     };
 
+    enum ErrorCode {
+        ErrorNon = 0x00,
+        ErrorBeforeSyncro,
+        ErrorBeforePresence,
+        ErrorAfterPresence,
+
+        ErrorQueryReadRom = 0x10,
+        ErrorAnswerReadRom = 0x20,
+        ErrorCrcReadRom = 0x30,
+        ErrorResetMatchRom = 0x40,
+        ErrorQueryMatchRom = 0x50,
+        ErrorAnswerMatchRom = 0x60,
+        ErrorCrcMatchRom = 0x70,
+    };
     OneWire(DigitalInOut apin);
 
     LineStatus status();
+    int errorCode();
 
     // собирает информацию об устройствах
     OneWireRomCode findSingleDevice(); // по сути Read Rom
@@ -214,6 +229,8 @@ private:
     LineStatus _status;
 
     YList<OneWireDevice *> _devices;
+
+    int _errorCode;
 };
 
 #endif // ONEWIRE_H

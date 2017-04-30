@@ -25,6 +25,11 @@ OneWire::LineStatus OneWire::status()
     return _status;
 }
 
+int OneWire::errorCode()
+{
+    return _errorCode;
+}
+
 
 OneWireRomCode OneWire::findSingleDevice()
 {
@@ -73,9 +78,11 @@ YList<OneWireDevice *> OneWire::devices()
 
 OneWire::LineStatus OneWire::reset()
 {
+    _errorCode = ErrorNon;
     // в начале на шине должна быть "1"
     if (!pin()){
         _status = StatusShortCircuit;
+        _errorCode = ErrorBeforeSyncro;
         return _status;
     }
 
@@ -91,6 +98,7 @@ OneWire::LineStatus OneWire::reset()
     // на шине должна стать "1"
     if (!pin()){
         _status = StatusShortCircuit;
+        _errorCode = ErrorBeforePresence;
         return _status;
     }
 
@@ -107,6 +115,7 @@ OneWire::LineStatus OneWire::reset()
     // на шине должна стать "1"
     if (!pin()){
         _status = StatusShortCircuit;
+        _errorCode = ErrorAfterPresence;
         return _status;
     }
 
@@ -121,16 +130,17 @@ bool OneWire::readROM(OneWireRomCode *romCode)
     unsigned char temp = CommandReadRom;
     unsigned char i = 0;
     unsigned char crc = 0;
+    _errorCode = ErrorNon;
 
     if (readWriteByte(&temp) != StatusPresence){
-        printf("Error ocured on write comand \"Read ROM\", status: %d\r\n", _status);
+        _errorCode = ErrorQueryReadRom | _errorCode;
         return false; // что-то пошло не так, например, устройство отключили
     }
 
     for(i=0; i<8; i++){
         temp = 0xFF; // будем читать из слэйва
         if (readWriteByte(&temp) != StatusPresence){
-            printf("Error ocured on read ROM cod, status: %d\r\n", _status);
+            _errorCode = ErrorAnswerReadRom | _errorCode;
             return false; // что-то пошло не так, например, устройство отключили
         }
 
@@ -140,7 +150,7 @@ bool OneWire::readROM(OneWireRomCode *romCode)
 
     // проверяем CRC
     if (crc){
-        printf("Error ocured on readROM() CRC check\r\n");
+        _errorCode = ErrorCrcReadRom | _errorCode;
         return false; // CRC НЕ совпала
     }
 
@@ -194,15 +204,18 @@ bool OneWire::matchROM(const OneWireRomCode romCode)
     return true;
 }
 
+
+
 OneWire::LineStatus OneWire::readWriteByte(unsigned char *byte)
 {
     unsigned char j;
+    _errorCode = ErrorNon;
 
     for(j=0;j<8;j++)
     {
         // должна быть "1"
         if (!pin()) {
-            printf("Error ocured on before syncro front\r\n");
+            _errorCode = ErrorBeforeSyncro;
             _status = StatusShortCircuit;
             return _status;
         }
