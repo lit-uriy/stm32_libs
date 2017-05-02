@@ -23,8 +23,8 @@ public:
     void append(const T &value);
     void append(const YList<T> & values);
 
-//    void insert(int i, const T &value); //TODO
-//    void prepend(const T &value); //TODO
+//    void insert(int i, const T &value); //TODO: Сделать функцию
+//    void prepend(const T &value); //TODO: Сделать функцию
 
     void clear();
     bool isEmpty() const {return !actual;}
@@ -41,7 +41,7 @@ public:
 
     T& operator[] (int i);
     const T& operator[] (int i) const;
-//    const T& operator[] (int i) const; // TODO
+//    const T& operator[] (int i) const; // TODO: Сделать функцию
     const T& at(int i) const;
 private:
     T *d;
@@ -100,7 +100,7 @@ void  YList<T>::copyData(const YList<T> &other)
 {
     actual = other.actual;
     rezerve = other.rezerve;
-    d = new T[rezerve];// NOTE: буфер ещё не инициализирован
+    d = new T[rezerve];// массив ещё не инициализирован - создаём новый
     //скопируем элементы входного списка
     for (int i = 0; i < actual; ++i) {
         d[i] = other.d[i];
