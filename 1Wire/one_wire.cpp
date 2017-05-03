@@ -163,6 +163,45 @@ bool OneWire::readROM(OneWireRomCode *romCode)
 void OneWire::searchROM()
 {
     // FIXME: не реализовано
+
+    _errorCode = ErrorNon;
+
+    // 1 - The master begins the initialization sequence
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
+        _errorCode = ErrorResetSkipRom | _errorCode;
+        return false;
+    }
+
+    // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
+    unsigned char temp = CommandSearchRom;
+
+    if (readWriteByte(&temp) != StatusPresence){
+        _errorCode = ErrorQuerySkipRom | _errorCode;
+        return false; // что-то пошло не так, например, устройство отключили
+    }
+
+    for (int byte = 0; byte < 8; ++byte) {
+        for (int bit = 0; bit < 8; ++bit) {
+            // 3 - The master reads one "bit i" from the 1–Wire bus.
+            bool first = true;
+            bool firstInv = true;
+            if (readWriteBit(first) != StatusPresence)
+                return; // какая-то проблема на линии
+            if (readWriteBit(firstInv) != StatusPresence)
+                return; // какая-то проблема на линии
+
+            // 4 - The master now decides to write "bit i"
+            if (readWriteBit(first) != StatusPresence)
+                return; // какая-то проблема на линии
+
+        }
+    }
+    // 9 - Все биты ROM-кода известны и
+    //     устройство готово для приёма команд транспортного уровня
+
+
+
 }
 
 bool OneWire::skipROM()
