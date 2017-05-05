@@ -162,44 +162,83 @@ bool OneWire::readROM(OneWireRomCode *romCode)
 
 void OneWire::searchROM()
 {
-    // FIXME: не реализовано
-
     _errorCode = ErrorNon;
 
-    // 1 - The master begins the initialization sequence
-    OneWire::LineStatus status = reset();
-    if (status != OneWire::StatusPresence){
-        _errorCode = ErrorResetSkipRom | _errorCode;
-        return false;
-    }
+    OneWireRomCode rom;
+    int lastDiscrepancy = 0;
+    int discrepancyMarker = 0;
+    bool done = false;
 
-    // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
-    unsigned char temp = CommandSearchRom;
+    // Ret = 0
 
-    if (readWriteByte(&temp) != StatusPresence){
-        _errorCode = ErrorQuerySkipRom | _errorCode;
-        return false; // что-то пошло не так, например, устройство отключили
-    }
-
-    for (int byte = 0; byte < 8; ++byte) {
-        for (int bit = 0; bit < 8; ++bit) {
-            // 3 - The master reads one "bit i" from the 1–Wire bus.
-            bool first = true;
-            bool firstInv = true;
-            if (readWriteBit(first) != StatusPresence)
-                return; // какая-то проблема на линии
-            if (readWriteBit(firstInv) != StatusPresence)
-                return; // какая-то проблема на линии
-
-            // 4 - The master now decides to write "bit i"
-            if (readWriteBit(first) != StatusPresence)
-                return; // какая-то проблема на линии
-
+    while (!done){
+        // 1 - The master begins the initialization sequence
+        OneWire::LineStatus status = reset();
+        if (status != OneWire::StatusPresence){
+            _errorCode = ErrorResetSkipRom | _errorCode;
+            return false;
         }
-    }
-    // 9 - Все биты ROM-кода известны и
-    //     устройство готово для приёма команд транспортного уровня
 
+        // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
+        unsigned char temp = CommandSearchRom;
+
+        if (readWriteByte(&temp) != StatusPresence){
+            _errorCode = ErrorQuerySkipRom | _errorCode;
+            return false; // что-то пошло не так, например, устройство отключили
+        }
+
+        for (int number = 1; number <= 64; ++number) {
+            // 3 - The master reads one "bit[i]" from the 1–Wire bus.
+            bool a = true; //  bit[i]
+            bool b = true; // ~bit[i]
+            bool c = true; // результирующий бит
+            discrepancyMarker = 0;
+
+            if (readWriteBit(a) != StatusPresence) // устройство выставит bit[i]
+                return; // какая-то проблема на линии
+            if (readWriteBit(b) != StatusPresence) // устройство выставит ~bit[i]
+                return; // какая-то проблема на линии
+
+            bool absent = a & b;
+            bool conflict = !a & !b;
+
+            if (absent){
+                _status = StatusAbsent;
+                return;
+            }
+            if (conflict){
+                if (number == lastDiscrepancy) // Добрались до предыдущего конфликта
+                    c = 1;
+                else if (number > lastDiscrepancy){ // ушли дальше предыдущего конфликта
+                    c = 0;
+                    discrepancyMarker = number;
+                }else { // НЕ добрались до предыдущего конфликта
+                    c = rom.bit(number-1);
+                    if (!c)
+                        discrepancyMarker = number;
+                }
+            }else{
+                c = a;
+            }
+
+            // 4 - The master now decides to write "bit[i]"
+            rom.setBit(number-1, c);
+            if (readWriteBit(c) != StatusPresence)
+                return; // какая-то проблема на линии
+
+        } // for (number: 1 - 64)
+
+        // 9 - Все биты ROM-кода известны и
+        //     устройство готово для приёма команд транспортного уровня
+
+
+        lastDiscrepancy = discrepancyMarker;
+        if (!lastDiscrepancy){
+            done = true;
+        }else{
+            // Ret = 1 надо читать следующий ROM-код
+        }
+    } // while (!done)
 
 
 }

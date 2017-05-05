@@ -92,6 +92,22 @@ public:
         return _romString;
     }
 
+    bool bit(int bitIndex)
+    {
+        int byteIndex = bitIndex/8;
+        unsigned char byte = bytes[byteIndex];
+        int bitInbyte = bitIndex - byte*8;
+        return byte & (1 << bitIndex);
+    }
+
+    void setBit(int bitIndex, bool value)
+    {
+        int byteIndex = bitIndex/8;
+        unsigned char byte = bytes[byteIndex];
+        int bitInbyte = bitIndex - byte*8;
+        unsigned char mask = 1 << bitIndex;
+        bytes[byteIndex] = value? (byte | mask): (byte & ~mask);
+    }
     unsigned char bytes[8];
     char _romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 };
