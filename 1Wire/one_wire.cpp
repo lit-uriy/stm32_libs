@@ -207,15 +207,13 @@ void OneWire::searchROM()
                 return;
             }
             if (conflict){
-                if (number == lastDiscrepancy) // Добрались до предыдущего конфликта
+                if (number == lastDiscrepancy){ // Добрались до предыдущего конфликта
                     c = 1;
-                else if (number > lastDiscrepancy){ // ушли дальше предыдущего конфликта
+                }else if (number > lastDiscrepancy){ // ушли дальше предыдущего конфликта
                     c = 0;
                     discrepancyMarker = number;
-                }else { // НЕ добрались до предыдущего конфликта
-                    c = rom.bit(number-1);
-                    if (!c)
-                        discrepancyMarker = number;
+                }else if (!(c = rom.bit(number-1))){ // НЕ добрались до предыдущего конфликта
+                    discrepancyMarker = number;
                 }
             }else{
                 c = a;
