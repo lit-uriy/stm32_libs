@@ -165,8 +165,8 @@ void OneWire::searchROM()
     _errorCode = ErrorNon;
 
     OneWireRomCode rom;
-    int lastDiscrepancy = 0;
-    int discrepancyMarker = 0;
+    int lastConflictPos = 0;
+    int conflictPos = 0;
     bool done = false;
 
     // Ret = 0
@@ -192,7 +192,7 @@ void OneWire::searchROM()
             bool a = true; //  bit[i]
             bool b = true; // ~bit[i]
             bool c = true; // результирующий бит
-            discrepancyMarker = 0;
+            conflictPos = 0;
 
             if (readWriteBit(a) != StatusPresence) // устройство выставит bit[i]
                 return; // какая-то проблема на линии
@@ -207,13 +207,13 @@ void OneWire::searchROM()
                 return;
             }
             if (conflict){
-                if (number == lastDiscrepancy){ // Добрались до предыдущего конфликта
+                if (number == lastConflictPos){ // Добрались до предыдущего конфликта
                     c = 1;
-                }else if (number > lastDiscrepancy){ // ушли дальше предыдущего конфликта
+                }else if (number > lastConflictPos){ // ушли дальше предыдущего конфликта
                     c = 0;
-                    discrepancyMarker = number;
+                    conflictPos = number;
                 }else if (!(c = rom.bit(number-1))){ // НЕ добрались до предыдущего конфликта
-                    discrepancyMarker = number;
+                    conflictPos = number;
                 }
             }else{
                 c = a;
@@ -230,8 +230,8 @@ void OneWire::searchROM()
         //     устройство готово для приёма команд транспортного уровня
 
 
-        lastDiscrepancy = discrepancyMarker;
-        if (!lastDiscrepancy){
+        lastConflictPos = conflictPos;
+        if (!lastConflictPos){
             done = true;
         }else{
             // Ret = 1 надо читать следующий ROM-код
