@@ -160,11 +160,10 @@ bool OneWire::readROM(OneWireRomCode *romCode)
     return true;
 }
 
-void OneWire::searchROM()
+bool OneWire::searchROM(OneWireRomCode *romCode)
 {
     _errorCode = ErrorNon;
 
-    OneWireRomCode rom;
     int lastConflictPos = 0;
     int conflictPos = 0;
     bool done = false;
@@ -216,7 +215,7 @@ void OneWire::searchROM()
                 }else if (number > lastConflictPos){ // ушли дальше предыдущего конфликта
                     c = 0;
                     conflictPos = number;
-                }else if (!(c = rom.bit(number-1))){ // НЕ добрались до предыдущего конфликта
+                }else if (!(c = romCode->bit(number-1))){ // НЕ добрались до предыдущего конфликта
                     conflictPos = number;
                 }
             }else{
@@ -224,7 +223,7 @@ void OneWire::searchROM()
             }
 
             // 4 - The master now decides to write "bit[i]"
-            rom.setBit(number-1, c);
+            romCode->setBit(number-1, c);
             if (readWriteBit(c) != StatusPresence)
                 return; // какая-то проблема на линии
 
