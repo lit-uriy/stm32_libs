@@ -175,7 +175,7 @@ void OneWire::searchROM()
         // 1 - The master begins the initialization sequence
         OneWire::LineStatus status = reset();
         if (status != OneWire::StatusPresence){
-            _errorCode = ErrorResetSkipRom | _errorCode;
+            _errorCode = ErrorResetSearchRom | _errorCode;
             return false;
         }
 
@@ -183,7 +183,7 @@ void OneWire::searchROM()
         unsigned char temp = CommandSearchRom;
 
         if (readWriteByte(&temp) != StatusPresence){
-            _errorCode = ErrorQuerySkipRom | _errorCode;
+            _errorCode = ErrorQuerySearchRom | _errorCode;
             return false; // что-то пошло не так, например, устройство отключили
         }
 
@@ -194,10 +194,14 @@ void OneWire::searchROM()
             bool c = true; // результирующий бит
             conflictPos = 0;
 
-            if (readWriteBit(a) != StatusPresence) // устройство выставит bit[i]
+            if (readWriteBit(a) != StatusPresence){ // устройство выставит bit[i]
+                _errorCode = ErrorAnswerSearchRom | _errorCode;
                 return; // какая-то проблема на линии
-            if (readWriteBit(b) != StatusPresence) // устройство выставит ~bit[i]
+            }
+            if (readWriteBit(b) != StatusPresence){ // устройство выставит ~bit[i]
+                _errorCode = ErrorAnswerSearchRom | _errorCode;
                 return; // какая-то проблема на линии
+            }
 
             bool absent = a & b;
             bool conflict = !a & !b;

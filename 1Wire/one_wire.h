@@ -133,21 +133,30 @@ public:
     };
 
     enum ErrorCode {
+        // младшая тетрада - "ЧТО?"
         ErrorNon = 0x00,
         ErrorBeforeSyncro,
         ErrorBeforePresence,
         ErrorAfterPresence,
 
+        // старшая тетрада - "ГДЕ?"
         ErrorQueryReadRom = 0x10,
         ErrorAnswerReadRom = 0x20,
         ErrorCrcReadRom = 0x30,
+
         ErrorResetMatchRom = 0x40,
         ErrorQueryMatchRom = 0x50,
         ErrorAnswerMatchRom = 0x60,
         ErrorCrcMatchRom = 0x70,
+
         ErrorOnReset = 0x80,
+
         ErrorResetSkipRom = 0x90,
         ErrorQuerySkipRom = 0xA0,
+
+        ErrorResetSearchRom = 0xB0,
+        ErrorQuerySearchRom = 0xC0,
+        ErrorAnswerSearchRom = 0xD0,
     };
     OneWire(DigitalInOut apin);
 
