@@ -233,8 +233,6 @@ void OneWire::searchROM()
         lastConflictPos = conflictPos;
         if (!lastConflictPos){
             done = true;
-        }else{
-            // Ret = 1 надо читать следующий ROM-код
         }
     } // while (!done)
 
