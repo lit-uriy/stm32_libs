@@ -229,18 +229,52 @@ void test4()
     OneWire wire(DATA_PIN);
     YList<OneWireRomCode> romCodes;
     romCodes = wire.findMultipleDevices();
-    if (romCodes.isEmpty())
+    if (romCodes.isEmpty()){
+        if (wire.status() == OneWire::StatusAbsent) {
+            printf("Devices not found\r\n");
+        } else {
+            printf("Finding devices ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
+        }
         return;
+    }
     // инициализируем термометры полученными ROM-кодами
     for (int i = 0; i < romCodes.count(); ++i) {
         OneWireRomCode rom = romCodes.at(i);
-        // второй способ инициализации термометра и связывания его с проволокой
+        // 2-ой способ инициализации термометра и связывания его с проволокой
+        /* TODO: второй способ ещё предстоит реализовать
         Yds1820 *thermo = new Yds1820(rom);
         wire.addDevice(thermo);
+        bool parasite = thermo.isParasiticPower();
+        */
+
+        // 1-ый способ инициализации
+        Yds1820 thermo(romCode, &wire);
+        bool parasite = thermo.isParasiticPower();
+        printf("\r\nDevice %s:\r\n"
+               "\tis parasite powered: %s\r\n"
+               "\tresolution = %d\r\n",
+               romCode.romString(),
+               parasite ? "true" : "false",
+               thermo.resolution());
     }
     // запускаем преобразование температуры сразу у всех термометров
     // сидящих на одной проволоке
-    Yds1820::convertTemperature(&wire);
+    int ret = Yds1820::convertTemperature(&wire);
+    if (ret < 0){
+        if (wire.status() == OneWire::StatusAbsent) {
+            printf("\r\nDevice unconected\r\n");
+        } else {
+            printf("\r\nDevice %s:\r\n"
+                   "\tconvert temperature ERROR, ret=%d\r\n"
+                   "\twire ERROR, code=%d, status=%d\r\n",
+                   romCode.romString(),
+                   ret,
+                   wire.errorCode(),
+                   wire.status());
+
+        }
+        return;
+    }
     // печатаем тепературу каждого термометра
     YList<OneWireDevice *> devices = wire.devices();
     for (int i = 0; i < devices.count(); ++i) {
