@@ -239,7 +239,7 @@ void test4()
     }
     // инициализируем термометры полученными ROM-кодами
     for (int i = 0; i < romCodes.count(); ++i) {
-        OneWireRomCode rom = romCodes.at(i);
+        OneWireRomCode romCode = romCodes.at(i);
         // 2-ой способ инициализации термометра и связывания его с проволокой
         /* TODO: второй способ ещё предстоит реализовать
         Yds1820 *thermo = new Yds1820(rom);
@@ -264,10 +264,9 @@ void test4()
         if (wire.status() == OneWire::StatusAbsent) {
             printf("\r\nDevice unconected\r\n");
         } else {
-            printf("\r\nDevice %s:\r\n"
-                   "\tconvert temperature ERROR, ret=%d\r\n"
+            printf("\r\nWire convert temperature ERROR, "
+			       "ret=%d\r\n"
                    "\twire ERROR, code=%d, status=%d\r\n",
-                   romCode.romString(),
                    ret,
                    wire.errorCode(),
                    wire.status());
