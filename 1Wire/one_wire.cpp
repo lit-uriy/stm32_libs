@@ -193,13 +193,13 @@ bool OneWire::searchROM(OneWireRomCode *romCode)
             bool c = true; // результирующий бит
             conflictPos = 0;
 
-            if (readWriteBit(a) != StatusPresence){ // устройство выставит bit[i]
+            if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
                 _errorCode = ErrorAnswerSearchRom | _errorCode;
-                return; // какая-то проблема на линии
+                return false; // какая-то проблема на линии
             }
-            if (readWriteBit(b) != StatusPresence){ // устройство выставит ~bit[i]
+            if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
                 _errorCode = ErrorAnswerSearchRom | _errorCode;
-                return; // какая-то проблема на линии
+                return false; // какая-то проблема на линии
             }
 
             bool absent = a & b;
@@ -207,7 +207,7 @@ bool OneWire::searchROM(OneWireRomCode *romCode)
 
             if (absent){
                 _status = StatusAbsent;
-                return;
+                return false;
             }
             if (conflict){
                 if (number == lastConflictPos){ // Добрались до предыдущего конфликта
@@ -224,8 +224,8 @@ bool OneWire::searchROM(OneWireRomCode *romCode)
 
             // 4 - The master now decides to write "bit[i]"
             romCode->setBit(number-1, c);
-            if (readWriteBit(c) != StatusPresence)
-                return; // какая-то проблема на линии
+            if (readWriteBit(&c) != StatusPresence)
+                return false; // какая-то проблема на линии
 
         } // for (number: 1 - 64)
 
@@ -239,7 +239,7 @@ bool OneWire::searchROM(OneWireRomCode *romCode)
         }
     } // while (!done)
 
-
+	return true;
 }
 
 bool OneWire::skipROM()
