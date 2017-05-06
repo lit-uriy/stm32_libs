@@ -97,7 +97,7 @@ public:
         int byteIndex = bitIndex/8;
         unsigned char byte = bytes[byteIndex];
         int bitInbyte = bitIndex - byte*8;
-        return byte & (1 << bitIndex);
+        return byte & (1 << bitInbyte);
     }
 
     void setBit(int bitIndex, bool value)
@@ -105,7 +105,7 @@ public:
         int byteIndex = bitIndex/8;
         unsigned char byte = bytes[byteIndex];
         int bitInbyte = bitIndex - byte*8;
-        unsigned char mask = 1 << bitIndex;
+        unsigned char mask = 1 << bitInbyte;
         bytes[byteIndex] = value? (byte | mask): (byte & ~mask);
     }
     unsigned char bytes[8];
