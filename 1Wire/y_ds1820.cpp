@@ -120,7 +120,7 @@ int Yds1820::convertTemperature(OneWire *awire)
     unsigned char temp = CommandConvertT;
     if (awire->readWriteByte(&temp) != OneWire::StatusPresence){
         printf("Error ocured on write comand \"Convert T\", status: %d\r\n", awire->status());
-        return -1; // что-то пошло не так, например, устройство отключили
+        return -2; // что-то пошло не так, например, устройство отключили
     }
 
     // считаем что все устройства с паразитным питанием

@@ -92,6 +92,22 @@ public:
         return _romString;
     }
 
+    bool bit(int bitIndex)
+    {
+        int byteIndex = bitIndex/8;
+        unsigned char byte = bytes[byteIndex];
+        int bitInbyte = bitIndex - byte*8;
+        return byte & (1 << bitIndex);
+    }
+
+    void setBit(int bitIndex, bool value)
+    {
+        int byteIndex = bitIndex/8;
+        unsigned char byte = bytes[byteIndex];
+        int bitInbyte = bitIndex - byte*8;
+        unsigned char mask = 1 << bitIndex;
+        bytes[byteIndex] = value? (byte | mask): (byte & ~mask);
+    }
     unsigned char bytes[8];
     char _romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 };
@@ -117,21 +133,30 @@ public:
     };
 
     enum ErrorCode {
+        // младшая тетрада - "ЧТО?"
         ErrorNon = 0x00,
         ErrorBeforeSyncro,
         ErrorBeforePresence,
         ErrorAfterPresence,
 
+        // старшая тетрада - "ГДЕ?"
         ErrorQueryReadRom = 0x10,
         ErrorAnswerReadRom = 0x20,
         ErrorCrcReadRom = 0x30,
+
         ErrorResetMatchRom = 0x40,
         ErrorQueryMatchRom = 0x50,
         ErrorAnswerMatchRom = 0x60,
         ErrorCrcMatchRom = 0x70,
+
         ErrorOnReset = 0x80,
+
         ErrorResetSkipRom = 0x90,
         ErrorQuerySkipRom = 0xA0,
+
+        ErrorResetSearchRom = 0xB0,
+        ErrorQuerySearchRom = 0xC0,
+        ErrorAnswerSearchRom = 0xD0,
     };
     OneWire(DigitalInOut apin);
 
@@ -154,7 +179,7 @@ public:
     LineStatus reset();
 
     bool readROM(OneWireRomCode *romCode);
-    void searchROM();
+    bool searchROM(OneWireRomCode *romCode);
     bool skipROM();
     bool matchROM(const OneWireRomCode romCode);
 
