@@ -119,9 +119,11 @@ public:
     enum LineStatus {
         StatusUnknown = 0,
         StatusPresence,
+        StatusPresenceMulty,
         StatusAlarming,
         StatusShortCircuit,
         StatusAbsent,
+        StatusError,
     };
 
 
@@ -165,7 +167,7 @@ public:
 
     // собирает информацию об устройствах
     OneWireRomCode findSingleDevice(); // по сути Read Rom
-    YList<OneWireRomCode> findMultipleDevices(); // по сути Search Rom
+    LineStatus findMultipleDevices(YList<OneWireRomCode> *romCodes); // по сути Search Rom
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
     YList<OneWireDevice *> devices();
@@ -179,7 +181,7 @@ public:
     LineStatus reset();
 
     bool readROM(OneWireRomCode *romCode);
-    bool searchROM(OneWireRomCode *romCode, bool next = true);
+    LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
     bool skipROM();
     bool matchROM(const OneWireRomCode romCode);
 

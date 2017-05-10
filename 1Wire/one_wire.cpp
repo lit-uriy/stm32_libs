@@ -43,19 +43,31 @@ OneWireRomCode OneWire::findSingleDevice()
     return OneWireRomCode(); // вернём пустышку
 }
 
-// FIXME: Не реализовано
-YList<OneWireRomCode> OneWire::findMultipleDevices()
+
+OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode> *romCodes)
 {
-    YList<OneWireRomCode> roms;
-
-    bool hasNext = true;
-    while (hasNext) {
+    int devCount = 0;
+    while (1) {
         OneWireRomCode romCode;
-        hasNext = searchROM(&romCode, hasNext);
-        roms.append(romCode);
-    }
+        LineStatus status = searchROM(&romCode, bool(devCount));
 
-    return roms;
+        if (status == StatusPresence) {
+            romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
+            devCount++;
+        }else if (status == StatusPresenceMulty){
+            romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
+            devCount++;
+            continue;
+        }else if (status == StatusError) {
+            return StatusError; // но при этом в список уже могли попасть устройства
+        }else {// StatusUnknown, StatusAlarming, StatusShortCircuit, StatusAbsent
+            break;
+        }
+    }
+    if (devCount)
+        return StatusPresence;
+
+    return StatusAbsent;
 }
 
 // FIXME: надо проверять сидит ли устройство на другой проволоке или нет
@@ -167,7 +179,7 @@ bool OneWire::readROM(OneWireRomCode *romCode)
     return true;
 }
 
-bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
+OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
     _errorCode = ErrorNon;
 
@@ -185,14 +197,14 @@ bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
     // Ret = 0
     if (done){
         done = false;
-        return false; // больше нет устройств
+        return StatusAbsent; // больше нет устройств
     }
 
     // 1 - The master begins the initialization sequence
     OneWire::LineStatus status = reset();
     if (status != OneWire::StatusPresence){
         _errorCode = ErrorResetSearchRom | _errorCode;
-        return false; // возможно на линии ни кого нет - надо начинать сначала
+        return status; // возможно на линии ни кого нет - надо начинать сначала
     }
 
     // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
@@ -200,7 +212,7 @@ bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
     if (readWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQuerySearchRom | _errorCode;
-        return false; // что-то пошло не так, например, устройство отключили - надо начинать сначала
+        return _status; // что-то пошло не так, например, устройство отключили - надо начинать сначала
     }
 
     for (int number = 1; number <= 64; ++number) {
@@ -212,11 +224,11 @@ bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
-            return false; // какая-то проблема на линии - надо начинать сначала
+            return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
         if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
-            return false; // какая-то проблема на линии - надо начинать сначала
+            return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
 
         bool absent = a & b;
@@ -224,7 +236,7 @@ bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
         if (absent){
             _status = StatusAbsent;
-            return false;
+            return StatusAbsent;
         }
         if (conflict){
             if (number == lastConflictPos){ // Добрались до предыдущего конфликта
@@ -241,8 +253,10 @@ bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
         // 4 - The master now decides to write "bit[i]"
         romCode->setBit(number-1, c);
-        if (readWriteBit(&c) != StatusPresence)
-            return false; // какая-то проблема на линии - надо начинать сначала
+        if (readWriteBit(&c) != StatusPresence){
+            _errorCode = ErrorAnswerSearchRom | _errorCode;
+            return _status; // какая-то проблема на линии - надо начинать сначала
+        }
 
     } // for (number: 1 - 64)
 
@@ -253,10 +267,10 @@ bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
     lastConflictPos = conflictPos;
     if (!lastConflictPos){
         done = true;
-        return false; // больше нет устройств - надо начинать сначала
+        return StatusAbsent; // больше нет устройств - надо начинать сначала
     }
 
-    return true; // ещё есть устройства - можно продолжать
+    return StatusPresenceMulty; // ещё есть устройства - можно продолжать
 }
 
 bool OneWire::skipROM()

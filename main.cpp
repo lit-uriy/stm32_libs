@@ -228,15 +228,15 @@ void test4()
     printf("test4\r\n");
     OneWire wire(DATA_PIN);
     YList<OneWireRomCode> romCodes;
-    romCodes = wire.findMultipleDevices();
-    if (romCodes.isEmpty()){
-        if (wire.status() == OneWire::StatusAbsent) {
-            printf("Devices not found\r\n");
-        } else {
-            printf("Finding devices ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
-        }
-        return;
+
+    // ищим
+    OneWire::LineStatus status = wire.findMultipleDevices(&romCodes);
+    if (status == OneWire::StatusAbsent) {
+        printf("Devices not found\r\n");
+    } else if (status == OneWire::StatusError){
+        printf("Finding devices ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
     }
+
     // инициализируем термометры полученными ROM-кодами
     for (int i = 0; i < romCodes.count(); ++i) {
         OneWireRomCode romCode = romCodes.at(i);
@@ -295,9 +295,13 @@ void test5()
 
     while(1){
         if (mybutton){
-            romCodes = wire.findMultipleDevices();
-            if (romCodes.isEmpty())
+            OneWire::LineStatus status = wire.findMultipleDevices(&romCodes);
+            if (status == OneWire::StatusAbsent) {
                 continue;
+            } else if (status == OneWire::StatusError){
+                printf("Finding devices ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
+                continue;
+            }
             // инициализируем термометры полученными ROM-кодами
             for (int i = 0; i < romCodes.count(); ++i) {
                 OneWireRomCode rom = romCodes.at(i);
