@@ -48,7 +48,14 @@ YList<OneWireRomCode> OneWire::findMultipleDevices()
 {
     YList<OneWireRomCode> roms;
 
-    return roms; // вернём пустышку
+    bool hasNext = true;
+    while (hasNext) {
+        OneWireRomCode romCode;
+        hasNext = searchROM(&romCode, hasNext);
+        roms.append(romCode);
+    }
+
+    return roms;
 }
 
 // FIXME: надо проверять сидит ли устройство на другой проволоке или нет
