@@ -160,86 +160,96 @@ bool OneWire::readROM(OneWireRomCode *romCode)
     return true;
 }
 
-bool OneWire::searchROM(OneWireRomCode *romCode)
+bool OneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
     _errorCode = ErrorNon;
 
-    int lastConflictPos = 0;
+    static int lastConflictPos = 0;
+    static bool done = false;
+
+    if (!next){
+        lastConflictPos = 0;
+        done = false;
+    }
+
     int conflictPos = 0;
-    bool done = false;
+
 
     // Ret = 0
+    if (done){
+        done = false;
+        return false; // больше нет устройств
+    }
 
-    while (!done){
-        // 1 - The master begins the initialization sequence
-        OneWire::LineStatus status = reset();
-        if (status != OneWire::StatusPresence){
-            _errorCode = ErrorResetSearchRom | _errorCode;
+    // 1 - The master begins the initialization sequence
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
+        _errorCode = ErrorResetSearchRom | _errorCode;
+        return false; // возможно на линии ни кого нет - надо начинать сначала
+    }
+
+    // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
+    unsigned char temp = CommandSearchRom;
+
+    if (readWriteByte(&temp) != StatusPresence){
+        _errorCode = ErrorQuerySearchRom | _errorCode;
+        return false; // что-то пошло не так, например, устройство отключили - надо начинать сначала
+    }
+
+    for (int number = 1; number <= 64; ++number) {
+        // 3 - The master reads one "bit[i]" from the 1–Wire bus.
+        bool a = true; //  bit[i]
+        bool b = true; // ~bit[i]
+        bool c = true; // результирующий бит
+        conflictPos = 0;
+
+        if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
+            _errorCode = ErrorAnswerSearchRom | _errorCode;
+            return false; // какая-то проблема на линии - надо начинать сначала
+        }
+        if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
+            _errorCode = ErrorAnswerSearchRom | _errorCode;
+            return false; // какая-то проблема на линии - надо начинать сначала
+        }
+
+        bool absent = a & b;
+        bool conflict = !a & !b;
+
+        if (absent){
+            _status = StatusAbsent;
             return false;
         }
-
-        // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
-        unsigned char temp = CommandSearchRom;
-
-        if (readWriteByte(&temp) != StatusPresence){
-            _errorCode = ErrorQuerySearchRom | _errorCode;
-            return false; // что-то пошло не так, например, устройство отключили
+        if (conflict){
+            if (number == lastConflictPos){ // Добрались до предыдущего конфликта
+                c = 1;
+            }else if (number > lastConflictPos){ // ушли дальше предыдущего конфликта
+                c = 0;
+                conflictPos = number;
+            }else if (!(c = romCode->bit(number-1))){ // НЕ добрались до предыдущего конфликта
+                conflictPos = number;
+            }
+        }else{
+            c = a;
         }
 
-        for (int number = 1; number <= 64; ++number) {
-            // 3 - The master reads one "bit[i]" from the 1–Wire bus.
-            bool a = true; //  bit[i]
-            bool b = true; // ~bit[i]
-            bool c = true; // результирующий бит
-            conflictPos = 0;
+        // 4 - The master now decides to write "bit[i]"
+        romCode->setBit(number-1, c);
+        if (readWriteBit(&c) != StatusPresence)
+            return false; // какая-то проблема на линии - надо начинать сначала
 
-            if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
-                _errorCode = ErrorAnswerSearchRom | _errorCode;
-                return false; // какая-то проблема на линии
-            }
-            if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
-                _errorCode = ErrorAnswerSearchRom | _errorCode;
-                return false; // какая-то проблема на линии
-            }
+    } // for (number: 1 - 64)
 
-            bool absent = a & b;
-            bool conflict = !a & !b;
-
-            if (absent){
-                _status = StatusAbsent;
-                return false;
-            }
-            if (conflict){
-                if (number == lastConflictPos){ // Добрались до предыдущего конфликта
-                    c = 1;
-                }else if (number > lastConflictPos){ // ушли дальше предыдущего конфликта
-                    c = 0;
-                    conflictPos = number;
-                }else if (!(c = romCode->bit(number-1))){ // НЕ добрались до предыдущего конфликта
-                    conflictPos = number;
-                }
-            }else{
-                c = a;
-            }
-
-            // 4 - The master now decides to write "bit[i]"
-            romCode->setBit(number-1, c);
-            if (readWriteBit(&c) != StatusPresence)
-                return false; // какая-то проблема на линии
-
-        } // for (number: 1 - 64)
-
-        // 9 - Все биты ROM-кода известны и
-        //     устройство готово для приёма команд транспортного уровня
+    // 9 - Все биты ROM-кода известны и
+    //     устройство готово для приёма команд транспортного уровня
 
 
-        lastConflictPos = conflictPos;
-        if (!lastConflictPos){
-            done = true;
-        }
-    } // while (!done)
+    lastConflictPos = conflictPos;
+    if (!lastConflictPos){
+        done = true;
+        return false; // больше нет устройств - надо начинать сначала
+    }
 
-	return true;
+    return true; // ещё есть устройства - можно продолжать
 }
 
 bool OneWire::skipROM()

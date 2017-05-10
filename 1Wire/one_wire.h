@@ -179,7 +179,7 @@ public:
     LineStatus reset();
 
     bool readROM(OneWireRomCode *romCode);
-    bool searchROM(OneWireRomCode *romCode);
+    bool searchROM(OneWireRomCode *romCode, bool next = true);
     bool skipROM();
     bool matchROM(const OneWireRomCode romCode);
 
