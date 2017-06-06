@@ -237,12 +237,18 @@ void test4()
     // ищем
     OneWire::LineStatus status = wire.findMultipleDevices(&romCodes);
     if (status == OneWire::StatusAbsent) {
-        printf("Devices not found\r\n");
+        printf("Devices not found, ERROR=%d, status=%d\r\n",
+               wire.errorCode(),
+               wire.status());
         return;
     } else if (status == OneWire::StatusError){
-        printf("Finding devices ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
+        printf("Finding devices ERROR=%d, status=%d\r\n",
+               wire.errorCode(),
+               wire.status());
         return;
     }
+
+    printf("Find devices  %d\r\n", romCodes.count());
 
     // инициализируем термометры полученными ROM-кодами
     for (int i = 0; i < romCodes.count(); ++i) {
