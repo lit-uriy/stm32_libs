@@ -192,6 +192,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     }
 
     int conflictPos = 0;
+    unsigned char crc = 0;
 
 
     // Ret = 0
@@ -262,6 +263,15 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
     // 9 - Все биты ROM-кода известны и
     //     устройство готово для приёма команд транспортного уровня
+
+    // считаем CRC
+    for (int i = 0; i < 8; ++i) {
+        crc = crc8(crc, romCode->bytes[i]);
+        if (crc){
+            _errorCode = ErrorCRCSearchRom | _errorCode;
+            return StatusError; // какая-то проблема на линии - надо начинать сначала
+        }
+    }
 
 
     lastConflictPos = conflictPos;

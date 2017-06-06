@@ -159,6 +159,7 @@ public:
         ErrorResetSearchRom = 0xB0,
         ErrorQuerySearchRom = 0xC0,
         ErrorAnswerSearchRom = 0xD0,
+        ErrorCRCSearchRom = 0xE0,
     };
     OneWire(DigitalInOut apin);
 
