@@ -180,7 +180,12 @@ void test3()
             continue;
         }
         float temp = thermo.temperature();
-        printf("Device %s, T=%3.1f, resolution=%d\r", romCode.romString(), temp, thermo.resolution());
+        bool parasite = thermo.isParasiticPower();
+        printf("Device %s, T=%3.1f, resolution=%d, isParasite=%s\r",
+               romCode.romString(),
+               temp,
+               thermo.resolution(),
+               parasite ? "true" : "false");
 //        wait(1);
     }
 }
