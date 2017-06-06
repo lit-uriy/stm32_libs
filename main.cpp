@@ -234,7 +234,7 @@ void test4()
     OneWire wire(DATA_PIN);
     YList<OneWireRomCode> romCodes;
 
-    // ищим
+    // ищем
     OneWire::LineStatus status = wire.findMultipleDevices(&romCodes);
     if (status == OneWire::StatusAbsent) {
         printf("Devices not found\r\n");
