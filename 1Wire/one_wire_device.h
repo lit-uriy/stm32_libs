@@ -15,6 +15,7 @@ public:
 
 protected:
 
+    bool _valid;
     OneWireRomCode _romCode;
 
     OneWire* wire() {return _wire;}

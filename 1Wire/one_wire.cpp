@@ -49,11 +49,19 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode> *romCodes
     int devCount = 0;
     while (1) {
         OneWireRomCode romCode;
-        LineStatus status = searchROM(&romCode, bool(devCount));
+        bool next = bool(devCount);
+        LineStatus status = searchROM(&romCode, next);
+
+        if (status != _status){
+            printf("searchROM status=%d, _status=%d\r\n",
+                    status,
+                    _status);
+        }
 
         if (status == StatusPresence) {
             romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
             devCount++;
+            break;
         }else if (status == StatusPresenceMulty){
             romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
             devCount++;
@@ -198,14 +206,14 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     // Ret = 0
     if (done){
         done = false;
+        printf("searchROM done\r\n");
         return StatusAbsent; // больше нет устройств
     }
 
     // 1 - The master begins the initialization sequence
-    OneWire::LineStatus status = reset();
-    if (status != OneWire::StatusPresence){
+    if (reset() != OneWire::StatusPresence){
         _errorCode = ErrorResetSearchRom | _errorCode;
-        return status; // возможно на линии ни кого нет - надо начинать сначала
+        return _status; // возможно на линии ни кого нет - надо начинать сначала
     }
 
     // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
@@ -268,6 +276,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     for (int i = 0; i < 8; ++i) {
         crc = crc8(crc, romCode->bytes[i]);
         if (crc){
+            printf("searchROM CRC ERROR\r\n");
             _errorCode = ErrorCRCSearchRom | _errorCode;
             return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
@@ -277,7 +286,8 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     lastConflictPos = conflictPos;
     if (!lastConflictPos){
         done = true;
-        return StatusAbsent; // больше нет устройств - надо начинать сначала
+        printf("searchROM NOT lastConflictPos\r\n");
+        return StatusPresence; // больше нет устройств - надо начинать сначала
     }
 
     return StatusPresenceMulty; // ещё есть устройства - можно продолжать

@@ -25,6 +25,8 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
     for (int i = 0; i < 9; ++i) {
         _ram.byte[i] = 0;
     }
+
+
     readPowerSupply();
     readRam();
     printf("RAM: config=%d, temp=%d\r\n", _ram.config, _ram.currentTemp);
