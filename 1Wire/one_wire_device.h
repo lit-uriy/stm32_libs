@@ -11,6 +11,7 @@ public:
     OneWireDevice(OneWireRomCode aRomCode, OneWire *awire = 0);
     virtual ~OneWireDevice(){}
 
+    bool isValid(){return _valid;}
     unsigned char familyCode();
 
 protected:
