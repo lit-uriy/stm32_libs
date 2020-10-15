@@ -180,7 +180,12 @@ void test3()
             continue;
         }
         float temp = thermo.temperature();
-        printf("Device %s, T=%3.1f, resolution=%d\r", romCode.romString(), temp, thermo.resolution());
+        bool parasite = thermo.isParasiticPower();
+        printf("Device %s, T=%3.1f, resolution=%d, isParasite=%s\r",
+               romCode.romString(),
+               temp,
+               thermo.resolution(),
+               parasite ? "true" : "false");
 //        wait(1);
     }
 }
@@ -229,13 +234,21 @@ void test4()
     OneWire wire(DATA_PIN);
     YList<OneWireRomCode> romCodes;
 
-    // ищим
+    // ищем
     OneWire::LineStatus status = wire.findMultipleDevices(&romCodes);
     if (status == OneWire::StatusAbsent) {
-        printf("Devices not found\r\n");
+        printf("Devices not found, ERROR=%d, status=%d\r\n",
+               wire.errorCode(),
+               wire.status());
+        return;
     } else if (status == OneWire::StatusError){
-        printf("Finding devices ERROR=%d, status=%d\r\n", wire.errorCode(), wire.status());
+        printf("Finding devices ERROR=%d, status=%d\r\n",
+               wire.errorCode(),
+               wire.status());
+        return;
     }
+
+    printf("Find devices  %d\r\n", romCodes.count());
 
     // инициализируем термометры полученными ROM-кодами
     for (int i = 0; i < romCodes.count(); ++i) {
@@ -257,29 +270,33 @@ void test4()
                parasite ? "true" : "false",
                thermo.resolution());
     }
-    // запускаем преобразование температуры сразу у всех термометров
-    // сидящих на одной проволоке
-    int ret = Yds1820::convertTemperature(&wire);
-    if (ret < 0){
-        if (wire.status() == OneWire::StatusAbsent) {
-            printf("\r\nDevice unconected\r\n");
-        } else {
-            printf("\r\nWire convert temperature ERROR, "
-			       "ret=%d\r\n"
-                   "\twire ERROR, code=%d, status=%d\r\n",
-                   ret,
-                   wire.errorCode(),
-                   wire.status());
+    // непрерывный опрос термометров
+    while (1) {
+        // запускаем преобразование температуры сразу у всех термометров
+        // сидящих на одной проволоке
+        int ret = Yds1820::convertTemperature(&wire);
+        if (ret < 0){
+            if (wire.status() == OneWire::StatusAbsent) {
+                printf("\r\nDevice unconected\r\n");
+                return; // тут нельзя продолжать, без инициализации.
+            } else {
+                printf("\r\nWire convert temperature ERROR, "
+                       "ret=%d\r\n"
+                       "\twire ERROR, code=%d, status=%d\r\n",
+                       ret,
+                       wire.errorCode(),
+                       wire.status());
 
+            }
+            continue;
         }
-        return;
-    }
-    // печатаем тепературу каждого термометра
-    YList<OneWireDevice *> devices = wire.devices();
-    for (int i = 0; i < devices.count(); ++i) {
-        Yds1820 *thermo = static_cast<Yds1820 *>(devices.at(i));
-        float temp = thermo->temperature();
-        printf("Device %d returns %3.1f %sC\r\n", i, temp, (char*)(248));
+        // печатаем тепературу каждого термометра
+        YList<OneWireDevice *> devices = wire.devices();
+        for (int i = 0; i < devices.count(); ++i) {
+            Yds1820 *thermo = static_cast<Yds1820 *>(devices.at(i));
+            float temp = thermo->temperature();
+            printf("Device %d returns %3.1f %sC\r\n", i, temp, (char*)(248));
+        }
     }
 }
 

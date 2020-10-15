@@ -77,7 +77,7 @@ template <typename T>
 YList<T>::YList(const YList<T> &other )
     :ReserveStep(other.ReserveStep)
 {
-    std::cout << "Copy constructor" << std::endl;
+    std::cout << "Copy constructor\r\n";
     copyData(other);
 }
 
@@ -85,7 +85,7 @@ YList<T>::YList(const YList<T> &other )
 template <typename T>
 YList<T>& YList<T>::operator=(const YList<T> &other)
 {
-    std::cout << "operator=" << std::endl;
+    std::cout << "operator=\r\n";
     if (d != other.d){
         delete[] d;
         copyData(other);
@@ -162,7 +162,7 @@ void YList<T>::removeAt(int i)
 template <typename T>
 T YList<T>::take(int i)
 {
-    std::cout << "T& take()" << std::endl;
+    std::cout << "T& take()\r\n";
     Y_ASSERT(i >= 0 && i < actual, "YList<T>::take()", "index out of range");
     T out = d[i];
     removeAt(i);
@@ -190,7 +190,7 @@ int	YList<T>::indexOf(const T &value, int from) const
 template <typename T>
 T& YList<T>::operator[] (int i)
 {
-    std::cout << "T& operator[]" << std::endl;
+    std::cout << "T& operator[]\r\n";
     Y_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
     T &out = d[i];
     return out;
@@ -199,7 +199,7 @@ T& YList<T>::operator[] (int i)
 template <typename T>
 const T& YList<T>::operator[] (int i) const
 {
-    std::cout << "const T operator[]" << std::endl;
+    std::cout << "const T operator[]\r\n";
     Y_ASSERT(i >= 0 && i < actual, "YList<T>::operator[]", "index out of range");
     const T &out = d[i];
     return out;
@@ -208,8 +208,8 @@ const T& YList<T>::operator[] (int i) const
 template <typename T>
 const T& YList<T>::at(int i) const
 {
-    std::cout << "const T operator[]" << std::endl;
-    Y_ASSERT(i >= 0 && i < actual, "YList<T>::at[]", "index out of range");
+    std::cout << "const T at()\r\n";
+    Y_ASSERT(i >= 0 && i < actual, "YList<T>::at()", "index out of range");
     const T &out = d[i];
     return out;
 }
