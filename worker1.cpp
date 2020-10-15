@@ -30,6 +30,7 @@ DigitalOut syncroPin(A1);
 //===========================================================================================
 Worker1::Worker1()
     : wire(oneWirePin)
+    , currentIndex(-1)
 {
 
 }
@@ -62,15 +63,24 @@ void Worker1::startFind()
 {
     // WARNING: Здесь не реальный код, а план кода!
     list.clear();
-    OneWireDevice dev = wire::findDevice();
-    Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
+    currentIndex = -1;
 
-    printf("\r\nDevice %s:\r\n"
-           "\tis parasite powered: %s\r\n"
-           "\tresolution = %d\r\n",
-           dev.romCode.toString(),
-           dev.isParasiticPower() ? "true" : "false",
-           thermo? thermo.resolution(): -1);
+    OneWireDevice dev = wire::findDevice();
+    if (dev.isValid()){
+        list << dev;
+        currentIndex = 0;
+
+        Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
+
+        printf("\r\nDevice %s:\r\n"
+               "\tis parasite powered: %s\r\n"
+               "\tresolution = %d\r\n",
+               dev.romCode.toString(),
+               dev.isParasiticPower() ? "true" : "false",
+               thermo? thermo.resolution(): -1);
+    }else{
+        printf("\r\nNo devices\r\n");
+    }
 }
 
 
@@ -84,17 +94,27 @@ void Worker1::startFind()
 void Worker1::nextFind()
 {
     // WARNING: Здесь не реальный код, а план кода!
+    if (list.isEmpty()){
+        startFind();
+        return;
+    }
+
     if (wire.hasNextDevice()){
         OneWireDevice dev = wire.nextDevice();
-        list << dev;
-        Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
+        if (dev.isValid()){
+            list << dev;
+            Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
 
-        printf("\r\nDevice %s:\r\n"
-               "\tis parasite powered: %s\r\n"
-               "\tresolution = %d\r\n",
-               dev.romCode.toString(),
-               dev.isParasiticPower() ? "true" : "false",
-               thermo? thermo.resolution(): -1);
+            printf("\r\Device found: \r\n"
+                   "\tROM: %s\r\n"
+                   "\tis parasite powered: %s\r\n"
+                   "\tresolution = %d\r\n",
+                   dev.romCode.toString(),
+                   dev.isParasiticPower() ? "true" : "false",
+                   thermo? thermo.resolution(): -1);
+        }else{
+            printf("\r\nNo more devices\r\n");
+        }
     }
 }
 
@@ -109,18 +129,25 @@ void Worker1::nextFind()
 void Worker1::findAll()
 {
     // WARNING: Здесь не реальный код, а план кода!
-    ;
+    startFind();
+
     while (wire.hasNextDevice()) {
         OneWireDevice dev = wire.nextDevice();
-        list << dev;
-        Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
+        if (dev.isValid()){
+            list << dev;
+            currentIndex = 0;
+            Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
 
-        printf("\r\nDevice %s:\r\n"
-               "\tis parasite powered: %s\r\n"
-               "\tresolution = %d\r\n",
-               dev.romCode.toString(),
-               dev.isParasiticPower() ? "true" : "false",
-               thermo? thermo.resolution(): -1);
+            printf("\r\Device found: \r\n"
+                   "\tROM: %s\r\n"
+                   "\tis parasite powered: %s\r\n"
+                   "\tresolution = %d\r\n",
+                   dev.romCode.toString(),
+                   dev.isParasiticPower() ? "true" : "false",
+                   thermo? thermo.resolution(): -1);
+        }else{
+            printf("\r\nNo more devices\r\n");
+        }
     }
 }
 
@@ -134,7 +161,18 @@ void Worker1::findAll()
 //===========================================================================================
 void Worker1::printNext()
 {
+    if (currentIndex >=0){
+        OneWireDevice dev = list.at(currentIndex++);
+        Yds1820 *thermo = static_cast<Yds1820 *>(&dev);
+        float temp = thermo->temperature();
 
+        if (currentIndex >= list.size())
+            currentIndex = 0;
+
+        printf("\r\Device [%d]: %3.1f %sC\r\n", currentIndex, temp, (char*)(248));
+    }else{
+        printf("\r\nNo devices\r\n");
+    }
 }
 
 
@@ -147,6 +185,9 @@ void Worker1::printNext()
 //===========================================================================================
 void Worker1::printAll()
 {
-
+    currentIndex = 0;
+    for (int i = 0; i < list.size(); ++i) {
+        printNext();
+    }
 }
 

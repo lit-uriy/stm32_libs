@@ -26,6 +26,7 @@ private:
     char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
     OneWire wire;
     YList<OneWireDevice> list;
+    int currentIndex;
 };
 
 #endif // WORKER1_H
