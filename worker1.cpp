@@ -44,9 +44,9 @@ int Worker1::exec()
         else if (buttonFindAll)
             findAll();
         else if (buttonPrintNextTemp)
-            nextPrintNext();
+            printNext();
         else if (buttonPrintAllTemp)
-            nextPrintAll();
+            printAll();
         else
             wait(0.1);
     }
@@ -132,7 +132,7 @@ void Worker1::findAll()
 //===========================================================================================
 //  Печатаем температуру следующего термометра
 //===========================================================================================
-void Worker1::nextPrintNext()
+void Worker1::printNext()
 {
 
 }
@@ -145,7 +145,7 @@ void Worker1::nextPrintNext()
 //===========================================================================================
 //  Печатаем температуры всех термометров
 //===========================================================================================
-void Worker1::nextPrintAll()
+void Worker1::printAll()
 {
 
 }

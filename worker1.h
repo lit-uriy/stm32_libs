@@ -18,8 +18,8 @@ private:
     void startFind();
     void nextFind();
     void findAll();
-    void nextPrintNext();
-    void nextPrintAll();
+    void printNext();
+    void printAll();
 
 
 private:
