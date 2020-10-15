@@ -228,3 +228,5 @@ utils/crc.c
 utils/crc.h
 utils/bin2hex.c
 utils/bin2hex.h
+worker1.cpp
+worker1.h
