@@ -12,14 +12,16 @@ public:
     virtual ~OneWireDevice(){}
 
     bool isValid(){return _valid;}
+
+    OneWireRomCode romCode();
     unsigned char familyCode();
+
+    OneWire* wire() {return _wire;}
 
 protected:
 
     bool _valid;
     OneWireRomCode _romCode;
-
-    OneWire* wire() {return _wire;}
 
 private:
     OneWire *_wire;
