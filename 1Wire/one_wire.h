@@ -161,6 +161,8 @@ public:
         ErrorAnswerSearchRom = 0xD0,
         ErrorCRCSearchRom = 0xE0,
     };
+
+
     OneWire(DigitalInOut apin);
 
     LineStatus status();
@@ -183,8 +185,8 @@ public:
 
     bool readROM(OneWireRomCode *romCode);
     LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
-    bool skipROM();
     bool matchROM(const OneWireRomCode romCode);
+    bool skipROM();
 
 private:
     enum Times {

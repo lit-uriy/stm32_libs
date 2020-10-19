@@ -142,9 +142,6 @@ int Yds1820::convertTemperature()
     // Convert temperature into scratchpad RAM for all devices at once
     int delay_time = 750; // Default delay time
 
-    if (!wire()->matchROM(_romCode)){
-        return -1; // что-то пошло не так, например, устройство отключили
-    }
 
     switch (resolution()) {
     case 0: // 9 bits
@@ -161,12 +158,20 @@ int Yds1820::convertTemperature()
         break;
     }
 
+#if (0)
+    if (!wire()->matchROM(_romCode)){
+        return -1; // что-то пошло не так, например, устройство отключили
+    }
     // собственно запуск преобразования
     unsigned char temp = CommandConvertT;
     if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         return -2; // что-то пошло не так, например, устройство отключили
     }
-
+#else
+    unsigned char temp = CommandConvertT;
+    appliedCommand(temp);
+    // нужна проверка удачности
+#endif
 
 //    delay_time = 750;
 	

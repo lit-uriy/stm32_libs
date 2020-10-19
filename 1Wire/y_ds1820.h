@@ -23,8 +23,15 @@ public:
 
     Yds1820(OneWireRomCode aRomCode, OneWire *awire = 0);
 
+    /**
+     * Запускает процедуру измерения температуры
+     */
+    // на ЭТОМ термометре
     int convertTemperature();
-    static int convertTemperature(OneWire *awire);
+    // на всех термометрах,
+    // если проволока указана, то в пределах проволоки,
+    // а если не указана, то на всех проволоках, на которых есть термометры этого класса
+    static int convertTemperature(OneWire *awire = 0);
 
     float temperature(char scale='c');
 
