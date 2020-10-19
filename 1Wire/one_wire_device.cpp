@@ -18,4 +18,17 @@ unsigned char OneWireDevice::familyCode()
     return _romCode.bytes[0];
 }
 
+void OneWireDevice::appliedCommand(unsigned char command, OneWireRomCode *romCode = 0)
+{
+    unsigned char i;
+
+    if (romCode) {
+        matchROM(romCode);  // to a single device
+    } else {
+        skipROM();          // to all devices
+    }
+
+    _wire->readWriteByte(&command);
+}
+
 
