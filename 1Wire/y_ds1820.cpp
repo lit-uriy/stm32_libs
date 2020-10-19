@@ -158,6 +158,7 @@ int Yds1820::convertTemperature()
         break;
     }
 
+#if (0)
     if (!wire()->matchROM(_romCode)){
         return -1; // что-то пошло не так, например, устройство отключили
     }
@@ -166,7 +167,11 @@ int Yds1820::convertTemperature()
     if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
         return -2; // что-то пошло не так, например, устройство отключили
     }
-
+#else
+    unsigned char temp = CommandConvertT;
+    appliedCommand(temp);
+    // нужна проверка удачности
+#endif
 
 //    delay_time = 750;
 	
