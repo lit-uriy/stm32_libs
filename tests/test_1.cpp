@@ -11,7 +11,7 @@
 
 DigitalIn mybutton(USER_BUTTON);
 
-DigitalOut syncroPin(A1);
+DigitalOut syncroPin(LED2);
 //bool test = false;
 
 
