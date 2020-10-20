@@ -22,8 +22,8 @@ int main() {
 
     char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
-    if (mybutton == 0) { // Button is pressed
-        printf("Button is pressed, Finding multiple devices...\r\n");
+    if (mybutton) {
+        printf("Button is not pressed, Finding multiple devices...\r\n");
         DS1820 *probe[MAX_PROBES];
 
         // Initialize the probe array to DS1820 objects
@@ -52,8 +52,8 @@ int main() {
             while(1){wait(1);};
         }
 
-    }else {
-        printf("Button is not pressed, Finding single devices...\r\n");
+    }else {// Button is pressed
+        printf("Button is pressed, Finding single devices...\r\n");
         DS1820 probe(DATA_PIN);
         while(1) {
             probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
