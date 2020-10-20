@@ -1,0 +1,4 @@
+Может сделать класс OneWireProtocol, а в него нахомячить реализацию
+    searchRom()
+    skipRom()
+    matchRom(romId)
