@@ -1,0 +1,76 @@
+
+#include "../mbed/mbed.h"
+#include "../DS1820/DS1820.h"
+
+
+
+#define DATA_PIN        A0
+#define MAX_PROBES      16
+
+
+
+DigitalIn mybutton(USER_BUTTON);
+
+DigitalOut syncroPin(A1);
+//bool test = false;
+
+
+
+int main() {
+
+    printf("\r\n----------------------------\r\n");
+
+    char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
+
+    if (mybutton) {
+        printf("Button is not pressed, Finding multiple devices...\r\n");
+        DS1820 *probe[MAX_PROBES];
+
+        // Initialize the probe array to DS1820 objects
+        int num_devices = 0;
+        while(DS1820::unassignedProbe(DATA_PIN)) {
+            DS1820 *dev = new DS1820(DATA_PIN);
+            probe[num_devices] = dev;
+            dev->romCode(romString);
+            printf("Found %d device, ROM=%s\r\n\n", num_devices+1, romString);
+            num_devices++;
+            if (num_devices == MAX_PROBES)
+                break;
+        }
+        if (num_devices){
+            printf("Found %d device(s)\r\n\n", num_devices);
+            while(1) {
+                probe[0]->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+                for (int i = 0; i<num_devices; i++)
+                    printf("Device %d returns %3.1f %sC\r\n", i, probe[i]->temperature(), (char*)(248));
+                printf("\r\n");
+                wait(1);
+            }
+        }else{
+            error("No devices!\r\n");
+
+            while(1){wait(1);};
+        }
+
+    }else {// Button is pressed
+        printf("Button is pressed, Finding single devices...\r\n");
+        DS1820 probe(DATA_PIN);
+        while(1) {
+            probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+            printf("It is %3.1foC\r\n", probe.temperature());
+            wait(1);
+        }
+    }
+
+
+
+#ifdef DS1820_TEST
+    DS1820 dev(DATA_PIN);
+    dev.romCode(rom);
+    printf("ROM code = %s\r\n", rom);
+
+#endif
+
+}
+
+
