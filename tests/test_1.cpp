@@ -40,9 +40,9 @@ int main() {
         if (num_devices){
             printf("Found %d device(s)\r\n\n", num_devices);
             while(1) {
-                probe[0]->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+                int delay_time = probe[0]->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
                 for (int i = 0; i<num_devices; i++)
-                    printf("Device %d returns %3.1f %sC\r\n", i, probe[i]->temperature(), (char*)(248));
+                    printf("Device %d returns %3.1f %sC; delay_time = %d\r\n", i, probe[i]->temperature(), (char*)(248), delay_time);
                 printf("\r\n");
                 wait(1);
             }
@@ -58,8 +58,8 @@ int main() {
         probe.romCode(romString);
         printf("ROM code = %s\r\n", romString);
         while(1) {
-            probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
-            printf("It is %3.1foC\r\n", probe.temperature());
+            int delay_time = probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+            printf("It is %3.1foC; delay_time = %d\r\n", probe.temperature(), delay_time);
             wait(1);
         }
     }
