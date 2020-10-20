@@ -55,6 +55,8 @@ int main() {
     }else {// Button is pressed
         printf("Button is pressed, Finding single devices...\r\n");
         DS1820 probe(DATA_PIN);
+        probe.romCode(romString);
+        printf("ROM code = %s\r\n", romString);
         while(1) {
             probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
             printf("It is %3.1foC\r\n", probe.temperature());
