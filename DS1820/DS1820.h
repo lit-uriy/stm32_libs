@@ -24,7 +24,7 @@
 #define MBED_DS1820_H
 
 #include "mbed.h"
-#include "LinkedList.h"
+#include "LinkedList/LinkedList.h"
 
 #define FAMILY_CODE _ROM[0]
 #define FAMILY_CODE_DS1820 0x10

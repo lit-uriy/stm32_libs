@@ -1,24 +1,17 @@
 
-#include "mbed.h"
-#include "DS1820.h"
+#include "../mbed/mbed.h"
+#include "../DS1820/DS1820.h"
 
-
-#define MULTIPLE_PROBES
 
 
 #define DATA_PIN        A0
-
-
-#ifdef MULTIPLE_PROBES
-
-
 #define MAX_PROBES      16
 
 
 
 DigitalIn mybutton(USER_BUTTON);
 
-//DigitalOut syncroPin(A1);
+DigitalOut syncroPin(A1);
 //bool test = false;
 
 
