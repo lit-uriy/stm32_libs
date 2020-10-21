@@ -110,6 +110,34 @@ void DS1820::romCode(char *buff)
     buff[8*2] = 0x00;
 }
 
+void DS1820::ramToHex(char *buff)
+{
+    unsigned char i;
+
+    for(i=0; i < sizeof(_RAM); i++){
+        char cl = _RAM[i] & 0x0F;
+        char cm = _RAM[i] >> 4;
+        char resl = 0;
+        char resm = 0;
+
+        if (cm <= 9){ // числами
+            resm = 0x30 + cm;
+        }else{ // буквами
+            resm = 55 + cm;
+        }
+
+        buff[2*i] = resm;
+
+        if (cl <= 9){ // числами
+            resl = 0x30 + cl;
+        }else{ // буквами
+            resl = 0x37 + cl;
+        }
+
+        buff[2*i+1] = resl;
+    }
+    buff[8*2] = 0x00;
+}
  
 bool DS1820::onewire_reset(DigitalInOut *pin) {
 // This will return false if no devices are present on the data bus
