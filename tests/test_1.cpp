@@ -63,16 +63,6 @@ int main() {
             wait(1);
         }
     }
-
-
-
-#ifdef DS1820_TEST
-    DS1820 dev(DATA_PIN);
-    dev.romCode(rom);
-    printf("ROM code = %s\r\n", rom);
-
-#endif
-
 }
 
 
