@@ -110,6 +110,8 @@ public:
     void romCode(char *buff);
     static LinkedList<node> getProbes() {return probes;}
 
+    bool isParasitePowered(){return _parasite_power;}
+
 private:
     bool _parasite_power;
     bool _power_mosfet;
