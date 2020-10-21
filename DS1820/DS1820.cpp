@@ -40,7 +40,10 @@ LinkedList<node> DS1820::probes;
 extern DigitalOut syncroPin;
  
  
-DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _datapin(data_pin), _parasitepin(power_pin) {
+DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity)
+    : _datapin(data_pin)
+    , _parasitepin(power_pin)
+{
     int byte_counter;
     _power_polarity = power_polarity;
 
