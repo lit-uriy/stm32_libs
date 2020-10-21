@@ -30,9 +30,7 @@ int main() {
         // Initialize the probe array to DS1820 objects
         int num_devices = 0;
         while(DS1820::unassignedProbe(DATA_PIN)) {
-            DS1820 *dev = new DS1820(DATA_PIN);
-            dev->romCode(romString);
-            printf("Found %d device, ROM=%s\r\n\n", num_devices+1, romString);
+            DS1820 *dev = makeDevice(DATA_PIN, num_devices);
             probe[num_devices] = dev;
             num_devices++;
             if (num_devices == MAX_PROBES)
