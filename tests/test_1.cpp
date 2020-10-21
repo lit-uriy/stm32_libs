@@ -10,7 +10,7 @@
 
 
 //DigitalIn mybutton(USER_BUTTON);
-bool mybutton = true;
+bool mybutton = false;
 
 DigitalOut syncroPin(LED2);
 //bool test = false;
@@ -20,8 +20,6 @@ DS1820* makeDevice(PinName name, int num_devices);
 int main() {
 
     printf("\r\n----------------------------\r\n");
-
-    char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
     if (mybutton) {
         printf("Button is not pressed, Finding multiple devices...\r\n");
@@ -57,9 +55,7 @@ int main() {
         bool ok = DS1820::unassignedProbe(DATA_PIN);
         printf("UnassignedProbe, return %s\r\n", ok? "true": "false");
 
-        DS1820 *probe = new DS1820(DATA_PIN);
-        probe->romCode(romString);
-        printf("ROM code = %s\r\n", romString);
+        DS1820 *probe = makeDevice(DATA_PIN, 0);
 
         while(1) {
             int delay_time = probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
