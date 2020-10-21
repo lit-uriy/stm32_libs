@@ -82,6 +82,9 @@ DS1820* makeDevice(PinName name, int num_devices)
     dev->romCode(romString);
     printf("Found %d device, ROM=%s\r\n", num_devices, romString);
     printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
+    char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
+    dev->ramToHex(ramString);
+    printf("\tRAM: %s\r\n", ramString);
     printf("\tresolution: %d bits\r\n", dev->resolution());
     printf("\r\n");
 
