@@ -56,3 +56,149 @@ R: Error ocured on RAM CRC check
 R: Device 1 returns -1000.0 C
 R: Device 1 RAM: FFFFFFFFFFFFFFFF
 R: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+R: 
+R: ----------------------------
+R: Button is not pressed, Finding multiple devices...
+R: Found 1 device, ROM=28FFC8B16B1801EA
+R: 	parasite powered: No
+R: Device 1 RAM: 0000000000000000
+R: 
+R: Found 2 device, ROM=28FFC74967180153
+R: 	parasite powered: No
+R: Device 2 RAM: 0000000000000000
+R: 
+R: Found 2 device(s)
+R: 
+R: Device 0 RAM: 0000000000000000
+R: Device 0 RAM: 0000000000000000
+R: Device 1 returns 25.9 C
+R: Device 1 RAM: 9E014B467FFF0C10
+R: Device 2 returns 26.2 C
+R: Device 2 RAM: A4014B467FFF0C10
+R: 
+R: Device 0 RAM: 9E014B467FFF0C10
+R: Device 0 RAM: 9E014B467FFF0C10
+R: Device 1 returns 25.9 C
+R: Device 1 RAM: 9E014B467FFF0C10
+R: Device 2 returns 26.2 C
+R: Device 2 RAM: A4014B467FFF0C10
+R: 
+R: Device 0 RAM: 9E014B467FFF0C10
+R: Device 0 RAM: 9E014B467FFF0C10
+R: Device 1 returns 25.9 C
+R: Device 1 RAM: 9E014B467FFF0C10
+R: Device 2 returns 26.2 C
+R: Device 2 RAM: A4014B467FFF0C10
+R: 
+R: Device 0 RAM: 9E014B467FFF0C10
+R: Device 0 RAM: 9E014B467FFF0C10
+R: Device 1 returns 25.9 C
+R: Device 1 RAM: 9F014B467FFF0C10
+R: Device 2 returns 26.2 C
+R: Device 2 RAM: A4014B467FFF0C10
+R: 
+
+
+
+
+
+
+
+
+R: Device 1 RAM: 9F014B467FFF0C10
+R: Device 2 returns 26.3 C
+R: Device 2 RAM: A5014B467FFF0C10
+R: 
+R: 
+R: ----------------------------
+R: Button is pressed, Finding single devices...
+R: UnassignedProbe, return true
+R: Found 1 device, ROM=28FFC8B16B1801EA
+R: 	parasite powered: No
+R: Device 1 RAM: 0000000000000000
+R: 
+R: Found 1 device(s)
+R: 
+R: Device 1 RAM: 0000000000000000
+R: Device 1 RAM: 0000000000000000
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+
+
+
+
+
+R: 
+R: ----------------------------
+R: Button is pressed, Finding single devices...
+R: UnassignedProbe, return true
+R: Found 1 device, ROM=28FFC8B16B1801EA
+R: 	parasite powered: No
+R: Device 1 RAM: 0000000000000000
+R: 
+R: Found 1 device(s)
+R: 
+R: Device 1 RAM: 0000000000000000
+R: Device 1 RAM: 0000000000000000
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: Error ocured on RAM CRC check
+R: Device 1 returns -1000.0 C
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+R: 
+R: Device 1 RAM: FFFFFFFFFFFFFFFF
+
+

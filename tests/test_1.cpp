@@ -42,9 +42,8 @@ int main() {
         if (num_devices){
             printf("Found %d device(s)\r\n\n", num_devices);
             while(1) {
-                probe[0]->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+                convertTemperature(probe[0], 0);
                 for (int i = 0; i<num_devices; i++){
-                    printRam(probe[i], i+1);
                     printTemperature(probe[i], i+1);
                     printRam(probe[i], i+1);
                 }
@@ -68,8 +67,7 @@ int main() {
         printf("Found %d device(s)\r\n\n", 1);
 
         while(1) {
-            probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
-            printRam(probe, 1);
+            convertTemperature(probe, 1);
             printTemperature(probe, 1);
             printRam(probe, 1);
             printf("\r\n");
