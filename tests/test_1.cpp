@@ -56,15 +56,13 @@ int main() {
     }else {// Button is pressed
         printf("Button is pressed, Finding single devices...\r\n");
 
-        DS1820::unassignedProbe(DATA_PIN);
-
-        DS1820 probe(DATA_PIN);
-        probe.romCode(romString);
+        DS1820 *probe = new DS1820(DATA_PIN);
+        probe->romCode(romString);
         printf("ROM code = %s\r\n", romString);
 
         while(1) {
-            int delay_time = probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
-            printf("It is %3.1foC; delay_time = %d\r\n", probe.temperature(), delay_time);
+            int delay_time = probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+            printf("It is %3.1foC; delay_time = %d\r\n", probe->temperature(), delay_time);
             wait(1);
         }
     }
