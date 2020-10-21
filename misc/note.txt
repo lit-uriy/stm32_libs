@@ -202,3 +202,39 @@ R:
 R: Device 1 RAM: FFFFFFFFFFFFFFFF
 
 
+R: 
+R: ----------------------------
+R: Button is pressed, Finding single devices...
+R: UnassignedProbe [1], return true
+R: Found 1 device, ROM=28FFC8B16B1801EA
+R: 	parasite powered: No
+R: Device 1 RAM: 0000000000000000
+R: 
+R: UnassignedProbe [2], return false
+R: Found 1 device(s)
+R: 
+R: Device 1 RAM: 0000000000000000
+R: Device 1 RAM: 0000000000000000
+R: Device 1 returns 25.8 C
+R: Device 1 RAM: 9D014B467FFF0C10
+R: 
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 returns 25.8 C
+R: Device 1 RAM: 9D014B467FFF0C10
+R: 
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 returns 25.8 C
+R: Device 1 RAM: 9D014B467FFF0C10
+R: 
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 returns 25.8 C
+R: Device 1 RAM: 9D014B467FFF0C10
+R: 
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 RAM: 9D014B467FFF0C10
+R: Device 1 returns 25.8 C
+R: Device 1 RAM: 9D014B467FFF0C10
+R: 
