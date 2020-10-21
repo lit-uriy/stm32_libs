@@ -242,7 +242,7 @@ bool DS1820::unassignedProbe(DigitalInOut *pin, char *ROM_address) {
 bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_address) {
     bool DS1820_done_flag = false;
     int DS1820_last_descrepancy = 0;
-    char DS1820_search_ROM[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    char searchedROM[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     
     int descrepancy_marker, ROM_bit_index;
     bool return_value, Bit_A, Bit_B;
@@ -272,25 +272,25 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                     if (Bit_A | Bit_B) {
                         // Set ROM bit to Bit_A
                         if (Bit_A) {
-                            DS1820_search_ROM[byte_counter] = DS1820_search_ROM[byte_counter] | bit_mask; // Set ROM bit to one
+                            searchedROM[byte_counter] = searchedROM[byte_counter] | bit_mask; // Set ROM bit to one
                         } else {
-                            DS1820_search_ROM[byte_counter] = DS1820_search_ROM[byte_counter] & ~bit_mask; // Set ROM bit to zero
+                            searchedROM[byte_counter] = searchedROM[byte_counter] & ~bit_mask; // Set ROM bit to zero
                         }
                     } else {
                         // both bits A and B are low, so there are two or more devices present
                         if ( ROM_bit_index == DS1820_last_descrepancy ) {
-                            DS1820_search_ROM[byte_counter] = DS1820_search_ROM[byte_counter] | bit_mask; // Set ROM bit to one
+                            searchedROM[byte_counter] = searchedROM[byte_counter] | bit_mask; // Set ROM bit to one
                         } else {
                             if ( ROM_bit_index > DS1820_last_descrepancy ) {
-                                DS1820_search_ROM[byte_counter] = DS1820_search_ROM[byte_counter] & ~bit_mask; // Set ROM bit to zero
+                                searchedROM[byte_counter] = searchedROM[byte_counter] & ~bit_mask; // Set ROM bit to zero
                                 descrepancy_marker = ROM_bit_index;
                             } else {
-                                if (( DS1820_search_ROM[byte_counter] & bit_mask) == 0x00 )
+                                if (( searchedROM[byte_counter] & bit_mask) == 0x00 )
                                     descrepancy_marker = ROM_bit_index;
                             }
                         }
                     }
-                    onewire_bit_out (pin, DS1820_search_ROM[byte_counter] & bit_mask);
+                    onewire_bit_out (pin, searchedROM[byte_counter] & bit_mask);
                     ROM_bit_index++;
                     if (bit_mask & 0x80) {
                         byte_counter++;
@@ -303,23 +303,23 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
             DS1820_last_descrepancy = descrepancy_marker;
             if (ROM_bit_index != 0xFF) {
                 int i = 1;
-                node *list_container;
+                node *listItem;
                 while(1) {
-                    list_container = probes.pop(i);
-                    if (list_container == NULL) {                             //End of list, or empty list
-                        if (ROM_checksum_error(DS1820_search_ROM)) {          // Check the CRC
+                    listItem = probes.pop(i);
+                    if (listItem == NULL) {                             //End of list, or empty list
+                        if (ROM_checksum_error(searchedROM)) {          // Check the CRC
                             return false;
                         }
                         for(byte_counter=0;byte_counter<8;byte_counter++)
-                            ROM_address[byte_counter] = DS1820_search_ROM[byte_counter];
+                            ROM_address[byte_counter] = searchedROM[byte_counter];
                         return true;
                     } else {                    //Otherwise, check if ROM is already known
                         bool equal = true;
-                        DS1820 *pointer = (DS1820*) list_container->data;
-                        char *ROM_compare = pointer->_ROM;
+                        DS1820 *listProbe = (DS1820*) listItem->data;
+                        char *ROM_compare = listProbe->_ROM;
                         
                         for(byte_counter=0;byte_counter<8;byte_counter++) {
-                            if ( ROM_compare[byte_counter] != DS1820_search_ROM[byte_counter])
+                            if ( ROM_compare[byte_counter] != searchedROM[byte_counter])
                                 equal = false;
                         }
                         if (equal)
