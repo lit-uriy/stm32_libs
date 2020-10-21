@@ -31,9 +31,9 @@ int main() {
         // Initialize the probe array to DS1820 objects
         int num_devices = 0;
         while(DS1820::unassignedProbe(DATA_PIN)) {
-            DS1820 *dev = makeDevice(DATA_PIN, num_devices);
-            probe[num_devices] = dev;
             num_devices++;
+            DS1820 *dev = makeDevice(DATA_PIN, num_devices);
+            probe[num_devices-1] = dev;
             if (num_devices == MAX_PROBES)
                 break;
         }
@@ -83,9 +83,9 @@ DS1820* makeDevice(PinName name, int num_devices)
 
     DS1820 *dev = new DS1820(DATA_PIN);
     dev->romCode(romString);
-    printf("Found %d device, ROM=%s\r\n", num_devices+1, romString);
+    printf("Found %d device, ROM=%s\r\n", num_devices, romString);
     printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
-    printRam(dev, num_devices+1);
+    printRam(dev, num_devices);
     printf("\r\n");
 
     return dev;
