@@ -19,7 +19,7 @@ DS1820* makeDevice(PinName name, int num_devices);
 
 void convertTemperature(DS1820 *dev, int num_device);
 
-void printTemperature(DS1820 *dev, int num_devices);
+void printTemperature(float temp, int num_devices);
 void printRam(DS1820 *dev, int num_devices);
 
 int main() {
@@ -44,7 +44,8 @@ int main() {
             while(1) {
                 convertTemperature(probe[0], 0);
                 for (int i = 0; i<num_devices; i++){
-                    printTemperature(probe[i], i+1);
+                    float t = probe[i]->temperature();
+                    printTemperature(t, i+1);
                 }
                 printf("\r\n");
                 wait(1);
@@ -66,7 +67,7 @@ int main() {
 
         while(1) {
             convertTemperature(probe, 1);
-            printTemperature(probe, 1);
+            printTemperature(probe->temperature(), 1);
             printf("\r\n");
             wait(1);
         }
@@ -96,9 +97,9 @@ void convertTemperature(DS1820 *dev, int num_device)
     dev->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
 }
 
-void printTemperature(DS1820 *dev, int num_devices)
+void printTemperature(float temp, int num_devices)
 {
-    printf("Device %d returns %3.1f %sC\r\n", num_devices, dev->temperature(), (char*)(248));
+    printf("Device %d returns %3.1f %sC\r\n", num_devices, temp, (char*)(248));
 }
 
 
