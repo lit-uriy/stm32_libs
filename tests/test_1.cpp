@@ -81,7 +81,7 @@ DS1820* makeDevice(PinName name, int num_devices)
 {
     char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
 
-    DS1820 *dev = new DS1820(DATA_PIN);
+    DS1820 *dev = new DS1820(name);
     dev->romCode(romString);
     printf("Found %d device, ROM=%s\r\n", num_devices, romString);
     printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
