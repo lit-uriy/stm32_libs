@@ -15,7 +15,7 @@ bool mybutton = true;
 DigitalOut syncroPin(LED2);
 //bool test = false;
 
-
+DS1820* makeDevice(PinName name, int num_devices);
 
 int main() {
 
@@ -82,3 +82,13 @@ int main() {
 }
 
 
+DS1820* makeDevice(PinName name, int num_devices)
+{
+    char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
+
+    DS1820 *dev = new DS1820(DATA_PIN);
+    dev->romCode(romString);
+    printf("Found %d device, ROM=%s\r\n\n", num_devices+1, romString);
+
+    return dev;
+}
