@@ -62,11 +62,10 @@ int main() {
         printf("UnassignedProbe, return %s\r\n", ok? "true": "false");
 
 
-        printf("DS1820 [1] probes %d\r\n", DS1820::getProbes().length());
 
         DS1820 *probe = makeDevice(DATA_PIN, 1);
 
-        printf("DS1820 [2] probes %d\r\n", DS1820::getProbes().length());
+        printf("Found %d device(s)\r\n\n", 1);
 
         while(1) {
             probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
