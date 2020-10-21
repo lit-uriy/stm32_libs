@@ -57,7 +57,7 @@ int main() {
         bool ok = DS1820::unassignedProbe(DATA_PIN);
         printf("UnassignedProbe, return %s\r\n", ok? "true": "false");
 
-        DS1820 *probe = makeDevice(DATA_PIN, 0);
+        DS1820 *probe = makeDevice(DATA_PIN, 1);
 
         while(1) {
             probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
