@@ -136,7 +136,7 @@ private:
     DigitalOut _parasitepin;
     
     char _ROM[8];
-    char RAM[9];
+    char _RAM[9];
     
     static LinkedList<node> probes;
 };

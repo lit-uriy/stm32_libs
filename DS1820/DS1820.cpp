@@ -47,7 +47,7 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity) : _dat
     _power_mosfet = power_pin != NC;
     
     for(byte_counter=0;byte_counter<9;byte_counter++)
-        RAM[byte_counter] = 0x00;
+        _RAM[byte_counter] = 0x00;
     
     ONEWIRE_INIT((&_datapin));
     INIT_DELAY;
@@ -331,9 +331,9 @@ bool DS1820::RAM_checksum_error() {
     char _CRC=0x00;
     int i;
     for(i=0;i<8;i++) // Only going to shift the lower 8 bytes
-        _CRC = CRC_byte(_CRC, RAM[i]);
+        _CRC = CRC_byte(_CRC, _RAM[i]);
     // After 8 bytes CRC should equal the 9th byte (RAM CRC)
-    return (_CRC!=RAM[8]); // will return true if there is a CRC checksum mis-match        
+    return (_CRC!=_RAM[8]); // will return true if there is a CRC checksum mis-match
 }
  
 char DS1820::CRC_byte (char _CRC, char byte ) {
@@ -377,7 +377,7 @@ int DS1820::convertTemperature(bool wait, devices device) {
     else {
         match_ROM();
         if ((FAMILY_CODE == FAMILY_CODE_DS18B20 ) || (FAMILY_CODE == FAMILY_CODE_DS1822 )) {
-            resolution = RAM[4] & 0x60;
+            resolution = _RAM[4] & 0x60;
             if (resolution == 0x00) // 9 bits
                 delay_time = 94;
             if (resolution == 0x20) // 10 bits
@@ -419,7 +419,7 @@ void DS1820::read_RAM() {
     match_ROM();             // Select this device
     onewire_byte_out( 0xBE);   //Read Scratchpad command
     for(i=0;i<9;i++) {
-        RAM[i] = onewire_byte_in();
+        _RAM[i] = onewire_byte_in();
     }
 //    if (!RAM_checksum_error())
 //       crcerr = 1;
@@ -430,8 +430,8 @@ bool DS1820::setResolution(unsigned int resolution) {
     resolution = resolution - 9;
     if (resolution < 4) {
         resolution = resolution<<5; // align the bits
-        RAM[4] = (RAM[4] & 0x60) | resolution; // mask out old data, insert new
-        write_scratchpad ((RAM[2]<<8) + RAM[3]);
+        _RAM[4] = (_RAM[4] & 0x60) | resolution; // mask out old data, insert new
+        write_scratchpad ((_RAM[2]<<8) + _RAM[3]);
 //        store_scratchpad (DS1820::this_device); // Need to test if this is required
         answer = true;
     }
@@ -439,14 +439,14 @@ bool DS1820::setResolution(unsigned int resolution) {
 }
  
 void DS1820::write_scratchpad(int data) {
-    RAM[3] = data;
-    RAM[2] = data>>8;
+    _RAM[3] = data;
+    _RAM[2] = data>>8;
     match_ROM();
     onewire_byte_out(0x4E);   // Copy scratchpad into DS1820 ram memory
-    onewire_byte_out(RAM[2]); // T(H)
-    onewire_byte_out(RAM[3]); // T(L)
+    onewire_byte_out(_RAM[2]); // T(H)
+    onewire_byte_out(_RAM[3]); // T(L)
     if ((FAMILY_CODE == FAMILY_CODE_DS18B20 ) || (FAMILY_CODE == FAMILY_CODE_DS1822 )) {
-        onewire_byte_out(RAM[4]); // Configuration register
+        onewire_byte_out(_RAM[4]); // Configuration register
     }
 }
  
@@ -464,7 +464,7 @@ float DS1820::temperature(char scale) {
         answer = invalid_conversion;
         printf("Error ocured on RAM CRC check\r\n");
     }else {
-        reading = (RAM[1] << 8) + RAM[0];
+        reading = (_RAM[1] << 8) + _RAM[0];
         if (reading & 0x8000) { // negative degrees C
             reading = 0-((reading ^ 0xffff) + 1); // 2's comp then convert to signed int
         }
@@ -473,8 +473,8 @@ float DS1820::temperature(char scale) {
             answer = answer / 16.0f;
         }
         else {
-            remaining_count = RAM[6];
-            count_per_degree = RAM[7];
+            remaining_count = _RAM[6];
+            count_per_degree = _RAM[7];
             answer = floor(answer/2.0f) - 0.25f + (count_per_degree - remaining_count) / count_per_degree;
         }
         if (scale=='F' or scale=='f')
