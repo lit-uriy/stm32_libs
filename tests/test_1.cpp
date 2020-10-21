@@ -60,8 +60,8 @@ int main() {
         DS1820 *probe = makeDevice(DATA_PIN, 0);
 
         while(1) {
-            int delay_time = probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
-            printf("It is %3.1foC; delay_time = %d\r\n", probe->temperature(), delay_time);
+            probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+            printTemperature(probe, 1);
             wait(1);
         }
     }
