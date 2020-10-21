@@ -10,7 +10,7 @@
 
 
 //DigitalIn mybutton(USER_BUTTON);
-bool mybutton = false;
+bool mybutton = true;
 
 DigitalOut syncroPin(LED2);
 //bool test = false;
@@ -31,9 +31,9 @@ int main() {
         int num_devices = 0;
         while(DS1820::unassignedProbe(DATA_PIN)) {
             DS1820 *dev = new DS1820(DATA_PIN);
-            probe[num_devices] = dev;
             dev->romCode(romString);
             printf("Found %d device, ROM=%s\r\n\n", num_devices+1, romString);
+            probe[num_devices] = dev;
             num_devices++;
             if (num_devices == MAX_PROBES)
                 break;
