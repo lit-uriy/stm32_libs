@@ -108,6 +108,7 @@ public:
     bool setResolution(unsigned int resolution);
 
     void romCode(char *buff);
+    static LinkedList<node> getProbes() {return probes;}
 
 private:
     bool _parasite_power;
