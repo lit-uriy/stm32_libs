@@ -88,6 +88,7 @@ DS1820* makeDevice(PinName name, int num_devices)
     dev->romCode(romString);
     printf("Found %d device, ROM=%s\r\n", num_devices+1, romString);
     printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
+    printRam(dev, num_devices+1);
     printf("\r\n");
 
     return dev;
