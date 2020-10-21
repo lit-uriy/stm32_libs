@@ -459,10 +459,11 @@ float DS1820::temperature(char scale) {
     float answer, remaining_count, count_per_degree;
     int reading;
     read_RAM();
-    if (RAM_checksum_error())
+    if (RAM_checksum_error()){
         // Indicate we got a CRC error
         answer = invalid_conversion;
-    else {
+        printf("Error ocured on RAM CRC check\r\n");
+    }else {
         reading = (RAM[1] << 8) + RAM[0];
         if (reading & 0x8000) { // negative degrees C
             reading = 0-((reading ^ 0xffff) + 1); // 2's comp then convert to signed int

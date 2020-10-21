@@ -10,3 +10,4 @@ BUILD/
 *.d
 # Qt Creator
 *.user
+*.[oa]

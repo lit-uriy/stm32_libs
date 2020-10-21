@@ -11,7 +11,7 @@
 
 DigitalIn mybutton(USER_BUTTON);
 
-DigitalOut syncroPin(A1);
+DigitalOut syncroPin(LED2);
 //bool test = false;
 
 
@@ -54,9 +54,11 @@ int main() {
 
     }else {// Button is pressed
         printf("Button is pressed, Finding single devices...\r\n");
+
         DS1820 probe(DATA_PIN);
         probe.romCode(romString);
         printf("ROM code = %s\r\n", romString);
+
         while(1) {
             int delay_time = probe.convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
             printf("It is %3.1foC; delay_time = %d\r\n", probe.temperature(), delay_time);
