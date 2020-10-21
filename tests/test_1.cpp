@@ -17,6 +17,8 @@ DigitalOut syncroPin(LED2);
 
 DS1820* makeDevice(PinName name, int num_devices);
 
+void printTemperature(DS1820 *dev, int num_devices);
+
 int main() {
 
     printf("\r\n----------------------------\r\n");
@@ -75,4 +77,9 @@ DS1820* makeDevice(PinName name, int num_devices)
     printf("Found %d device, ROM=%s\r\n\n", num_devices+1, romString);
 
     return dev;
+}
+
+void printTemperature(DS1820 *dev, int num_devices)
+{
+    printf("Device %d returns %3.1f %sC\r\n", num_devices, dev->temperature(), (char*)(248));
 }
