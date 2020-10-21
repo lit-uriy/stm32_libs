@@ -69,6 +69,7 @@ DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity)
         probes.append(this);
         _parasite_power = !read_power_supply();
         ONEWIRE_INIT((&_datapin));
+        read_RAM();
     }
 }
 
