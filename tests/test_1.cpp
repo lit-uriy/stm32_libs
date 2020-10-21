@@ -9,8 +9,8 @@
 
 
 
-//DigitalIn mybutton(USER_BUTTON);
-bool mybutton = false;
+DigitalIn mybutton(USER_BUTTON);
+//bool mybutton = true;
 
 DigitalOut syncroPin(LED2);
 //bool test = false;
@@ -57,7 +57,12 @@ int main() {
         bool ok = DS1820::unassignedProbe(DATA_PIN);
         printf("UnassignedProbe, return %s\r\n", ok? "true": "false");
 
+
+        printf("DS1820 [1] probes %d\r\n", DS1820::getProbes().length());
+
         DS1820 *probe = makeDevice(DATA_PIN, 1);
+
+        printf("DS1820 [2] probes %d\r\n", DS1820::getProbes().length());
 
         while(1) {
             probe->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
