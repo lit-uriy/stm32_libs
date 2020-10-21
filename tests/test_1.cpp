@@ -61,8 +61,6 @@ int main() {
         bool ok = DS1820::unassignedProbe(DATA_PIN);
         printf("UnassignedProbe, return %s\r\n", ok? "true": "false");
 
-
-
         DS1820 *probe = makeDevice(DATA_PIN, 1);
 
         printf("Found %d device(s)\r\n\n", 1);
