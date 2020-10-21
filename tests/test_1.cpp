@@ -17,6 +17,8 @@ DigitalOut syncroPin(LED2);
 
 DS1820* makeDevice(PinName name, int num_devices);
 
+void convertTemperature(DS1820 *dev, int num_device);
+
 void printTemperature(DS1820 *dev, int num_devices);
 void printRam(DS1820 *dev, int num_devices);
 
@@ -89,6 +91,13 @@ DS1820* makeDevice(PinName name, int num_devices)
     printf("\r\n");
 
     return dev;
+}
+
+void convertTemperature(DS1820 *dev, int num_device)
+{
+    printRam(dev, num_device);
+    dev->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+    printRam(dev, num_device);
 }
 
 void printTemperature(DS1820 *dev, int num_devices)
