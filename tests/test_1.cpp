@@ -9,7 +9,8 @@
 
 
 
-DigitalIn mybutton(USER_BUTTON);
+//DigitalIn mybutton(USER_BUTTON);
+bool mybutton = false;
 
 DigitalOut syncroPin(LED2);
 //bool test = false;
