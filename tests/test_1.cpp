@@ -39,9 +39,9 @@ int main() {
         if (num_devices){
             printf("Found %d device(s)\r\n\n", num_devices);
             while(1) {
-                int delay_time = probe[0]->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+                probe[0]->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
                 for (int i = 0; i<num_devices; i++)
-                    printf("Device %d returns %3.1f %sC; delay_time = %d\r\n", i, probe[i]->temperature(), (char*)(248), delay_time);
+                    printTemperature(probe[i], i+1);
                 printf("\r\n");
                 wait(1);
             }
