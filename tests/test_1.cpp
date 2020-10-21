@@ -41,12 +41,16 @@ int main() {
         }
         if (num_devices){
             printf("Found %d device(s)\r\n\n", num_devices);
+
             while(1) {
                 convertTemperature(probe[0], 0);
+                float temp = 0;
                 for (int i = 0; i<num_devices; i++){
                     float t = probe[i]->temperature();
+                    temp += t;
                     printTemperature(t, i+1);
                 }
+                printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
                 printf("\r\n");
                 wait(1);
             }
