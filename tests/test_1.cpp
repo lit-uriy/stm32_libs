@@ -45,7 +45,6 @@ int main() {
                 convertTemperature(probe[0], 0);
                 for (int i = 0; i<num_devices; i++){
                     printTemperature(probe[i], i+1);
-                    printRam(probe[i], i+1);
                 }
                 printf("\r\n");
                 wait(1);
@@ -68,7 +67,6 @@ int main() {
         while(1) {
             convertTemperature(probe, 1);
             printTemperature(probe, 1);
-            printRam(probe, 1);
             printf("\r\n");
             wait(1);
         }
@@ -84,7 +82,6 @@ DS1820* makeDevice(PinName name, int num_devices)
     dev->romCode(romString);
     printf("Found %d device, ROM=%s\r\n", num_devices, romString);
     printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
-    printRam(dev, num_devices);
     printf("\r\n");
 
     return dev;
@@ -92,9 +89,7 @@ DS1820* makeDevice(PinName name, int num_devices)
 
 void convertTemperature(DS1820 *dev, int num_device)
 {
-    printRam(dev, num_device);
     dev->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
-    printRam(dev, num_device);
 }
 
 void printTemperature(DS1820 *dev, int num_devices)
