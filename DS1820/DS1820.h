@@ -107,6 +107,8 @@ public:
       */ 
     bool setResolution(unsigned int resolution);
 
+    unsigned int resolution();
+
     void romCode(char *buff);
     void ramToHex(char *buff);
 

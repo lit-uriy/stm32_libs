@@ -469,6 +469,18 @@ bool DS1820::setResolution(unsigned int resolution) {
     }
     return answer;
 }
+
+unsigned int DS1820::resolution()
+{
+    char r = (_RAM[4] & 0x60) >> 5;
+    switch (r) {
+    case 0: return 9;
+    case 1: return 10;
+    case 2: return 11;
+    case 3: return 12;
+    default: return 0;
+    }
+}
  
 void DS1820::write_scratchpad(int data) {
     _RAM[3] = data;
