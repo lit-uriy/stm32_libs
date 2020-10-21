@@ -56,6 +56,8 @@ int main() {
     }else {// Button is pressed
         printf("Button is pressed, Finding single devices...\r\n");
 
+        DS1820::unassignedProbe(DATA_PIN);
+
         DS1820 probe(DATA_PIN);
         probe.romCode(romString);
         printf("ROM code = %s\r\n", romString);
