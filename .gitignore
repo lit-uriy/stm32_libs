@@ -4,10 +4,12 @@
 *.lst
 *.uvopt
 *.uvoptx
+DebugConfig/
 # Keil STM32
 RTE/
 BUILD/
 *.d
 # Qt Creator
 *.user
+*.user.*
 *.[oa]
