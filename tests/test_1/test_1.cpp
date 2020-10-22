@@ -1,6 +1,6 @@
 
-#include "../mbed/mbed.h"
-#include "../DS1820/DS1820.h"
+#include "mbed.h"
+#include "DS1820.h"
 
 
 
