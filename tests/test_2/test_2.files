@@ -440,6 +440,7 @@ mbed_config.h
 1Wire/one_wire.h
 1Wire/one_wire.cpp
 test_2.cpp
+test_21.cpp
 tm.h
 tm.c
 1Wire/y_ds1820.h
