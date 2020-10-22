@@ -2,6 +2,8 @@
 #include "mbed.h"
 #include "DS1820.h"
 
+#include "ylist.h"
+#include "one_wire.h"
 
 
 #define DATA_PIN        A0
@@ -28,7 +30,16 @@ int main() {
 
     if (mybutton) {
         printf("Button is not pressed, Finding multiple devices...\r\n");
-        DS1820 *probe[MAX_PROBES];
+        YList<DS1820*> termometrs;
+
+        DigitalInOut pin;
+        OneWire wire(pin);
+
+        if (!wire.findDevices()){
+            printf("Error ocured during the search; %s\r\n\n", wire.lastErrorText());
+        }
+
+        termometrs = wire.devices<DS1820*>();// А в проволоке создаются конкретные классы? А как она о всех классах знает?
 
         // Initialize the probe array to DS1820 objects
         int num_devices = 0;
