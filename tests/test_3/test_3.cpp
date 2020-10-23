@@ -17,6 +17,11 @@ DigitalOut syncroPin(LED2);
 
 DS1820* makeDevice(PinName name, int num_devices);
 
+void convertTemperature()
+{
+
+}
+
 void convertTemperature(DS1820 *dev, int num_device);
 
 void printTemperature(float temp, int num_devices);
@@ -39,8 +44,12 @@ int main() {
             if (num_devices == MAX_PROBES)
                 break;
         }
+
         if (num_devices){
             printf("Found %d device(s)\r\n\n", num_devices);
+
+            Ticker ticker;
+            ticker.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
 
             while(1) {
                 convertTemperature(probe[0], 0);
