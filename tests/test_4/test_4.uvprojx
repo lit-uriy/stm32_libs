@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>test_2</TargetName>
+      <TargetName>test_4</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\BUILD\</OutputDirectory>
-          <OutputName>test_3</OutputName>
+          <OutputName>test_4</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -414,9 +414,9 @@
               <FilePath>../../mbed_config.h</FilePath>
             </File>
             <File>
-              <FileName>test_3.cpp</FileName>
+              <FileName>test_4.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\test_3.cpp</FilePath>
+              <FilePath>.\test_4.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1925,7 +1925,7 @@
       <Layer>
         <LayName>test_2</LayName>
         <LayPrjMark>1</LayPrjMark>
-        <LayTitle>test_3</LayTitle>
+        <LayTitle>test_4</LayTitle>
       </Layer>
     </Layers>
   </LayerInfo>
