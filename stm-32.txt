@@ -1,0 +1,23 @@
+== GPIO
+
+=== Регистры портов
+
+==== Настроечные
+GPIOx_MODER
+GPIOx_OTYPER
+GPIOx_OSPEEDR
+GPIOx_PUPDR
+
+==== Данные
+GPIOx_IDR
+GPIOx_ODR
+
+==== Установочный
+GPIOx_BSRR - Bit set and reset register
+
+==== Блокирующий (для Port A и Port B)
+GPIOx_LCKR
+
+==== Выбора альтернативных функций (Port A и Port B, а в STM32F030xB и STM32F030xC для Port C и Port D)
+GPIOx_AFRH
+GPIOx_AFRL

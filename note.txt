@@ -2,3 +2,10 @@ CMSIS -  Cortex Microcontroller Software Interface Standard - vendor-independent
     that are based on Arm Cortex processors.
     https://developer.arm.com/tools-and-software/embedded/cmsis
     https://github.com/ARM-software/CMSIS_5
+
+
+HAL
+
+LL
+
+CUBE
