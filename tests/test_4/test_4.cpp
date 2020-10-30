@@ -36,7 +36,7 @@ int main()
     // INIT
     // -- ONEWIRE_INIT
     data_pin.output();
-    data_pin.mode(OpenDrain);
+    data_pin.mode(OpenDrain); // OpenDrain = OpenDrainPullUp !!!
 
     bool state = mybutton.read();
 
