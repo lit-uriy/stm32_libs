@@ -1,9 +1,10 @@
 
 #include "mbed.h"
-#include "DS1820.h"
+//#include "DS1820.h"
 
 #include "ylist.h"
 #include "one_wire.h"
+#include "one_wire_device.h"
 
 
 #define DATA_PIN        A0
@@ -14,8 +15,9 @@
 DigitalIn mybutton(USER_BUTTON);
 //bool mybutton = true;
 
-DigitalOut syncroPin(LED2);
-//bool test = false;
+DigitalOut syncroPin(NC);
+
+DigitalOut greenLed(LED2);
 
 DS1820* makeDevice(PinName name, int num_devices);
 
@@ -29,13 +31,15 @@ int main() {
     printf("\r\n----------------------------\r\n");
 
     if (mybutton) {
-        printf("Button is not pressed, Finding multiple devices...\r\n");
+        printf("Button is not pressed, Finding unknown devices...\r\n");
         YList<DS1820*> termometrs;
 
         DigitalInOut pin;
         OneWire wire(pin);
 
-        if (!wire.findDevices()){
+
+
+        if (!OneWireDevice::findDevices()){
             printf("Error ocured during the search; %s\r\n\n", wire.lastErrorText());
         }
 
@@ -72,18 +76,36 @@ int main() {
         }
 
     }else {// Button is pressed
-        printf("Button is pressed, Finding single devices...\r\n");
+        printf("Button is pressed, Working with predefined devices...\r\n");
 
+        YList<DS1820*> termometrs;
+        DigitalInOut pin;
+        OneWire wire(pin);
 
-        DS1820 *probe = makeDevice(DATA_PIN, 1);
+        DS1820 *t1 = &DS1820("28FF0A1C661803D3", wire);
+        termometrs << t1;
+        DS1820 *t2 = &DS1820("28FFAEB36B180160");
+        t2.setWire(wire);
+        termometrs << t2;
 
+        DS1990A ibutton("28FF6D3D6718017B");
 
-        printf("Found %d device(s)\r\n\n", 1);
+        int count = termometrs.count();
 
-        while(1) {
-            convertTemperature(probe, 1);
-            printTemperature(probe->temperature(), 1);
-            printf("\r\n");
+        while(1){
+            // вариант на ВСЕХ проволоках
+            DS1820::convertTemperature();
+
+            // вариант на КОНКРЕТНОЙ проволоке
+            DS1820::convertTemperature(wire);
+
+            for (int i=0; i < count; i++) {
+                printTemperature(termometrs[i].temperature(), 1);
+                printf("\r\n");
+            }
+
+            greenLed = ibutton.isPresent();
+
             wait(1);
         }
     }
