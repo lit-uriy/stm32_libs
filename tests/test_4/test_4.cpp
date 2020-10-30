@@ -12,7 +12,7 @@
 DigitalIn mybutton(USER_BUTTON);
 //bool mybutton = true;
 
-DigitalOut syncroPin(LED2);
+DigitalOut syncroPin(NC);
 //bool test = false;
 
 DS1820* makeDevice(PinName name, int num_devices);
@@ -27,60 +27,31 @@ void convertTemperature(DS1820 *dev, int num_device);
 void printTemperature(float temp, int num_devices);
 void printRam(DS1820 *dev, int num_devices);
 
-int main() {
+int main()
+{
+    printf("---------------- Test IO pin ----------\r\n");
+    DigitalOut led(LED2);
 
-    printf("\r\n----------------------------\r\n");
+    DigitalInOut data_pin(DATA_PIN);
+    // INIT
+    // -- ONEWIRE_INIT
+    data_pin.output();
+    data_pin.mode(OpenDrain);
 
-    if (mybutton) {
-        printf("Button is not pressed, Finding multiple devices...\r\n");
-        DS1820 *probe[MAX_PROBES];
+    bool state = mybutton.read();
 
-        // Initialize the probe array to DS1820 objects
-        int num_devices = 0;
-        while(DS1820::unassignedProbe(DATA_PIN)) {
-            num_devices++;
-            DS1820 *dev = makeDevice(DATA_PIN, num_devices);
-            probe[num_devices-1] = dev;
-            if (num_devices == MAX_PROBES)
-                break;
+    while(1){
+        if (state) {// Button is NOT pressed
+            data_pin.write(1);
+            led.write(1);
+            printf("Write 1\r\n");
+        }else {// Button is pressed
+            data_pin.write(0);
+            led.write(0);
+            printf("Write 0\r\n");
         }
-
-        if (num_devices){
-            printf("Found %d device(s)\r\n\n", num_devices);
-
-            while(1) {
-                convertTemperature(probe[0], 0);
-                float temp = 0;
-                for (int i = 0; i<num_devices; i++){
-                    float t = probe[i]->temperature();
-                    temp += t;
-                    printTemperature(t, i+1);
-                }
-                printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
-                printf("\r\n");
-                wait(1);
-            }
-        }else{
-            error("No devices!\r\n");
-
-            while(1){wait(1);};
-        }
-
-    }else {// Button is pressed
-        printf("Button is pressed, Finding single devices...\r\n");
-
-
-        DS1820 *probe = makeDevice(DATA_PIN, 1);
-
-
-        printf("Found %d device(s)\r\n\n", 1);
-
-        while(1) {
-            convertTemperature(probe, 1);
-            printTemperature(probe->temperature(), 1);
-            printf("\r\n");
-            wait(1);
-        }
+        while(state == mybutton.read()){}
+        state = mybutton.read();
     }
 }
 
