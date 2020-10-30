@@ -48,9 +48,6 @@ int main() {
         if (num_devices){
             printf("Found %d device(s)\r\n\n", num_devices);
 
-            Ticker ticker;
-            ticker.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
-
             while(1) {
                 convertTemperature(probe[0], 0);
                 float temp = 0;
