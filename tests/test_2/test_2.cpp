@@ -22,19 +22,38 @@ void convertTemperature(DS1820 *dev, int num_device);
 void printTemperature(float temp, int num_devices);
 void printRam(DS1820 *dev, int num_devices);
 
+void onSerialInput();
+
 Serial port(USBTX, USBRX);
+volatile bool newCommand = false;
+const int Size = 80;
+int receivedBytes = 0;
+char commandBuffer[Size];
+
+enum Command {
+    CommandTest1 = 0,
+    CommandTest2,
+    CommandUnknown = 0xFF
+};
+
+volatile int command = CommandUnknown;
 
 int main() {
 
+    port.attach(&onSerialInput, Serial::RxIrq);
 
-    char command[80];
+    port.puts("\r\n------------ Ready ----------------\r\n");
 
     while(1){
-        port.printf("\r\n------------ Ready ----------------\r\n");
-        port.scanf("%s", command);
 
-        if (strncmp(command , "test1()", sizeof("test1()")) == 0){
+        if (!newCommand){
+            wait(1);
+            continue;
+        }
+
+        if (command == CommandTest1){
             port.printf("Command test1(): Finding multiple devices...\r\n");
+            newCommand = false;
             DS1820 *probe[MAX_PROBES];
 
             // Initialize the probe array to DS1820 objects
@@ -59,15 +78,19 @@ int main() {
                     }
                     port.printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
                     port.printf("\r\n");
+
+                    if (newCommand){
+                        break;
+                    }
                 }
             }else{
 //                error("No devices!\r\n");
                 port.printf("No devices!\r\n");
             }
 
-        }else if (strncmp(command , "test2()", sizeof("test2()")) == 0){
+        }else if (command == CommandTest2){
             port.printf("Command test2(): Finding single devices...\r\n");
-
+            newCommand = false;
 
             DS1820 *probe = makeDevice(DATA_PIN, 1);
 
@@ -78,10 +101,47 @@ int main() {
                 convertTemperature(probe, 1);
                 printTemperature(probe->temperature(), 1);
                 port.printf("\r\n");
+
+                if (newCommand)
+                    break;
             }
         }else{
-            port.printf("Unknown command: %s\r\n", command);
+            port.printf("Unknown command: %s\r\n", commandBuffer);
+            newCommand = false;
         }
+    }
+}
+
+
+
+void onSerialInput()
+{
+    while(port.readable()){
+        char c = port.getc();
+        if ((receivedBytes >= Size) || newCommand){
+            continue;
+        }else if ((c == '\n') || (c == '\r')){
+            newCommand = true;
+            commandBuffer[receivedBytes++] = 0;
+            break;
+        }
+        commandBuffer[receivedBytes++] = c;
+    }
+
+    if(strncmp(commandBuffer , "test1()", sizeof("test1()")) == 0){
+        command = CommandTest1;
+    }else if (strncmp(commandBuffer , "test2()", sizeof("test2()")) == 0){
+        command = CommandTest2;
+    }else{
+        command = CommandUnknown;
+    }
+
+    if (newCommand){/*
+        for(int i=0; i < Size; i++){
+            port.putc(commandBuffer[i]);
+            commandBuffer[i] = 0;
+        }*/
+        receivedBytes = 0;
     }
 }
 
