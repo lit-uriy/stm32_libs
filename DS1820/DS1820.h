@@ -113,6 +113,7 @@ public:
     void ramToHex(char *buff);
 
     static LinkedList<node> getProbes() {return probes;}
+    static void clearProbes();
 
     bool isParasitePowered(){return _parasite_power;}
 

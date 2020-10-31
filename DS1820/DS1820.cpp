@@ -83,6 +83,14 @@ DS1820::~DS1820 (void) {
     }
 }
 
+void DS1820::clearProbes()
+{
+    int s;
+    while(s = probes.length()){
+        probes.remove(1);
+    }
+}
+
 void DS1820::romCode(char *buff)
 {
     unsigned char i;
