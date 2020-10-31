@@ -12,7 +12,8 @@
 DigitalIn mybutton(USER_BUTTON);
 //bool mybutton = true;
 
-DigitalOut syncroPin(LED2);
+DigitalOut syncroPin(NC);
+DigitalOut led(LED2);
 //bool test = false;
 
 DS1820* makeDevice(PinName name, int num_devices);
@@ -33,6 +34,7 @@ char commandBuffer[Size];
 enum Command {
     CommandTest1 = 0,
     CommandTest2,
+    CommandReset,
     CommandUnknown = 0xFF
 };
 
@@ -40,19 +42,31 @@ volatile int command = CommandUnknown;
 
 int main() {
 
+//    port.set_flow_control(Serial::Disabled);
     port.attach(&onSerialInput, Serial::RxIrq);
 
     port.puts("\r\n------------ Ready ----------------\r\n");
 
     while(1){
+        led = !led;
 
         if (!newCommand){
             wait(1);
             continue;
         }
 
+        if(strncmp(commandBuffer , "test1()", sizeof("test1()")) == 0){
+            command = CommandTest1;
+        }else if (strncmp(commandBuffer , "test2()", sizeof("test2()")) == 0){
+            command = CommandTest2;
+        }else if (strncmp(commandBuffer , "reset()", sizeof("reset()")) == 0){
+            command = CommandReset;
+        }else{
+            command = CommandUnknown;
+        }
+
         if (command == CommandTest1){
-            port.printf("Command test1(): Finding multiple devices...\r\n");
+            port.puts("Command test1(): Finding multiple devices...\r\n");
             newCommand = false;
             DS1820 *probe[MAX_PROBES];
 
@@ -77,7 +91,7 @@ int main() {
                         printTemperature(t, i+1);
                     }
                     port.printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
-                    port.printf("\r\n");
+                    port.puts("\r\n");
 
                     if (newCommand){
                         break;
@@ -89,7 +103,7 @@ int main() {
             }
 
         }else if (command == CommandTest2){
-            port.printf("Command test2(): Finding single devices...\r\n");
+            port.puts("Command test2(): Finding single devices...\r\n");
             newCommand = false;
 
             DS1820 *probe = makeDevice(DATA_PIN, 1);
@@ -100,15 +114,24 @@ int main() {
             while(1) {
                 convertTemperature(probe, 1);
                 printTemperature(probe->temperature(), 1);
-                port.printf("\r\n");
+                port.puts("\r\n");
 
                 if (newCommand)
                     break;
             }
+        }else if (command == CommandReset){
+            int size = DS1820::getProbes().length();
+            port.printf("Command reset(): deleting %d devices from list\r\n", size);
+            DS1820::clearProbes();
+            size = DS1820::getProbes().length();
+            port.printf("\t left %d devices in list\r\n", size);
+            newCommand = false;
         }else{
             port.printf("Unknown command: %s\r\n", commandBuffer);
             newCommand = false;
         }
+
+        port.puts("\r\n------------ Ready ----------------\r\n");
     }
 }
 
@@ -123,25 +146,10 @@ void onSerialInput()
         }else if ((c == '\n') || (c == '\r')){
             newCommand = true;
             commandBuffer[receivedBytes++] = 0;
+            receivedBytes = 0;
             break;
         }
         commandBuffer[receivedBytes++] = c;
-    }
-
-    if(strncmp(commandBuffer , "test1()", sizeof("test1()")) == 0){
-        command = CommandTest1;
-    }else if (strncmp(commandBuffer , "test2()", sizeof("test2()")) == 0){
-        command = CommandTest2;
-    }else{
-        command = CommandUnknown;
-    }
-
-    if (newCommand){/*
-        for(int i=0; i < Size; i++){
-            port.putc(commandBuffer[i]);
-            commandBuffer[i] = 0;
-        }*/
-        receivedBytes = 0;
     }
 }
 
