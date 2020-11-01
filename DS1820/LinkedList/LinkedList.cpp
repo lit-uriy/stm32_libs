@@ -134,7 +134,7 @@ retT *LinkedList<retT>::remove(uint32_t loc)
         if (1 == loc)
         {
             _head = current->next;
-            delete [] current;
+            delete current;
         }
         else
         {
@@ -145,7 +145,7 @@ retT *LinkedList<retT>::remove(uint32_t loc)
             }
             // store the item + 1 to replace what we are deleting
             prev->next = current->next;
-            delete [] current;
+            delete current;
         }
     }
 
