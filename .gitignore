@@ -9,7 +9,9 @@ DebugConfig/
 RTE/
 BUILD/
 *.d
+*.[oa]
 # Qt Creator
 *.user
 *.user.*
-*.[oa]
+*.cxxflags
+*.cflags
