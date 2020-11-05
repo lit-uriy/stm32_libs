@@ -151,7 +151,7 @@ int main() {
 
 void onSerialInput()
 {
-    while(port.readable()){
+    do{
         char c = port.getc();
         if ((receivedBytes >= Size) || newCommand){
             continue;
@@ -162,7 +162,7 @@ void onSerialInput()
             break;
         }
         commandBuffer[receivedBytes++] = c;
-    }
+    }while(port.readable());
 }
 
 
