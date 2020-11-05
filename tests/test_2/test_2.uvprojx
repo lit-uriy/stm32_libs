@@ -414,9 +414,9 @@
               <FilePath>../../mbed_config.h</FilePath>
             </File>
             <File>
-              <FileName>test_2.cpp</FileName>
+              <FileName>main.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\test_2.cpp</FilePath>
+              <FilePath>.\main.cpp</FilePath>
             </File>
           </Files>
         </Group>
