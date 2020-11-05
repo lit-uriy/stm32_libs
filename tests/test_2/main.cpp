@@ -70,6 +70,10 @@ int main() {
             newCommand = false;
             DS1820 *probe[MAX_PROBES];
 
+						float minT = 0;
+						float maxT = 0;
+						float meanT = 0;
+
             // Initialize the probe array to DS1820 objects
             int num_devices = 0;
             while(DS1820::unassignedProbe(DATA_PIN)) {
@@ -84,13 +88,21 @@ int main() {
 
                 while(1) {
                     convertTemperature(probe[0], 0);
+									  maxT = -100;
+									  minT = 100;
+									  meanT = 0;
                     float temp = 0;
                     for (int i = 0; i<num_devices; i++){
                         float t = probe[i]->temperature();
                         temp += t;
+											  if (t < minT)
+													  minT = t;
+											  if (t > maxT)
+													  maxT = t;
                         printTemperature(t, i+1);
                     }
-                    port.printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
+										meanT = temp/num_devices;
+                    port.printf("Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f\r", minT, meanT, maxT);
                     port.puts("\r\n");
 
                     if (newCommand){
