@@ -46,7 +46,7 @@ int main() {
     port.attach(&onSerialInput, Serial::RxIrq);
 
     port.puts("\r\n------------ Ready ----------------\r\n");
-      DS1820 *probe[MAX_PROBES];
+      DS1820 *probes[MAX_PROBES];
     int num_devices = 0;
 
     while(1){
@@ -79,7 +79,7 @@ int main() {
             while(DS1820::unassignedProbe(DATA_PIN)) {
                 num_devices++;
                 DS1820 *dev = makeDevice(DATA_PIN, num_devices);
-                probe[num_devices-1] = dev;
+                probes[num_devices-1] = dev;
                 if (num_devices == MAX_PROBES)
                     break;
             }
@@ -87,13 +87,13 @@ int main() {
                 port.printf("Found %d device(s)\r\n\n", num_devices);
 
                 while(1) {
-                    convertTemperature(probe[0], 0);
+                    convertTemperature(probes[0], 0);
 									  maxT = -100;
 									  minT = 100;
 									  meanT = 0;
                     float temp = 0;
                     for (int i = 0; i<num_devices; i++){
-                        float t = probe[i]->temperature();
+                        float t = probes[i]->temperature();
                         temp += t;
 											  if (t < minT)
 													  minT = t;
