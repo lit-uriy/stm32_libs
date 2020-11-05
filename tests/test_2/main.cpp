@@ -119,6 +119,8 @@ int main() {
             newCommand = false;
 
             DS1820 *dev = makeDevice(DATA_PIN, 1);
+            num_devices++;
+            probes[num_devices-1] = dev;
 
             port.printf("Found %d device(s)\r\n\n", 1);
 
