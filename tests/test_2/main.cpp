@@ -46,6 +46,8 @@ int main() {
     port.attach(&onSerialInput, Serial::RxIrq);
 
     port.puts("\r\n------------ Ready ----------------\r\n");
+      DS1820 *probe[MAX_PROBES];
+    int num_devices = 0;
 
     while(1){
         led = !led;
@@ -68,14 +70,12 @@ int main() {
         if (command == CommandTest1){
             port.puts("Command test1(): Finding multiple devices...\r\n");
             newCommand = false;
-            DS1820 *probe[MAX_PROBES];
 
 						float minT = 0;
 						float maxT = 0;
 						float meanT = 0;
 
             // Initialize the probe array to DS1820 objects
-            int num_devices = 0;
             while(DS1820::unassignedProbe(DATA_PIN)) {
                 num_devices++;
                 DS1820 *dev = makeDevice(DATA_PIN, num_devices);
@@ -118,14 +118,13 @@ int main() {
             port.puts("Command test2(): Finding single devices...\r\n");
             newCommand = false;
 
-            DS1820 *probe = makeDevice(DATA_PIN, 1);
-
+            DS1820 *dev = makeDevice(DATA_PIN, 1);
 
             port.printf("Found %d device(s)\r\n\n", 1);
 
             while(1) {
-                convertTemperature(probe, 1);
-                printTemperature(probe->temperature(), 1);
+                convertTemperature(dev, 1);
+                printTemperature(dev->temperature(), 1);
                 port.puts("\r\n");
 
                 if (newCommand)
@@ -135,6 +134,7 @@ int main() {
             int size = DS1820::getProbes().length();
             port.printf("Command reset(): deleting %d devices from list\r\n", size);
             DS1820::clearProbes();
+            num_devices = 0;
             size = DS1820::getProbes().length();
             port.printf("\t left %d devices in list\r\n", size);
             newCommand = false;
