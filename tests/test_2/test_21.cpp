@@ -5,6 +5,7 @@
 #include "ylist.h"
 #include "one_wire.h"
 #include "one_wire_device.h"
+#include "y_ds1820.h"
 
 
 #define DATA_PIN        A0
@@ -30,49 +31,46 @@ int main() {
 
     printf("\r\n----------------------------\r\n");
 
+    /*********************************************
+     *  Ищем все устройства которые откликнутся
+     */
     if (mybutton) {
         printf("Button is not pressed, Finding unknown devices...\r\n");
-        YList<DS1820*> termometrs;
+        YList<OneWireRomCode*> roms;
+        YList<Yds1820*> termometrs;
 
         DigitalInOut pin;
         OneWire wire(pin);
 
-
-
-        if (!OneWireDevice::findDevices()){
+        bool ok = wire.findDevices(&roms);
+        if (!ok){
             printf("Error ocured during the search; %s\r\n\n", wire.lastErrorText());
-        }
-
-        termometrs = wire.devices<DS1820*>();// А в проволоке создаются конкретные классы? А как она о всех классах знает?
-
-        // Initialize the probe array to DS1820 objects
-        int num_devices = 0;
-        while(DS1820::unassignedProbe(DATA_PIN)) {
-            num_devices++;
-            DS1820 *dev = makeDevice(DATA_PIN, num_devices);
-            probe[num_devices-1] = dev;
-            if (num_devices == MAX_PROBES)
-                break;
-        }
-        if (num_devices){
-            printf("Found %d device(s)\r\n\n", num_devices);
-
-            while(1) {
-                convertTemperature(probe[0], 0);
-                float temp = 0;
-                for (int i = 0; i<num_devices; i++){
-                    float t = probe[i]->temperature();
-                    temp += t;
-                    printTemperature(t, i+1);
-                }
-                printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
-                printf("\r\n");
-                wait(1);
+            if (roms.isEmpty()){
+                exit(1);
             }
-        }else{
-            error("No devices!\r\n");
+        }
 
-            while(1){wait(1);};
+        for(int i = 0; i < roms.size(); i++){
+            unsigned char familyCode = roms.at(i)->familyCode();
+            if ((familyCode == Yds1820::FamilyDs1820) || (familyCode == Yds1820::FamilyDs1822) || (familyCode == Yds1820::FamilyDs18B20)){
+                termometrs.append(new Yds1820(roms, wire));
+            }
+        }
+
+        printf("Found %d device(s)\n", roms.size());
+        printf("\t%d of them are DS1820\n", termometrs.size());
+
+        while(1) {
+            convertTemperature(probe[0], 0);
+            float temp = 0;
+            for (int i = 0; i<num_devices; i++){
+                float t = probe[i]->temperature();
+                temp += t;
+                printTemperature(t, i+1);
+            }
+            printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
+            printf("\r\n");
+            wait(1);
         }
 
     }else {// Button is pressed
