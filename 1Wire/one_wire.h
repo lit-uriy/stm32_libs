@@ -91,6 +91,10 @@ public:
         _romString[8*2] = 0x00;
         return _romString;
     }
+    unsigned char familyCode()
+    {
+        return bytes[0];
+    }
 
     bool bit(int bitIndex)
     {
