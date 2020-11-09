@@ -53,23 +53,27 @@ int main() {
         for(int i = 0; i < roms.size(); i++){
             unsigned char familyCode = roms.at(i)->familyCode();
             if ((familyCode == Yds1820::FamilyDs1820) || (familyCode == Yds1820::FamilyDs1822) || (familyCode == Yds1820::FamilyDs18B20)){
-                termometrs.append(new Yds1820(roms, wire));
+                termometrs.append(new Yds1820(roms.at(i), wire));
             }
         }
 
         printf("Found %d device(s)\n", roms.size());
         printf("\t%d of them are DS1820\n", termometrs.size());
 
-        while(1) {
-            convertTemperature(probe[0], 0);
-            float temp = 0;
-            for (int i = 0; i<num_devices; i++){
-                float t = probe[i]->temperature();
-                temp += t;
-                printTemperature(t, i+1);
+        while(1){
+            // вариант на ВСЕХ проволоках
+//            Yds1820::convertTemperature();
+
+            // вариант на КОНКРЕТНОЙ проволоке
+            Yds1820::convertTemperature(wire);
+
+            for (int i=0; i < count; i++) {
+                printTemperature(termometrs[i].temperature(), 1);
+                printf("\r\n");
             }
-            printf("Mean temperature: %3.1f %sC\r\n", temp/num_devices, (char*)(248));
-            printf("\r\n");
+
+            greenLed = ibutton.isPresent();
+
             wait(1);
         }
 
