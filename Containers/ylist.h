@@ -16,7 +16,7 @@ public:
     ~YList();
 
     YList(const YList<T> &other );
-    // WARNING: шаг резервирования места не копируется
+// WARNING: шаг резервирования места не копируется >> уже копируется!!!
     YList<T>& operator=(const YList<T> &other);
 
 
@@ -41,7 +41,7 @@ public:
 
     T& operator[] (int i);
     const T& operator[] (int i) const;
-//    const T& operator[] (int i) const; // TODO: Сделать функцию
+//    const T& operator[] (int i) const; // TODO: Сделать функцию >> уже сделана
     const T& at(int i) const;
 private:
     T *d;
@@ -62,7 +62,7 @@ YList<T>::YList(int areserve)
     ,actual(0)
     ,ReserveStep(areserve)
 {
-    d = new T[rezerve]; // сразу резервируем места под 100 элементов
+    d = new T[rezerve]; // сразу резервируем места под areserve элементов
 }
 
 
