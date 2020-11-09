@@ -89,17 +89,17 @@ int main() {
 
                 while(1) {
                     convertTemperature(probes.at(0), 0);
-									  maxT = -100;
-									  minT = 100;
-									  meanT = 0;
+                    maxT = -100;
+                    minT = 100;
+                    meanT = 0;
                     float temp = 0;
                     for (int i = 0; i < probes.size(); i++){
                         float t = probes[i]->temperature();
                         temp += t;
-											  if (t < minT)
-													  minT = t;
-											  if (t > maxT)
-													  maxT = t;
+                        if (t < minT)
+                              minT = t;
+                        if (t > maxT)
+                              maxT = t;
                         printTemperature(t, i+1);
                     }
                     meanT = temp/probes.size();
