@@ -1,4 +1,6 @@
 
+
+#include "ylist.h"
 #include "mbed.h"
 #include "DS1820.h"
 
@@ -46,7 +48,7 @@ int main() {
     port.attach(&onSerialInput, Serial::RxIrq);
 
     port.puts("\r\n------------ Ready ----------------\r\n");
-      DS1820 *probes[MAX_PROBES];
+    YList<DS1820*> probes;
     int num_devices = 0;
 
     while(1){
@@ -77,22 +79,21 @@ int main() {
 
             // Initialize the probe array to DS1820 objects
             while(DS1820::unassignedProbe(DATA_PIN)) {
-                num_devices++;
-                DS1820 *dev = makeDevice(DATA_PIN, num_devices);
-                probes[num_devices-1] = dev;
-                if (num_devices == MAX_PROBES)
+                DS1820 *dev = makeDevice(DATA_PIN, probes.size());
+                probes.append(dev);
+                if (probes.size() == MAX_PROBES)
                     break;
             }
-            if (num_devices){
-                port.printf("Found %d device(s)\r\n\n", num_devices);
+            if (probes.size()){
+                port.printf("Found %d device(s)\r\n\n", probes.size());
 
                 while(1) {
-                    convertTemperature(probes[0], 0);
+                    convertTemperature(probes.at(0), 0);
 									  maxT = -100;
 									  minT = 100;
 									  meanT = 0;
                     float temp = 0;
-                    for (int i = 0; i<num_devices; i++){
+                    for (int i = 0; i < probes.size(); i++){
                         float t = probes[i]->temperature();
                         temp += t;
 											  if (t < minT)
@@ -101,7 +102,7 @@ int main() {
 													  maxT = t;
                         printTemperature(t, i+1);
                     }
-										meanT = temp/num_devices;
+                    meanT = temp/probes.size();
                     port.printf("Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f\r", minT, meanT, maxT);
                     port.puts("\r\n");
 
@@ -119,8 +120,7 @@ int main() {
             newCommand = false;
 
             DS1820 *dev = makeDevice(DATA_PIN, 1);
-            num_devices++;
-            probes[num_devices-1] = dev;
+            probes.append(dev);
 
             port.printf("Found %d device(s)\r\n\n", 1);
 
@@ -135,8 +135,11 @@ int main() {
         }else if (command == CommandReset){
             int size = DS1820::getProbes().length();
             port.printf("Command reset(): deleting %d devices from list\r\n", size);
-            DS1820::clearProbes();
-            num_devices = 0;
+            for (int i = 0; i < probes.size(); ++i) {
+                DS1820 *dev = probes.at(i);
+                delete dev;
+            }
+            probes.clear();
             size = DS1820::getProbes().length();
             port.printf("\t left %d devices in list\r\n", size);
             newCommand = false;
