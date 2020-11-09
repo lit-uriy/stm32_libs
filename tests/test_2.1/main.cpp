@@ -49,7 +49,6 @@ int main() {
 
     port.puts("\r\n------------ Ready ----------------\r\n");
     YList<DS1820*> probes;
-    int num_devices = 0;
 
     while(1){
         led = !led;
@@ -94,7 +93,7 @@ int main() {
                     meanT = 0;
                     float temp = 0;
                     for (int i = 0; i < probes.size(); i++){
-                        float t = probes[i]->temperature();
+                        float t = probes.at(i)->temperature();
                         temp += t;
                         if (t < minT)
                               minT = t;
