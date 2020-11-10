@@ -194,7 +194,8 @@ void convertTemperature(DS1820 *dev, int num_device)
 
 void printTemperature(float temp, int num_devices)
 {
-    port.printf("Device %d returns %3.1f %sC\r\n", num_devices, temp, (char*)(248));
+    char celsius = (char)(7); // 176
+    port.printf("Device %d returns %3.1f %cC\r\n", num_devices, temp, celsius);
 }
 
 
