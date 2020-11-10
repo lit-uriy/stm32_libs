@@ -39,7 +39,7 @@ int main() {
         YList<OneWireRomCode*> roms;
         YList<Yds1820*> termometrs;
 
-        DigitalInOut pin;
+        DigitalInOut pin(DATA_PIN);
         OneWire wire(pin);
 
         bool ok = wire.findDevices(&roms);
@@ -80,13 +80,13 @@ int main() {
     }else {// Button is pressed
         printf("Button is pressed, Working with predefined devices...\r\n");
 
-        YList<DS1820*> termometrs;
+        YList<Yds1820*> termometrs;
         DigitalInOut pin;
         OneWire wire(pin);
 
-        DS1820 *t1 = &DS1820("28FF0A1C661803D3", wire);
+        Yds1820 *t1 = &Yds1820("28FF0A1C661803D3", wire);
         termometrs << t1;
-        DS1820 *t2 = &DS1820("28FFAEB36B180160");
+        Yds1820 *t2 = &Yds1820("28FFAEB36B180160");
         t2.setWire(wire);
         termometrs << t2;
 
@@ -96,10 +96,10 @@ int main() {
 
         while(1){
             // вариант на ВСЕХ проволоках
-            DS1820::convertTemperature();
+            Yds1820::convertTemperature();
 
             // вариант на КОНКРЕТНОЙ проволоке
-            DS1820::convertTemperature(wire);
+            Yds1820::convertTemperature(wire);
 
             for (int i=0; i < count; i++) {
                 printTemperature(termometrs[i].temperature(), 1);
