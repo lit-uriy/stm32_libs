@@ -1,6 +1,9 @@
 
 
 #include "ylist.h"
+#include "one_wire.h"
+#include "one_wire_device.h"
+#include "y_ds1820.h"
 #include "mbed.h"
 #include "DS1820.h"
 
@@ -11,6 +14,9 @@
 
 
 
+DigitalInOut pin(DATA_PIN);
+OneWire wire(pin);
+
 DigitalIn mybutton(USER_BUTTON);
 //bool mybutton = true;
 
@@ -19,8 +25,14 @@ DigitalOut led(LED2);
 //bool test = false;
 
 DS1820* makeDevice(PinName name, int num_devices);
+Yds1820* makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices);
+
+
+
+OneWireRomCode stringToRomCode(const char *string);
 
 void convertTemperature(DS1820 *dev, int num_device);
+void convertTemperature2();
 
 void printTemperature(float temp, int num_devices);
 void printRam(DS1820 *dev, int num_devices);
@@ -49,6 +61,7 @@ int main() {
 
     port.puts("\r\n------------ Ready ----------------\r\n");
     YList<DS1820*> probes;
+    YList<Yds1820*> probes2;
 
     while(1){
         led = !led;
@@ -118,13 +131,13 @@ int main() {
             port.puts("Command test2(): Finding single devices...\r\n");
             newCommand = false;
 
-            DS1820 *dev = makeDevice(DATA_PIN, 1);
-            probes.append(dev);
+            Yds1820 *dev = makeDevice2(stringToRomCode("28FFF5EC6718017C"), &wire, 1);
+            probes2.append(dev);
 
             port.printf("Found %d device(s)\r\n\n", 1);
 
             while(1) {
-                convertTemperature(dev, 1);
+                convertTemperature2();
                 printTemperature(dev->temperature(), 1);
                 port.puts("\r\n");
 
@@ -187,9 +200,42 @@ DS1820* makeDevice(PinName name, int num_devices)
     return dev;
 }
 
+OneWireRomCode stringToRomCode(const char *string)
+{
+    OneWireRomCode out;
+    int i = 0;
+    char c;
+    do {
+        c = string[i];
+        out.bytes[i] = c;
+        i++;
+    } while(c != 0);
+
+    return out;
+}
+
+Yds1820 *makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices)
+{
+    Yds1820 *dev = new Yds1820(romCode, awire);
+    port.printf("Found %d device, ROM=%s\r\n", num_devices, romCode.romString());
+//    port.printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
+//    char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
+//    dev->ramToHex(ramString);
+//    port.printf("\tRAM: %s\r\n", ramString);
+//    port.printf("\tresolution: %d bits\r\n", dev->resolution());
+    port.printf("\r\n");
+
+    return dev;
+}
+
 void convertTemperature(DS1820 *dev, int num_device)
 {
     dev->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+}
+
+void convertTemperature2()
+{
+    Yds1820::convertTemperature(&wire);         //Start temperature conversion, wait until ready
 }
 
 void printTemperature(float temp, int num_devices)
