@@ -20,10 +20,10 @@ public:
 
 
 public:
-    OneWire::LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
-    bool matchROM(const OneWireRomCode romCode);
-    bool skipROM();
-    bool readROM(OneWireRomCode *romCode);
+//    OneWire::LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
+//    bool matchROM(const OneWireRomCode romCode);
+//    bool skipROM();
+//    bool readROM(OneWireRomCode *romCode);
 
     void appliedCommand(unsigned char command, OneWireRomCode *romCode = 0);
 

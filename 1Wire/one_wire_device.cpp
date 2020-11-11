@@ -22,9 +22,9 @@ void OneWireDevice::appliedCommand(unsigned char command, OneWireRomCode *romCod
     unsigned char i;
 
     if (romCode) {
-        matchROM(*romCode);  // to a single device
+        _wire->matchROM(*romCode);  // to a single device
     } else {
-        skipROM();          // to all devices
+        _wire->skipROM();          // to all devices
     }
 
     _wire->readWriteByte(&command);
