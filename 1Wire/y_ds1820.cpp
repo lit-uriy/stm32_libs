@@ -73,7 +73,7 @@ bool Yds1820::readPowerSupply(OneWire *awire)
     return !flag;
 }
 
-bool Yds1820::isParasiticPower()
+bool Yds1820::isParasitePowered()
 {
     return _parasitePower;
 }

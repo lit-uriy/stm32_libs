@@ -40,7 +40,7 @@ public:
 
     bool readPowerSupply();
     static bool readPowerSupply(OneWire *awire);
-    bool isParasiticPower();
+    bool isParasitePowered();
 
     bool readRam();
 
