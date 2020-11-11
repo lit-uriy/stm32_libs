@@ -25,7 +25,7 @@ public:
 //    bool skipROM();
 //    bool readROM(OneWireRomCode *romCode);
 
-    void appliedCommand(unsigned char command, OneWireRomCode *romCode = 0);
+    bool appliedCommand(unsigned char command, OneWireRomCode *romCode = 0);
 
 protected:
 

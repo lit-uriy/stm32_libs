@@ -18,7 +18,10 @@ unsigned char OneWireDevice::familyCode()
     return _romCode.bytes[0];
 }
 
-void OneWireDevice::appliedCommand(unsigned char command, OneWireRomCode *romCode){
+bool OneWireDevice::appliedCommand(unsigned char command, OneWireRomCode *romCode)
+{
+    if (!_wire)
+        return false;
     unsigned char i;
 
     if (romCode) {
@@ -28,6 +31,7 @@ void OneWireDevice::appliedCommand(unsigned char command, OneWireRomCode *romCod
     }
 
     _wire->readWriteByte(&command);
+    return true;
 }
 
 
