@@ -203,13 +203,48 @@ DS1820* makeDevice(PinName name, int num_devices)
 OneWireRomCode stringToRomCode(const char *string)
 {
     OneWireRomCode out;
+    const int goodSize = (8*2);
     int i = 0;
     char c;
+    // сначала проверим кол-во символов во входной строке
     do {
         c = string[i];
-        out.bytes[i] = c;
+        if (c == 0){ // Меньше чем надо
+            printf("stringToRomCode(); Less (%d) chars then required (%d)\n", i, goodSize);
+            return out;
+        }
+        ++i;
+    } while (i < goodSize);
+
+    // здесь i = goodSize
+    c = string[i];
+    if (c != 0){ // Больше чем надо
+        printf("stringToRomCode(); More (%d) chars then required (%d)\n", i, goodSize);
+        return out;
+    }
+
+    // хорошая длина
+    i = 0;
+    char cm, cl;
+    char resm, resl;
+
+    do {
+        cm = string[2*i];
+        cl = string[2*i+1];
+
+        if (cm <= '9')
+            resm = cm - 0x30;
+        else
+            resm = cm - 0x37;
+
+        if (cl <= '9')
+            resl = cl - 0x30;
+        else
+            resl = cl - 0x37;
+
+        out.bytes[i] = ((unsigned char)resm << 4) | (unsigned char)resl;
         i++;
-    } while(c != 0);
+    } while(i < goodSize);
 
     return out;
 }
