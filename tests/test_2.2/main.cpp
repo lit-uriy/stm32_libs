@@ -131,7 +131,10 @@ int main() {
             port.puts("Command test2(): Finding single devices...\r\n");
             newCommand = false;
 
-            Yds1820 *dev = makeDevice2(stringToRomCode("28FFF5EC6718017C"), &wire, 1);
+            // 28FF2BA36B180141
+            // 28FF0A1C661803D3
+            // 28FFF5EC6718017C
+            Yds1820 *dev = makeDevice2(stringToRomCode("28FF2BA36B180141"), &wire, 1);
             probes2.append(dev);
 
             port.printf("Found %d device(s)\r\n\n", 1);
