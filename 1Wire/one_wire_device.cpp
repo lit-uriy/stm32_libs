@@ -22,7 +22,6 @@ bool OneWireDevice::appliedCommand(unsigned char command, OneWireRomCode *romCod
 {
     if (!_wire)
         return false;
-    unsigned char i;
 
     if (romCode) {
         _wire->matchROM(*romCode);  // to a single device
