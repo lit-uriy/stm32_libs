@@ -256,7 +256,7 @@ Yds1820 *makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices)
 {
     Yds1820 *dev = new Yds1820(romCode, awire);
     port.printf("Found %d device, ROM=%s\r\n", num_devices, romCode.romString());
-//    port.printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
+    port.printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
 //    char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
 //    dev->ramToHex(ramString);
 //    port.printf("\tRAM: %s\r\n", ramString);
