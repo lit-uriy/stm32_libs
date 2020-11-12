@@ -224,7 +224,15 @@ float Yds1820::temperature(char scale)
 
 unsigned int Yds1820::resolution()
 {
-    return (_ram.config & 0x60) >> 5;
+    char r = _ram.config & 0x60 >> 5;
+
+    switch (r) {
+    case 0: return 9;
+    case 1: return 10;
+    case 2: return 11;
+    case 3: return 12;
+    default: return 0;
+    }
 }
 
 bool Yds1820::setResolution(unsigned int res)
