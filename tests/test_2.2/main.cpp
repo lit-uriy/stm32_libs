@@ -260,7 +260,7 @@ Yds1820 *makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices)
 //    char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
 //    dev->ramToHex(ramString);
 //    port.printf("\tRAM: %s\r\n", ramString);
-//    port.printf("\tresolution: %d bits\r\n", dev->resolution());
+    port.printf("\tresolution: %d bits\r\n", dev->resolution());
     port.printf("\r\n");
 
     return dev;
