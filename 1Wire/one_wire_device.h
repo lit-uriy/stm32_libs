@@ -25,7 +25,11 @@ public:
 //    bool skipROM();
 //    bool readROM(OneWireRomCode *romCode);
 
-    bool appliedCommand(unsigned char command, OneWireRomCode *romCode = 0);
+    // Прикладная команда этому устройству
+    bool appliedCommand(unsigned char command);
+
+    // Прикладная команда всем устройствам на проволоке
+    static bool appliedCommand(unsigned char command, OneWire *awire);
 
 protected:
 
