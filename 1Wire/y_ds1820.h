@@ -28,10 +28,8 @@ public:
      */
     // на ЭТОМ термометре
     int convertTemperature();
-    // на всех термометрах,
-    // если проволока указана, то в пределах проволоки,
-    // а если не указана, то на всех проволоках, на которых есть термометры этого класса
-    static int convertTemperature(OneWire *awire = 0);
+    // на всех термометрах
+    static int convertTemperature(OneWire *awire);
 
     float temperature(char scale='c');
 
