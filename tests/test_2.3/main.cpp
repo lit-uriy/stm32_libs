@@ -5,7 +5,6 @@
 #include "one_wire_device.h"
 #include "y_ds1820.h"
 #include "mbed.h"
-#include "DS1820.h"
 
 
 
@@ -60,7 +59,6 @@ int main() {
     port.attach(&onSerialInput, Serial::RxIrq);
 
     port.puts("\r\n------------ Ready ----------------\r\n");
-    YList<DS1820*> probes;
     YList<Yds1820*> probes2;
 
     while(1){
