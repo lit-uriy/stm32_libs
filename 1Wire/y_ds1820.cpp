@@ -114,7 +114,7 @@ int Yds1820::convertTemperature(OneWire *awire)
 {
     // Convert temperature into scratchpad RAM for all devices at once
     int delay_time = 750; // Default delay time
-
+#if (0)
     awire->skipROM();
     if (awire->status() != OneWire::StatusPresence)
         return -1;
@@ -124,7 +124,10 @@ int Yds1820::convertTemperature(OneWire *awire)
         printf("Error ocured on write comand \"Convert T\", status: %d\r\n", awire->status());
         return -2; // что-то пошло не так, например, устройство отключили
     }
-
+#else
+    unsigned char temp = CommandConvertT;
+    OneWireDevice::appliedCommand(temp, awire);// TODO: нужна проверка удачности
+#endif
     // считаем что все устройства с паразитным питанием
     // и им нужна жёсткая подтяжка к питанию, на время преобразования
     awire->setStrongPullup(true);// TODO: это не должно быть функцией проволоки
@@ -169,8 +172,7 @@ int Yds1820::convertTemperature()
     }
 #else
     unsigned char temp = CommandConvertT;
-    appliedCommand(temp);
-    // нужна проверка удачности
+    appliedCommand(temp);// TODO: нужна проверка удачности
 #endif
 
 //    delay_time = 750;
