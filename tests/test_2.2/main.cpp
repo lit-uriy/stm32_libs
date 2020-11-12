@@ -32,7 +32,7 @@ Yds1820* makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices);
 OneWireRomCode stringToRomCode(const char *string);
 
 void convertTemperature(DS1820 *dev, int num_device);
-void convertTemperature2();
+void convertTemperature2(Yds1820 *dev);
 
 void printTemperature(float temp, int num_devices);
 void printRam(DS1820 *dev, int num_devices);
@@ -140,7 +140,7 @@ int main() {
             port.printf("Found %d device(s)\r\n\n", 1);
 
             while(1) {
-                convertTemperature2();
+                convertTemperature2(dev);
                 printTemperature(dev->temperature(), 1);
                 port.puts("\r\n");
 
@@ -271,9 +271,13 @@ void convertTemperature(DS1820 *dev, int num_device)
     dev->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
 }
 
-void convertTemperature2()
+void convertTemperature2(Yds1820 *dev)
 {
+#if (0)
     Yds1820::convertTemperature(&wire);         //Start temperature conversion, wait until ready
+#else
+    dev->convertTemperature(&wire);         //Start temperature conversion, wait until ready
+#endif
 }
 
 void printTemperature(float temp, int num_devices)
