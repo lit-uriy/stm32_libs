@@ -43,14 +43,22 @@ OneWireRomCode OneWire::findSingleDevice()
     return OneWireRomCode(); // вернём пустышку
 }
 
+bool OneWire::findDevices(YList<OneWireRomCode*> *romList)
+{
+    bool ok = true;
+    OneWire::LineStatus status = findMultipleDevices(romList);
+    ok = status != StatusError;
 
-OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode> *romCodes)
+    return ok;
+}
+
+OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCodes)
 {
     int devCount = 0;
     while (1) {
-        OneWireRomCode romCode;
+        OneWireRomCode *romCode = new OneWireRomCode;
         bool next = bool(devCount);
-        LineStatus status = searchROM(&romCode, next);
+        LineStatus status = searchROM(romCode, next);
 
         if (status != _status){
             printf("searchROM status=%d, _status=%d\r\n",

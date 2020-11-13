@@ -181,7 +181,10 @@ public:
 
     // собирает информацию об устройствах
     OneWireRomCode findSingleDevice(); // по сути Read Rom
-    LineStatus findMultipleDevices(YList<OneWireRomCode> *romCodes); // по сути Search Rom
+    LineStatus findMultipleDevices(YList<OneWireRomCode*> *romCodes); // по сути Search Rom
+
+    bool findDevices(YList<OneWireRomCode*> *romList);
+
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
     YList<OneWireDevice *> devices();
