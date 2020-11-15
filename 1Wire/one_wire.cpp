@@ -58,6 +58,9 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
     while (1) {
         OneWireRomCode *romCode = new OneWireRomCode;
         bool next = bool(devCount);
+
+        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
+
         LineStatus status = searchROM(romCode, next);
 
         if (status != _status){
@@ -295,7 +298,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     lastConflictPos = conflictPos;
     if (!lastConflictPos){
         done = true;
-        printf("searchROM NOT lastConflictPos\r\n");
+        printf("searchROM Done\r\n");
         return StatusPresence; // больше нет устройств - надо начинать сначала
     }
 
