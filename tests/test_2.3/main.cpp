@@ -91,7 +91,7 @@ int main() {
 
             bool ok = wire.findDevices(&roms);
             if (!ok){
-                printf("Error ocured during the search; %d\r\n\n", wire.errorCode());
+                printf("Error ocured during the search; ErrorCode: %d\r\n\n", wire.errorCode());
             }
 
             if (!roms.isEmpty()){
