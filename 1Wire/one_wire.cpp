@@ -222,18 +222,21 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     }
 
     int conflictPos = 0;
+    bool present = false;
 
 
     // Ret = 0
     if (done){
         done = false;
         printf("searchROM done\r\n");
+//        return present;
         return StatusAbsent; // больше нет устройств
     }
 
     // 1 - The master begins the initialization sequence
     if (reset() != OneWire::StatusPresence){
         _errorCode = ErrorResetSearchRom | _errorCode;
+//        return present;
         return _status; // возможно на линии ни кого нет - надо начинать сначала
     }
 
@@ -266,6 +269,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
         if (absent){
             _status = StatusAbsent;
+//        return present;
             return StatusAbsent;
         }
         if (conflict){
@@ -299,9 +303,12 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     if (!lastConflictPos){
         done = true;
         printf("searchROM Done\r\n");
+        present = true;
+//        return present;
         return StatusPresence; // больше нет устройств - надо начинать сначала
     }
 
+//        return present;
     return StatusPresenceMulty; // ещё есть устройства - можно продолжать
 }
 
