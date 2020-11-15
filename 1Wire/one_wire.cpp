@@ -236,6 +236,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     // 1 - The master begins the initialization sequence
     if (reset() != OneWire::StatusPresence){
         _errorCode = ErrorResetSearchRom | _errorCode;
+        lastConflictPos = 0;
 //        return present;
         return _status; // возможно на линии ни кого нет - надо начинать сначала
     }
@@ -269,6 +270,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
         if (absent){
             _status = StatusAbsent;
+            lastConflictPos = 0;
 //        return present;
             return StatusAbsent;
         }
