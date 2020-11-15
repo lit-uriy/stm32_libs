@@ -66,6 +66,17 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
                     _status);
         }
 
+        // считаем CRC
+        unsigned char crc = 0;
+        for (int i = 0; i < 8; ++i) {
+            crc = crc8(crc, romCode->bytes[i]);
+            if (crc){
+                printf("findMultipleDevices(); CRC ERROR: ROM=%s\r\n", romCode->romString());
+                _errorCode = ErrorCRCSearchRom | _errorCode;
+                return StatusError; // какая-то проблема на линии - надо начинать сначала
+            }
+        }
+
         if (status == StatusPresence) {
             romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
             devCount++;
@@ -208,7 +219,6 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     }
 
     int conflictPos = 0;
-    unsigned char crc = 0;
 
 
     // Ret = 0
@@ -280,15 +290,6 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     // 9 - Все биты ROM-кода известны и
     //     устройство готово для приёма команд транспортного уровня
 
-    // считаем CRC
-    for (int i = 0; i < 8; ++i) {
-        crc = crc8(crc, romCode->bytes[i]);
-        if (crc){
-            printf("searchROM CRC ERROR\r\n");
-            _errorCode = ErrorCRCSearchRom | _errorCode;
-            return StatusError; // какая-то проблема на линии - надо начинать сначала
-        }
-    }
 
 
     lastConflictPos = conflictPos;
