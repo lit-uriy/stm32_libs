@@ -97,6 +97,8 @@ int main() {
                     break;
             }
             if (probes.size()){
+                port.printf("\n");
+                port.printf("----------------------------------------\n");
                 port.printf("Found %d device(s)\r\n\n", probes.size());
 
                 while(1) {
