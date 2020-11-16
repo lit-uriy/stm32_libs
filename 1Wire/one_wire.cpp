@@ -7,6 +7,8 @@ extern DigitalOut syncroPin;
 
 extern bool test;
 
+static int returnCounter = 0;
+
 OneWire::OneWire(DigitalInOut apin)
     : _pin(apin)
     , _status(StatusUnknown)
@@ -56,12 +58,15 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
 {
     int devCount = 0;
     while (1) {
+        returnCounter = 0;
         OneWireRomCode *romCode = new OneWireRomCode;
         bool next = bool(devCount);
 
         printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
 
         LineStatus status = searchROM(romCode, next);
+
+        printf("findMultipleDevices(); after searchROM, returnCounter=%d\r\n", returnCounter);
 
         if (status != _status){
             printf("searchROM status=%d, _status=%d\r\n",
@@ -213,12 +218,17 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
     _errorCode = ErrorNon;
 
+    OneWireRomCode testRom;
+
+    int testCounter = 0;
+
     static int lastConflictPos = 0;
     static bool done = false;
 
     if (!next){
         lastConflictPos = 0;
         done = false;
+        returnCounter = 1;
     }
 
     int conflictPos = 0;
@@ -230,6 +240,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         done = false;
         printf("searchROM done\r\n");
 //        return present;
+        returnCounter = 2;
         return StatusAbsent; // больше нет устройств
     }
 
@@ -238,6 +249,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         _errorCode = ErrorResetSearchRom | _errorCode;
         lastConflictPos = 0;
 //        return present;
+        returnCounter = 3;
         return _status; // возможно на линии ни кого нет - надо начинать сначала
     }
 
@@ -246,6 +258,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 
     if (readWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQuerySearchRom | _errorCode;
+        returnCounter = 4;
         return _status; // что-то пошло не так, например, устройство отключили - надо начинать сначала
     }
 
@@ -255,15 +268,20 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         bool b = true; // ~bit[i]
         bool c = true; // результирующий бит
         conflictPos = 0;
+        testCounter = 0;
 
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
+            returnCounter = 5;
             return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
         if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
+            returnCounter = 6;
             return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
+
+        testRom.setBit(number-1, a);
 
         bool absent = a & b;
         bool conflict = !a & !b;
@@ -272,16 +290,22 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
             _status = StatusAbsent;
             lastConflictPos = 0;
 //        return present;
+            returnCounter = 7;
             return StatusAbsent;
         }
+
         if (conflict){
+            testCounter = 1;
             if (number == lastConflictPos){ // Добрались до предыдущего конфликта
                 c = 1;
             }else if (number > lastConflictPos){ // ушли дальше предыдущего конфликта
                 c = 0;
                 conflictPos = number;
-            }else if (!(c = romCode->bit(number-1))){ // НЕ добрались до предыдущего конфликта
-                conflictPos = number;
+            }else {
+                c = romCode->bit(number-1);
+                if (!c){ // НЕ добрались до предыдущего конфликта
+                    conflictPos = number;
+                }
             }
         }else{
             c = a;
@@ -291,26 +315,30 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         romCode->setBit(number-1, c);
         if (readWriteBit(&c) != StatusPresence){
             _errorCode = ErrorAnswerSearchRom | _errorCode;
+            returnCounter = 8;
             return _status; // какая-то проблема на линии - надо начинать сначала
         }
+        printf("testCounter: %d\n", testCounter);
 
     } // for (number: 1 - 64)
 
     // 9 - Все биты ROM-кода известны и
     //     устройство готово для приёма команд транспортного уровня
 
-
+    printf("Test ROM: %s\n", testRom.romString());
 
     lastConflictPos = conflictPos;
     if (!lastConflictPos){
         done = true;
         printf("searchROM Done\r\n");
         present = true;
+        returnCounter = 9;
 //        return present;
         return StatusPresence; // больше нет устройств - надо начинать сначала
     }
 
 //        return present;
+    returnCounter = 10;
     return StatusPresenceMulty; // ещё есть устройства - можно продолжать
 }
 

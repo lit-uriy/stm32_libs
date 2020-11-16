@@ -1,4 +1,5 @@
 #include "DS1820.h"
+#include "one_wire.h"
 
 #ifdef TARGET_STM
 //STM targets use opendrain mode since their switching between input and output is slow
@@ -255,6 +256,8 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
     int descrepancy_marker, ROM_bit_index;
     bool return_value, Bit_A, Bit_B;
     char byte_counter, bit_mask;
+
+    OneWireRomCode testRom;
  
     return_value=false;
     while (!DS1820_done_flag) {
@@ -293,8 +296,14 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                                 searchedROM[byte_counter] = searchedROM[byte_counter] & ~bit_mask; // Set ROM bit to zero
                                 descrepancy_marker = ROM_bit_index;
                             } else {
-                                if (( searchedROM[byte_counter] & bit_mask) == 0x00 )
+                                bool t = ( searchedROM[byte_counter] & bit_mask);
+
+                                if (t == false){
+                                    testRom.bytes[byte_counter] &= ~bit_mask;
                                     descrepancy_marker = ROM_bit_index;
+                                }else {
+                                    testRom.bytes[byte_counter] |= bit_mask;
+                                }
                             }
                         }
                     }
@@ -308,6 +317,9 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                     }
                 }
             }
+
+            printf("Test ROM: %s\n", testRom.romString());
+
             DS1820_last_descrepancy = descrepancy_marker;
             if (ROM_bit_index != 0xFF) {
                 int i = 1;
