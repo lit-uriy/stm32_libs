@@ -4,6 +4,7 @@
 #include "one_wire.h"
 #include "one_wire_device.h"
 #include "y_ds1820.h"
+#include "DS1820.h"
 #include "mbed.h"
 
 
@@ -23,14 +24,15 @@ DigitalOut syncroPin(NC);
 DigitalOut led(LED2);
 //bool test = false;
 
-
+DS1820* makeDevice(PinName name, int num_devices);
 Yds1820* makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices);
 
 
 
 OneWireRomCode stringToRomCode(const char *string);
 
-void convertTemperature(OneWire *awire);
+void convertTemperature(DS1820 *dev, int num_device);
+void convertTemperature1(OneWire *awire);
 void convertTemperature2(Yds1820 *dev);
 
 void printTemperature(float temp, int num_devices);
@@ -47,6 +49,7 @@ char commandBuffer[Size];
 enum Command {
     CommandTest1 = 0,
     CommandTest2,
+    CommandTest3,
     CommandReset,
     CommandUnknown = 0xFF
 };
@@ -59,6 +62,7 @@ int main() {
     port.attach(&onSerialInput, Serial::RxIrq);
 
     port.puts("\r\n------------ Ready ----------------\r\n");
+    YList<DS1820*> probes;
     YList<Yds1820*> probes2;
 
     while(1){
@@ -73,6 +77,8 @@ int main() {
             command = CommandTest1;
         }else if (strncmp(commandBuffer , "test2()", sizeof("test2()")) == 0){
             command = CommandTest2;
+        }else if (strncmp(commandBuffer , "test3()", sizeof("test3()")) == 0){
+            command = CommandTest3;
         }else if (strncmp(commandBuffer , "reset()", sizeof("reset()")) == 0){
             command = CommandReset;
         }else{
@@ -80,7 +86,7 @@ int main() {
         }
 
         if (command == CommandTest1){
-            port.puts("Command test1(): Finding multiple devices...\r\n");
+            port.puts("Command test1(): Finding multiple Yds1820 devices...\r\n");
             newCommand = false;
 
             float minT = 0;
@@ -108,7 +114,7 @@ int main() {
                 port.printf("Found %d device(s)\r\n\n", probes2.size());
 
                 while(1) {
-                    convertTemperature(&wire);
+                    convertTemperature1(&wire);
                     maxT = -100;
                     minT = 100;
                     meanT = 0;
@@ -136,7 +142,7 @@ int main() {
             }
 
         }else if (command == CommandTest2){
-            port.puts("Command test2(): Finding single devices...\r\n");
+            port.puts("Command test2(): Finding single Yds1820 devices...\r\n");
             newCommand = false;
 
             // 28FF2BA36B180141
@@ -158,6 +164,53 @@ int main() {
 
                 if (newCommand)
                     break;
+            }
+        }else if (command == CommandTest3){
+            port.puts("Command test3(): Finding multiple DS1820 devices...\r\n");
+            newCommand = false;
+
+                        float minT = 0;
+                        float maxT = 0;
+                        float meanT = 0;
+
+            // Initialize the probe array to DS1820 objects
+            while(DS1820::unassignedProbe(DATA_PIN)) {
+                DS1820 *dev = makeDevice(DATA_PIN, probes.size());
+                probes.append(dev);
+                if (probes.size() == MAX_PROBES)
+                    break;
+            }
+            if (probes.size()){
+                port.printf("\n");
+                port.printf("----------------------------------------\n");
+                port.printf("Found %d device(s)\r\n\n", probes.size());
+
+                while(1) {
+                    convertTemperature(probes.at(0), 0);
+                    maxT = -100;
+                    minT = 100;
+                    meanT = 0;
+                    float temp = 0;
+                    for (int i = 0; i < probes.size(); i++){
+                        float t = probes.at(i)->temperature();
+                        temp += t;
+                        if (t < minT)
+                              minT = t;
+                        if (t > maxT)
+                              maxT = t;
+                        printTemperature(t, i+1);
+                    }
+                    meanT = temp/probes.size();
+                    port.printf("Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f\r", minT, meanT, maxT);
+                    port.puts("\r\n");
+
+                    if (newCommand){
+                        break;
+                    }
+                }
+            }else{
+//                error("No devices!\r\n");
+                port.printf("No devices!\r\n");
             }
         }else if (command == CommandReset){
             port.printf("Command reset(): deleting %d devices from list\r\n", probes2.size());
@@ -246,6 +299,24 @@ OneWireRomCode stringToRomCode(const char *string)
     return out;
 }
 
+
+DS1820* makeDevice(PinName name, int num_devices)
+{
+    char romString[2*8+1]; // в два раза больше символов + замыкающий нуль
+
+    DS1820 *dev = new DS1820(name);
+    dev->romCode(romString);
+    port.printf("Found %d device, ROM=%s\r\n", num_devices, romString);
+    port.printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
+    char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
+    dev->ramToHex(ramString);
+    port.printf("\tRAM: %s\r\n", ramString);
+    port.printf("\tresolution: %d bits\r\n", dev->resolution());
+    port.printf("\r\n");
+
+    return dev;
+}
+
 Yds1820 *makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices)
 {
     Yds1820 *dev = new Yds1820(romCode, awire);
@@ -260,7 +331,14 @@ Yds1820 *makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices)
     return dev;
 }
 
-void convertTemperature(OneWire *awire)
+
+void convertTemperature(DS1820 *dev, int num_device)
+{
+    dev->convertTemperature(true, DS1820::all_devices);         //Start temperature conversion, wait until ready
+}
+
+
+void convertTemperature1(OneWire *awire)
 {
     Yds1820::convertTemperature(awire);         //Start temperature conversion, wait until ready
 }
