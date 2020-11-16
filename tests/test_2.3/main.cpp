@@ -142,6 +142,10 @@ int main() {
             // 28FF2BA36B180141
             // 28FF0A1C661803D3
             // 28FFF5EC6718017C
+            // - на работе
+            // 28FFE88E601802E3
+            // 28FFF5EC6718017C
+            // 28FF63C16B180101
             Yds1820 *dev = makeDevice2(stringToRomCode("28FF2BA36B180141"), &wire, 1);
             probes2.append(dev);
 
