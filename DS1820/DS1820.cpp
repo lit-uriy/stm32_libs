@@ -275,7 +275,6 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
             return false;
         } else {
             ROM_bit_index=1;
-            testCounter = 1;
             descrepancy_marker=0;
             char command_shift = command;
             for (int n=0; n<8; n++) {           // Search ROM command or Search Alarm command
@@ -285,12 +284,9 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
             byte_counter = 0;
             bit_mask = 0x01;
             while (ROM_bit_index<=64) {
+                testCounter = 0;
                 Bit_A = onewire_bit_in(pin);
                 Bit_B = onewire_bit_in(pin);
-
-                if (testCounter != ROM_bit_index){
-                    printf("ROM_bit_index = %d, testCounter = %d\n", ROM_bit_index, testCounter);
-                }
 
                 romA.setBit(ROM_bit_index-1, Bit_A);
                 romB.setBit(ROM_bit_index-1, Bit_B);
@@ -317,13 +313,12 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                                 descrepancy_marker = ROM_bit_index;
                             } else {
                                 bool t = ( searchedROM[byte_counter] & bit_mask);
-//                                romD.setBit(ROM_bit_index-1, t);
-
+                                romD.setBit(ROM_bit_index-1, t);
                                 if (t == false){
-                                    romD.bytes[byte_counter] &= ~bit_mask;
+
                                     descrepancy_marker = ROM_bit_index;
                                 }else {
-                                    romD.bytes[byte_counter] |= bit_mask;
+
                                 }
                             }
                         }
@@ -341,9 +336,7 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                     }
                 }
 //                printf("testCounter: %d\n", testCounter);
-                testCounter++;
-            } // END while (ROM_bit_index<=64)
-
+            }
 
             printf("Test ROM A: %s, conflictPos = %d, lastConflictPos = %d\n", romA.romString(), descrepancy_marker, DS1820_last_descrepancy);
             printf("Test ROM B: %s\n", romB.romString());
