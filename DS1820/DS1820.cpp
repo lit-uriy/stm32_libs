@@ -39,8 +39,7 @@ void init_soft_delay( void ) {
 LinkedList<node> DS1820::probes;
 
 extern DigitalOut syncroPin;
-
-static int fCount = 0;
+ 
  
 DS1820::DS1820 (PinName data_pin, PinName power_pin, bool power_polarity)
     : _datapin(data_pin)
@@ -211,15 +210,11 @@ char DS1820::onewire_byte_in() { // read byte, least sig byte first
 }
 
 bool DS1820::unassignedProbe(PinName pin) {
-    printf("DS1820::unassignedProbe()\n");
-    fCount = 0;
     DigitalInOut _pin(pin);
     ONEWIRE_INIT((&_pin));
     INIT_DELAY;
     char ROM_address[8];
     bool ret = search_ROM_routine(&_pin, 0xF0, ROM_address);
-    printf("\tsearch_ROM_routine() = %d\n", ret);
-    printf("return from DS1820::unassignedProbe(); fCount=%d\n", fCount);
 	return ret;
 }
  
@@ -254,8 +249,6 @@ bool DS1820::unassignedProbe(DigitalInOut *pin, char *ROM_address) {
 }
  
 bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_address) {
-    fCount++;
-
     bool DS1820_done_flag = false;
     int DS1820_last_descrepancy = 0;
     char searchedROM[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -263,12 +256,9 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
     int descrepancy_marker, ROM_bit_index;
     bool return_value, Bit_A, Bit_B;
     char byte_counter, bit_mask;
-    int testCounter = 0;
 
-    OneWireRomCode romA, romB, romC, romD;
-
-    printf("search_ROM_routine()\n");
-
+    OneWireRomCode romA, romB, romC;
+ 
     return_value=false;
     while (!DS1820_done_flag) {
         if (!onewire_reset(pin)) {
@@ -284,7 +274,6 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
             byte_counter = 0;
             bit_mask = 0x01;
             while (ROM_bit_index<=64) {
-                testCounter = 0;
                 Bit_A = onewire_bit_in(pin);
                 Bit_B = onewire_bit_in(pin);
 
@@ -303,7 +292,6 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                             searchedROM[byte_counter] = searchedROM[byte_counter] & ~bit_mask; // Set ROM bit to zero
                         }
                     } else {
-                        testCounter = 1;
                         // both bits A and B are low, so there are two or more devices present
                         if ( ROM_bit_index == DS1820_last_descrepancy ) {
                             searchedROM[byte_counter] = searchedROM[byte_counter] | bit_mask; // Set ROM bit to one
@@ -313,7 +301,7 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                                 descrepancy_marker = ROM_bit_index;
                             } else {
                                 bool t = ( searchedROM[byte_counter] & bit_mask);
-                                romD.setBit(ROM_bit_index-1, t);
+
                                 if (t == false){
 
                                     descrepancy_marker = ROM_bit_index;
@@ -335,13 +323,11 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                         bit_mask = bit_mask << 1;
                     }
                 }
-//                printf("testCounter: %d\n", testCounter);
             }
 
-            printf("Test ROM A: %s, conflictPos =%d\n", romA.romString(), descrepancy_marker);
+            printf("Test ROM A: %s\n", romA.romString());
             printf("Test ROM B: %s\n", romB.romString());
             printf("Test ROM C: %s\n", romC.romString());
-            printf("Test ROM D: %s\n", romD.romString());
 
             DS1820_last_descrepancy = descrepancy_marker;
             if (ROM_bit_index != 0xFF) {
