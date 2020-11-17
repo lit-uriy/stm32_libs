@@ -267,7 +267,6 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         bool a = true; //  bit[i]
         bool b = true; // ~bit[i]
         bool c = true; // результирующий бит
-        conflictPos = 0;
         testCounter = 0;
 
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]

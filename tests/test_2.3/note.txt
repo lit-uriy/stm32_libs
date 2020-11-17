@@ -14,158 +14,163 @@ T: test3()
 
 
 R: Command test3(): Finding multiple DS1820 devices...
-R: Test ROM A: 28FFE88E601802E3
+R: DS1820::unassignedProbe()
+R: search_ROM_routine()
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
 R: Test ROM B: D70016719FE7FD1C
 R: Test ROM C: 28FFE88E601802E3
-
-R: Test ROM A: 28FFE88E601802E3
-R: Test ROM B: D70016719FE7FD1C
-R: Test ROM C: 28FFE88E601802E3
-
+R: Test ROM D: 0000000000000000
+R: 	search_ROM_routine() = 1
+R: return from DS1820::unassignedProbe(); fCount=1
 R: Found 0 device, ROM=28FFE88E601802E3
 R: 	parasite powered: No
-R: 	RAM: 86014B467FFF0C10
+R: 	RAM: 88014B467FFF0C10
 R: 	resolution: 12 bits
 R: 
-R: Test ROM A: 28FFE88E601802E3
+R: DS1820::unassignedProbe()
+R: search_ROM_routine()
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
 R: Test ROM B: D70016719FE7FD1C
 R: Test ROM C: 28FFE88E601802E3
-
-R: Test ROM A: 28FFF4EC6718017C
-R: Test ROM B: D7000A1398E7FE83
+R: Test ROM D: 0000000000000000
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
 R: Test ROM C: 28FFF5EC6718017C
-
-R: Test ROM A: 28FFE88E601802E3
-R: Test ROM B: D70016719FE7FD1C
-R: Test ROM C: 28FFE88E601802E3
-
-R: Test ROM A: 28FFF4EC6718017C
-R: Test ROM B: D7000A1398E7FE83
-R: Test ROM C: 28FFF5EC6718017C
+R: Test ROM D: 0000000000000000
+R: 	search_ROM_routine() = 1
+R: return from DS1820::unassignedProbe(); fCount=1
 R: Found 1 device, ROM=28FFF5EC6718017C
 R: 	parasite powered: No
-R: 	RAM: 8D014B467FFF0C10
+R: 	RAM: 8A014B467FFF0C10
 R: 	resolution: 12 bits
 R: 
-R: Test ROM A: 28FFE88E601802E3
+R: DS1820::unassignedProbe()
+R: search_ROM_routine()
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
 R: Test ROM B: D70016719FE7FD1C
 R: Test ROM C: 28FFE88E601802E3
-
-R: Test ROM A: 28FFF4EC6718017C
-R: Test ROM B: D7000A1398E7FE83
+R: Test ROM D: 0000000000000000
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
 R: Test ROM C: 28FFF5EC6718017C
+R: Test ROM D: 0000000000000000
+R: Test ROM A: 28FF60C16B180101, conflictPos =0
+R: Test ROM B: D7009C3E94E7FEFE
+R: Test ROM C: 28FF63C16B180101
+R: Test ROM D: 0000010000000000
+R: 	search_ROM_routine() = 1
+R: return from DS1820::unassignedProbe(); fCount=1
+R: Found 2 device, ROM=28FF63C16B180101
+R: 	parasite powered: No
+R: 	RAM: 88014B467FFF0C10
+R: 	resolution: 12 bits
+R: 
+R: DS1820::unassignedProbe()
+R: search_ROM_routine()
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
+R: Test ROM B: D70016719FE7FD1C
+R: Test ROM C: 28FFE88E601802E3
+R: Test ROM D: 0000000000000000
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: Test ROM D: 0000000000000000
+R: Test ROM A: 28FF60C16B180101, conflictPos =0
+R: Test ROM B: D7009C3E94E7FEFE
+R: Test ROM C: 28FF63C16B180101
+R: Test ROM D: 0000010000000000
+R: 	search_ROM_routine() = 0
+R: return from DS1820::unassignedProbe(); fCount=1
 R: 
 R: ----------------------------------------
 
 
-
-
-
+==========================================================
 
 T: test1()
 
 
 R: Command test1(): Finding multiple Yds1820 devices...
-R: findMultipleDevices(); Init ROM=0000000000000000
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 1
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: testCounter: 0
-R: Test ROM A: 28FFE88E601802E3
+R: OneWire::findDevices()
+R: OneWire::findMultipleDevices()
+R: OneWire::searchROM(next=0)
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
 R: Test ROM B: D70016719FE7FD1C
 R: Test ROM C: 28FFE88E601802E3
-R: searchROM Done
-R: findMultipleDevices(); after searchROM, returnCounter=9
-R: 	CRC: 00
-R: 	CRC: E1
-R: 	CRC: 82
-R: 	CRC: 1B
-R: 	CRC: 2E
-R: 	CRC: 59
-R: 	CRC: 18
-R: 	CRC: E3
-R: 	CRC: 00
-R: RAM: config=127, temp=386
-R: Found 1 device, ROM=28FFE88E601802E3
-R: 	parasite powered: No
-R: 	resolution: 12 bits
-R: 
-R: Found 1 device(s)
-R: 
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
-R: Device 1 returns 24.1 C
-R: Temperature: Min:24.1 | Mean:24.1 | Max:24.1
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
+R: Test ROM B: D70016719FE7FD1C
+R: Test ROM C: 28FFE88E601802E3
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
+R: Test ROM B: D70016719FE7FD1C
+R: Test ROM C: 28FFE88E601802E3
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
+R: Test ROM B: D70016719FE7FD1C
+R: Test ROM C: 28FFE88E601802E3
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
+R: Test ROM B: D70016719FE7FD1C
+R: Test ROM C: 28FFE88E601802E3
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFE88E601802E3, conflictPos =17
+R: Test ROM B: D70016719FE7FD1C
+R: Test ROM C: 28FFE88E601802E3
+R: 	searchROM() = 2
+R: searchROM status=2, _status=1
+R: OneWire::searchROM(next=1)
+R: Test ROM A: 28FFF4EC6718017C, conflictPos =18
+R: Test ROM B: D700081398E7FE83
+R: Test ROM C: 28FFF5EC6718017C
+R: 	searchROM() = 2
 
 
 
