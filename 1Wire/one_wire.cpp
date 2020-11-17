@@ -72,35 +72,36 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
 
         printf("\tsearchROM() = %d\n", status);
 
-        if (status != _status){
+        if (status >= StatusError){
             printf("searchROM status=%d, _status=%d\r\n",
                     status,
                     _status);
         }
 
-        // считаем CRC
-        unsigned char crc = 0;
-        for (int i = 0; i < 8; ++i) {
-            crc = crc8(romCode.bytes[i], crc);
-        }
-        if (crc){
-            printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode.romString(), crc);
-            _errorCode = ErrorCRCSearchRom | _errorCode;
-            return StatusError; // какая-то проблема на линии - надо начинать сначала
-        }
-
-        if ((status == StatusPresence) || (status == StatusPresenceMulty)) {
+        if ((status == StatusPresence) || (status == StatusPresenceMulty)){
+            // считаем CRC
+            unsigned char crc = 0;
+            for (int i = 0; i < 8; ++i) {
+                crc = crc8(romCode.bytes[i], crc);
+            }
+            if (crc){
+                printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode.romString(), crc);
+                _errorCode = ErrorCRCSearchRom | _errorCode;
+                return StatusError; // какая-то проблема на линии - надо начинать сначала
+            }
             OneWireRomCode *r = new OneWireRomCode;
             *r = romCode;
             romCodes->append(r);// FIXME: Дубликаты не проверяются!
             devCount++;
-            if (status == StatusPresence)
-                break;
-            else
+
+            if (status == StatusPresenceMulty)
                 continue;
-        }else if (status == StatusError) {
+
+            break;
+
+        }else if (status >= StatusError) {
             return StatusError; // но при этом в список уже могли попасть устройства
-        }else {// StatusUnknown, StatusAlarming, StatusShortCircuit, StatusAbsent
+        }else {// StatusAlarming, StatusAbsent
             break;
         }
     }

@@ -128,13 +128,15 @@ class OneWire
 {
 public:
     enum LineStatus {
-        StatusUnknown = 0,
-        StatusPresence,
-        StatusPresenceMulty,
-        StatusAlarming,
-        StatusShortCircuit,
-        StatusAbsent,
-        StatusError,
+        // non-error statuses
+        StatusPresence = 0x01,
+        StatusPresenceMulty = 0x02,
+        StatusAlarming = 0x03,
+        StatusAbsent = 0x04,
+        // error statuses
+        StatusError = 0x81,
+        StatusShortCircuit = 0x82,
+        StatusUnknown = 0x83,
     };
 
 
