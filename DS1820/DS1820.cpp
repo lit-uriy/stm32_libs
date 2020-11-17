@@ -257,7 +257,7 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
     bool return_value, Bit_A, Bit_B;
     char byte_counter, bit_mask;
 
-    OneWireRomCode romA, romB, romC;
+    OneWireRomCode testRom;
  
     return_value=false;
     while (!DS1820_done_flag) {
@@ -276,10 +276,6 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
             while (ROM_bit_index<=64) {
                 Bit_A = onewire_bit_in(pin);
                 Bit_B = onewire_bit_in(pin);
-
-                romA.setBit(ROM_bit_index-1, Bit_A);
-                romB.setBit(ROM_bit_index-1, Bit_B);
-
                 if (Bit_A & Bit_B) {
                     descrepancy_marker = 0; // data read error, this should never happen
                     ROM_bit_index = 0xFF;
@@ -303,18 +299,15 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                                 bool t = ( searchedROM[byte_counter] & bit_mask);
 
                                 if (t == false){
-
+                                    testRom.bytes[byte_counter] &= ~bit_mask;
                                     descrepancy_marker = ROM_bit_index;
                                 }else {
-
+                                    testRom.bytes[byte_counter] |= bit_mask;
                                 }
                             }
                         }
                     }
                     onewire_bit_out (pin, searchedROM[byte_counter] & bit_mask);
-
-                    romC.setBit(ROM_bit_index-1, searchedROM[byte_counter] & bit_mask);
-
                     ROM_bit_index++;
                     if (bit_mask & 0x80) {
                         byte_counter++;
@@ -325,9 +318,7 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
                 }
             }
 
-            printf("Test ROM A: %s\n", romA.romString());
-            printf("Test ROM B: %s\n", romB.romString());
-            printf("Test ROM C: %s\n", romC.romString());
+            printf("Test ROM: %s\n", testRom.romString());
 
             DS1820_last_descrepancy = descrepancy_marker;
             if (ROM_bit_index != 0xFF) {
