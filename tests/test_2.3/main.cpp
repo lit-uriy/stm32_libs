@@ -152,10 +152,18 @@ int main() {
             // 28FFE88E601802E3
             // 28FFF5EC6718017C
             // 28FF63C16B180101
-            Yds1820 *dev = makeDevice2(stringToRomCode("28FF2BA36B180141"), &wire, 1);
+            Yds1820 *dev = makeDevice2(stringToRomCode("28FFE88E601802E3"), &wire, 1);
             probes2.append(dev);
 
-            port.printf("Found %d device(s)\r\n\n", 1);
+            OneWireRomCode rom;
+            wire.reset();
+            bool ok = wire.readROM(&rom);
+            if (ok){
+                port.printf("Found device with ROM: %s\n", rom.romString());
+            }else{
+
+                port.printf("Found device with ROM: %s, Error code=%02X\n", rom.romString(), wire.errorCode());
+            }
 
             while(1) {
                 convertTemperature2(dev);
