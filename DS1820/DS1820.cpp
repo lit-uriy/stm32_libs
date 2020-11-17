@@ -338,7 +338,7 @@ bool DS1820::search_ROM_routine(DigitalInOut *pin, char command, char *ROM_addre
 //                printf("testCounter: %d\n", testCounter);
             }
 
-            printf("Test ROM A: %s, conflictPos = %d, lastConflictPos = %d\n", romA.romString(), descrepancy_marker, DS1820_last_descrepancy);
+            printf("Test ROM A: %s, conflictPos =%d\n", romA.romString(), descrepancy_marker);
             printf("Test ROM B: %s\n", romB.romString());
             printf("Test ROM C: %s\n", romC.romString());
             printf("Test ROM D: %s\n", romD.romString());
