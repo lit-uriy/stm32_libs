@@ -78,11 +78,11 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
         unsigned char crc = 0;
         for (int i = 0; i < 8; ++i) {
             crc = crc8(romCode->bytes[i], crc);
-            if (crc){
-                printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode->romString(), crc);
-                _errorCode = ErrorCRCSearchRom | _errorCode;
-                return StatusError; // какая-то проблема на линии - надо начинать сначала
-            }
+        }
+        if (crc){
+            printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode->romString(), crc);
+            _errorCode = ErrorCRCSearchRom | _errorCode;
+            return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
 
         if (status == StatusPresence) {
