@@ -222,7 +222,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     printf("OneWire::searchROM(next=%d)\n", next);
     _errorCode = ErrorNon;
 
-    OneWireRomCode romA, romB, romC;
+    OneWireRomCode romA, romB, romC, romD;
 
     int testCounter = 0;
 
@@ -266,12 +266,12 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         return _status; // что-то пошло не так, например, устройство отключили - надо начинать сначала
     }
 
+    conflictPos = 0;
     for (int number = 1; number <= 64; ++number) {
         // 3 - The master reads one "bit[i]" from the 1–Wire bus.
         bool a = true; //  bit[i]
         bool b = true; // ~bit[i]
         bool c = true; // результирующий бит
-//        conflictPos = 0;
         testCounter = 0;
 
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
@@ -309,6 +309,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
                 conflictPos = number;
             }else {
                 c = romCode->bit(number-1);
+                romD.setBit(number-1, c);
                 if (!c){ // НЕ добрались до предыдущего конфликта
                     conflictPos = number;
                 }
@@ -333,9 +334,10 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
     // 9 - Все биты ROM-кода известны и
     //     устройство готово для приёма команд транспортного уровня
 
-    printf("Test ROM A: %s, conflictPos = %d\n", romA.romString(), conflictPos);
+    printf("Test ROM A: %s, conflictPos = %d, lastConflictPos = %d\n", romA.romString(), conflictPos, lastConflictPos);
     printf("Test ROM B: %s\n", romB.romString());
     printf("Test ROM C: %s\n", romC.romString());
+    printf("Test ROM D: %s\n", romD.romString());
 
     lastConflictPos = conflictPos;
     if (!lastConflictPos){
