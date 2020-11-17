@@ -102,7 +102,7 @@ public:
     {
         int byteIndex = bitIndex/8;
         unsigned char byte = bytes[byteIndex];
-        int bitInbyte = bitIndex - byte*8;
+        int bitInbyte = bitIndex%8;
         return byte & (1 << bitInbyte);
     }
 
@@ -110,7 +110,7 @@ public:
     {
         int byteIndex = bitIndex/8;
         unsigned char byte = bytes[byteIndex];
-        int bitInbyte = bitIndex - byte*8;
+        int bitInbyte = bitIndex%8;
         unsigned char mask = 1 << bitInbyte;
         bytes[byteIndex] = value? (byte | mask): (byte & ~mask);
     }
