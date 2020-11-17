@@ -47,26 +47,29 @@ OneWireRomCode OneWire::findSingleDevice()
 
 bool OneWire::findDevices(YList<OneWireRomCode*> *romList)
 {
+    printf("OneWire::findDevices()\n");
     bool ok = true;
     OneWire::LineStatus status = findMultipleDevices(romList);
     ok = status != StatusError;
-
+    printf("\tfindMultipleDevices() = %d\n", status);
+    printf("return from OneWire::findDevices()\n");
     return ok;
 }
 
 OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCodes)
 {
+    printf("OneWire::findMultipleDevices()\n");
     int devCount = 0;
     while (1) {
         returnCounter = 0;
         OneWireRomCode *romCode = new OneWireRomCode;
         bool next = bool(devCount);
 
-        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
+//        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
 
         LineStatus status = searchROM(romCode, next);
 
-        printf("findMultipleDevices(); after searchROM, returnCounter=%d\r\n", returnCounter);
+        printf("\tsearchROM() = %d\n", status);
 
         if (status != _status){
             printf("searchROM status=%d, _status=%d\r\n",
@@ -216,6 +219,7 @@ bool OneWire::readROM(OneWireRomCode *romCode)
 
 OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
+    printf("OneWire::searchROM(next=%d)\n", next);
     _errorCode = ErrorNon;
 
     OneWireRomCode romA, romB, romC;
@@ -267,6 +271,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         bool a = true; //  bit[i]
         bool b = true; // ~bit[i]
         bool c = true; // результирующий бит
+//        conflictPos = 0;
         testCounter = 0;
 
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
@@ -289,6 +294,7 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
         if (absent){
             _status = StatusAbsent;
             lastConflictPos = 0;
+            conflictPos = 0;
 //        return present;
             returnCounter = 7;
             return StatusAbsent;
@@ -320,14 +326,14 @@ OneWire::LineStatus OneWire::searchROM(OneWireRomCode *romCode, bool next)
             returnCounter = 8;
             return _status; // какая-то проблема на линии - надо начинать сначала
         }
-        printf("testCounter: %d\n", testCounter);
+//        printf("testCounter: %d\n", testCounter);
 
     } // for (number: 1 - 64)
 
     // 9 - Все биты ROM-кода известны и
     //     устройство готово для приёма команд транспортного уровня
 
-    printf("Test ROM A: %s\n", romA.romString());
+    printf("Test ROM A: %s, conflictPos = %d\n", romA.romString(), conflictPos);
     printf("Test ROM B: %s\n", romB.romString());
     printf("Test ROM C: %s\n", romC.romString());
 
