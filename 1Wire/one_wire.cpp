@@ -60,14 +60,15 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
 {
     printf("OneWire::findMultipleDevices()\n");
     int devCount = 0;
+    OneWireRomCode romCode;
+
     while (1) {
         returnCounter = 0;
-        OneWireRomCode *romCode = new OneWireRomCode;
         bool next = bool(devCount);
 
 //        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
 
-        LineStatus status = searchROM(romCode, next);
+        LineStatus status = searchROM(&romCode, next);
 
         printf("\tsearchROM() = %d\n", status);
 
@@ -80,22 +81,23 @@ OneWire::LineStatus OneWire::findMultipleDevices(YList<OneWireRomCode*> *romCode
         // считаем CRC
         unsigned char crc = 0;
         for (int i = 0; i < 8; ++i) {
-            crc = crc8(romCode->bytes[i], crc);
+            crc = crc8(romCode.bytes[i], crc);
         }
         if (crc){
-            printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode->romString(), crc);
+            printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode.romString(), crc);
             _errorCode = ErrorCRCSearchRom | _errorCode;
             return StatusError; // какая-то проблема на линии - надо начинать сначала
         }
 
-        if (status == StatusPresence) {
-            romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
+        if ((status == StatusPresence) || (status == StatusPresenceMulty)) {
+            OneWireRomCode *r = new OneWireRomCode;
+            *r = romCode;
+            romCodes->append(r);// FIXME: Дубликаты не проверяются!
             devCount++;
-            break;
-        }else if (status == StatusPresenceMulty){
-            romCodes->append(romCode);// FIXME: Дубликаты не проверяются!
-            devCount++;
-            continue;
+            if (status == StatusPresence)
+                break;
+            else
+                continue;
         }else if (status == StatusError) {
             return StatusError; // но при этом в список уже могли попасть устройства
         }else {// StatusUnknown, StatusAlarming, StatusShortCircuit, StatusAbsent
