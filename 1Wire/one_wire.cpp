@@ -195,6 +195,11 @@ bool OneWire::readROM(OneWireRomCode *romCode)
     unsigned char crc = 0;
     _errorCode = ErrorNon;
 
+    if (reset() != OneWire::StatusPresence){
+        _errorCode = ErrorQueryReadRom | _errorCode;
+        return _status;
+    }
+
     if (readWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQueryReadRom | _errorCode;
         return false; // что-то пошло не так, например, устройство отключили
