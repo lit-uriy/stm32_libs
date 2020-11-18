@@ -127,6 +127,13 @@ public:
 class OneWire
 {
 public:
+    enum NewLineStatus {
+        NewStatusUnknown = 0,
+        NewStatusPulledUp,
+        NewStatusShortCircuit,
+        NewStatusNormal = NewStatusPulledUp
+    };
+
     enum LineStatus {
         // non-error statuses
         StatusPresence = 0x01,
