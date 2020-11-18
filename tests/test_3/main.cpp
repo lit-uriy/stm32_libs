@@ -156,7 +156,6 @@ int main() {
             probes2.append(dev);
 
             OneWireRomCode rom;
-            wire.reset();
             bool ok = wire.readROM(&rom);
             if (ok){
                 port.printf("Found device with ROM: %s\n", rom.romString());
