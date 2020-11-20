@@ -18,7 +18,7 @@ Device 28FF559D6F14043F, T=26.8, resolution=96
 
 extern DigitalOut syncroPin;
 
-Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
+Yds1820::Yds1820(OneWireRomCode aRomCode, NewOneWire *awire)
     : OneWireDevice(aRomCode, awire)
     , _parasitePower(true)
 {
@@ -39,12 +39,12 @@ bool Yds1820::readPowerSupply()
         return false;
     }
     unsigned char temp = CommandReadPowerSupply;
-    if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
+    if (wire()->readWriteByte(&temp) != NewOneWire::StatusPresence){
         printf("Error ocured on write comand \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
     bool flag = true;
-    if (wire()->readWriteBit(&flag) != OneWire::StatusPresence){
+    if (wire()->readWriteBit(&flag) != NewOneWire::StatusPresence){
         printf("Error ocured on read answer on \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
@@ -53,19 +53,19 @@ bool Yds1820::readPowerSupply()
 }
 
 // NOTE: неясно что возвращает
-bool Yds1820::readPowerSupply(OneWire *awire)
+bool Yds1820::readPowerSupply(NewOneWire *awire)
 {
     if (!awire->skipROM()){
         return false;
     }
 
     unsigned char temp = CommandReadPowerSupply;
-    if (awire->readWriteByte(&temp) != OneWire::StatusPresence){
+    if (awire->readWriteByte(&temp) != NewOneWire::StatusPresence){
         printf("Error ocured on write comand \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
     bool flag = true;
-    if (awire->readWriteBit(&flag) != OneWire::StatusPresence){
+    if (awire->readWriteBit(&flag) != NewOneWire::StatusPresence){
         printf("Error ocured on read answer on \"Read Power Supply\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
@@ -110,7 +110,7 @@ bool Yds1820::ramString(char buff[])
 }
 
 // статическая, для всех термометров на проволоке
-int Yds1820::convertTemperature(OneWire *awire)
+int Yds1820::convertTemperature(NewOneWire *awire)
 {
     // Convert temperature into scratchpad RAM for all devices at once
     int delay_time = 750; // Default delay time
@@ -250,7 +250,7 @@ bool Yds1820::readRam()
         return false;
     }
     unsigned char temp = CommandReadScratchpad;
-    if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
+    if (wire()->readWriteByte(&temp) != NewOneWire::StatusPresence){
         printf("Error ocured on write comand \"Read Scratchpad\"\r\n");
         return false; // что-то пошло не так, например, устройство отключили
     }
@@ -258,7 +258,7 @@ bool Yds1820::readRam()
     unsigned char crc = 0;
     for (int i = 0; i < 9; ++i) {
         temp = 0xFF;
-        if (wire()->readWriteByte(&temp) != OneWire::StatusPresence){
+        if (wire()->readWriteByte(&temp) != NewOneWire::StatusPresence){
             printf("Error ocured on read scratchpad\r\n");
             return false; // что-то пошло не так, например, устройство отключили
         }

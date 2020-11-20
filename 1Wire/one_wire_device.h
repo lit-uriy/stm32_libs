@@ -2,13 +2,13 @@
 #define ONEWIREDEVICE_H
 
 
-#include "one_wire.h"
+#include "new_one_wire.h"
 
 
 class OneWireDevice
 {
 public:
-    OneWireDevice(OneWireRomCode aRomCode, OneWire *awire = 0);
+    OneWireDevice(OneWireRomCode aRomCode, NewOneWire *awire = 0);
     virtual ~OneWireDevice(){}
 
     bool isValid(){return _valid;}
@@ -16,7 +16,7 @@ public:
     OneWireRomCode romCode();
     unsigned char familyCode();
 
-    OneWire* wire() {return _wire;}
+    NewOneWire* wire() {return _wire;}
 
 
 public:
@@ -29,7 +29,7 @@ public:
     bool appliedCommand(unsigned char command);
 
     // Прикладная команда всем устройствам на проволоке
-    static bool appliedCommand(unsigned char command, OneWire *awire);
+    static bool appliedCommand(unsigned char command, NewOneWire *awire);
 
 protected:
 
@@ -37,9 +37,9 @@ protected:
     OneWireRomCode _romCode;
 
 private:
-    OneWire *_wire;
+    NewOneWire *_wire;
 
-    friend class OneWire;
+    friend class NewOneWire;
 };
 
 #endif // ONEWIREDEVICE_H
