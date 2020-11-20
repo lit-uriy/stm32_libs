@@ -138,12 +138,16 @@ public:
      * @brief reset
      * @return признак присутствия на шине
      */
+    // >>> Link Layer
     LineStatus reset();
+    // <<< Link Layer
 
+    // >>> Network Layer
     bool readROM(OneWireRomCode *romCode);
     LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
     bool matchROM(const OneWireRomCode romCode);
     bool skipROM();
+    // <<< Network Layer
 
 private:
     enum Times {
@@ -177,7 +181,7 @@ public:
         CommandReadStatus = 0xAA,
     };
 
-
+    // >>> Physical Layer
     inline bool pin()
     {
         return _pin.read();
@@ -204,11 +208,6 @@ public:
         }
     }
 
-    inline void deleyUs(int us)
-    {
-        wait_us(us);
-    }
-
     inline void pinInit()
     {
         // Line state: 1
@@ -217,8 +216,21 @@ public:
         pinRelease(); // Line state: 1
     }
 
-    LineStatus readWriteByte(unsigned char *byte);
+    // <<< Physical Layer
+
+    inline void deleyUs(int us)
+    {
+        wait_us(us);
+    }
+
+    // >>> Link Layer
     LineStatus readWriteBit(bool *bit);
+    // <<< Link Layer
+
+
+    // >>> Over Link Layer
+    LineStatus readWriteByte(unsigned char *byte);
+    // <<< Over Link Layer
 
 
 
