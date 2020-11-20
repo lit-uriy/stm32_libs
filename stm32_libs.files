@@ -1,3 +1,5 @@
+1Wire/new_one_wire.cpp
+1Wire/new_one_wire.h
 1Wire/one_wire.cpp
 1Wire/one_wire.h
 1Wire/one_wire_device.cpp
