@@ -114,18 +114,26 @@ public:
     LineStatus status();
     int errorCode();
 
-    // собирает информацию об устройствах
+    // ***********************************************************
+    // *          собирает информацию об устройствах             *
+    // ***********************************************************
     OneWireRomCode findSingleDevice(); // по сути Read Rom
     LineStatus findMultipleDevices(YList<OneWireRomCode*> *romCodes); // по сути Search Rom
-
     bool findDevices(YList<OneWireRomCode*> *romList);
 
+
+    // ***********************************************************
+    // *          связывает устройства спроволокой               *
+    // ***********************************************************
     void addDevice(OneWireDevice *dev);
     void removeDevice(OneWireDevice *dev);
     YList<OneWireDevice *> devices();
 
 
 public:
+    // ***********************************************************
+    // *          Общие ROM-функции проволоки                    *
+    // ***********************************************************
     /**
      * @brief reset
      * @return признак присутствия на шине
