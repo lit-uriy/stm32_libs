@@ -1,10 +1,7 @@
-#ifndef ONEWIRE_H
-#define ONEWIRE_H
+#ifndef ONEWIRE_PHY_H
+#define ONEWIRE_PHY_H
 
 #include "mbed.h"
-
-#include "one_wire_rom_code.h"
-#include "ylist.h"
 
 
 //-------------------------
@@ -121,10 +118,14 @@ private:
     // <<< Link Layer
 
 
+    inline void deleyUs(int us)
+    {
+        wait_us(us);
+    }
 
 
 private:
     int _errorCode;
 };
 
-#endif // ONEWIRE_H
+#endif // ONEWIRE_PHY_H

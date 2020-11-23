@@ -1,10 +1,9 @@
-#ifndef ONEWIRE_H
-#define ONEWIRE_H
+#ifndef ONEWIRE_MBEDPIN_H
+#define ONEWIRE_MBEDPIN_H
 
 #include "mbed.h"
-
-#include "one_wire_rom_code.h"
-#include "ylist.h"
+#include "new_one_wire.h"
+#include "one_wire_phy.h"
 
 //-------------------------
 //  ID термометра: 28 FF 55 9D 6F 14 04 3F
@@ -50,7 +49,7 @@ class OneWireDevice;
  *
  */
 
-class OneWireMbedPin
+class OneWireMbedPin: public NewOneWire, public OneWirePhy
 {
 public:
     enum NewLineStatus {
@@ -136,6 +135,10 @@ public:
     LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
     bool matchROM(const OneWireRomCode romCode);
     bool skipROM();
+
+
+protected:
+    virtual OneWirePhy* physicalInterface();
 
 private:
     enum Times {
@@ -226,4 +229,4 @@ private:
     int _errorCode;
 };
 
-#endif // ONEWIRE_H
+#endif // ONEWIRE_MBEDPIN_H

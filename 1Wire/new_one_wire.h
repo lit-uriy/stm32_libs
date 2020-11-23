@@ -1,5 +1,5 @@
-#ifndef ONEWIRE_H
-#define ONEWIRE_H
+#ifndef NEW_ONEWIRE_H
+#define NEW_ONEWIRE_H
 
 
 #include "one_wire_rom_code.h"
@@ -112,9 +112,11 @@ public:
     bool skipROM();
     // <<< Network Layer
 
+protected:
+    virtual OneWirePhy* physicalInterface() = 0;
+    NewOneWire();
 
 private:
-    NewOneWire();
     NewOneWire(const NewOneWire &other);
     NewOneWire& operator=(const NewOneWire &other);
 
@@ -125,7 +127,7 @@ private:
     }
 
     friend class OneWireDevice;
-    OneWirePhy _phy;
+    OneWirePhy *_phy;
     LineStatus _status;
 
     YList<OneWireDevice *> _devices;
@@ -133,4 +135,4 @@ private:
     int _errorCode;
 };
 
-#endif // ONEWIRE_H
+#endif // NEW_ONEWIRE_H

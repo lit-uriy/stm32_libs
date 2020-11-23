@@ -1,21 +1,18 @@
 #include "new_one_wire.h"
 
+#include "one_wire_phy.h"
+
 #include "one_wire_device.h"
+
 #include "../utils/crc.h"
 
-extern DigitalOut syncroPin;
-
-extern bool test;
-
-static int returnCounter = 0;
 
 NewOneWire::NewOneWire()
-    : _pin(apin)
-    , _status(StatusUnknown)
+    : _status(StatusUnknown)
     , _devices(16)
+    , _phy(0)
 {
-    pinInit();
-    syncroPin.write(0);
+
 }
 
 NewOneWire::LineStatus NewOneWire::status()
@@ -122,7 +119,7 @@ void NewOneWire::addDevice(OneWireDevice *dev)
 void NewOneWire::removeDevice(OneWireDevice *dev)
 {
     int index = _devices.indexOf(dev);
-    if (!index)
+    if (index < 0)
         return;
     _devices.removeAt(index);
     dev->_wire = 0;
@@ -135,10 +132,13 @@ YList<OneWireDevice *> NewOneWire::devices()
 
 NewOneWire::LineStatus NewOneWire::reset()
 {
+    if (!_phy)
+        _phy = _phy = static_cast<OneWirePhy*>(this);
+
     _errorCode = ErrorNon;
     // в начале на шине должна быть "1"
 //    syncroPin.write(1);
-    if (!pin()){
+    if (!_phy->pin()){
         _status = StatusShortCircuit;
         _errorCode = ErrorBeforeSyncro;
 //        syncroPin.write(0);
@@ -146,16 +146,16 @@ NewOneWire::LineStatus NewOneWire::reset()
     }
 
     // выставляем "Reset pulse"
-    pinLow();
+    _phy->pinLow();
     // выдержваем в течении TRSTL
-    deleyUs(TimeReset);
+    _phy->deleyUs(TimeReset);
 
     // снимаем "Reset pulse"
-    pinRelease();
+    _phy->pinRelease();
     // ждем возврата линии "0"->"1" (слэйв подождёт TimePdh, а затем выставит Presence на время TimePdl)
-    deleyUs(Time10); // здесь можно сделать измерение времени восстановления
+    _phy->deleyUs(Time10); // здесь можно сделать измерение времени восстановления
     // на шине должна стать "1"
-    if (!pin()){
+    if (!_phy->pin()){
         _status = StatusShortCircuit;
         _errorCode = ErrorBeforePresence;
 //        syncroPin.write(0);
@@ -163,9 +163,9 @@ NewOneWire::LineStatus NewOneWire::reset()
     }
 
     // подождем время, за которое слэйв гарантировано выставит "Presence pulse"
-    deleyUs(TimeSlot);
+    _phy->deleyUs(TimeSlot);
     // проверим наличие "Presence pulse"
-    if (pin()){
+    if (_phy->pin()){
         _status = StatusAbsent;
 //        syncroPin.write(0);
         return _status;
@@ -174,14 +174,14 @@ NewOneWire::LineStatus NewOneWire::reset()
     //ждем завершения "Presence pulse" "0"->"1"
     deleyUs(TimePresence);
     // на шине должна стать "1"
-    if (!pin()){
+    if (!_phy->pin()){
         _status = StatusShortCircuit;
         _errorCode = ErrorAfterPresence;
 //        syncroPin.write(0);
         return _status;
     }
 
-    deleyUs(TimeReset - TimePresence); // общая выдержка в отпущенном состоянии не менее TimeReset
+    _phy->deleyUs(TimeReset - TimePresence); // общая выдержка в отпущенном состоянии не менее TimeReset
 
     // нормальный "Presence pulse" был
     _status = StatusPresence;
@@ -200,7 +200,7 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
         return _status;
     }
 
-    if (readWriteByte(&temp) != StatusPresence){
+    if (_phyreadWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQueryReadRom | _errorCode;
         return false; // что-то пошло не так, например, устройство отключили
     }
