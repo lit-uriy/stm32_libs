@@ -1,49 +1,14 @@
 #ifndef ONEWIRE_H
 #define ONEWIRE_H
 
-#include "mbed.h"
 
 #include "one_wire_rom_code.h"
 #include "ylist.h"
 
-//-------------------------
-//  ID термометра: 28 FF 55 9D 6F 14 04 3F
-//
-
-
-//    0x60=480us, 0x01=5us  0x01=8us
-#define T15 0x02				//15us
-#define Tpdh 0x07				//15...60us  0x07 (номинал 30us)
-#define Tslot 0x0F			//60...120us 0x0F
-#define Tpdl 0x1E				//60...240us 0x1E (120us)
-#define Trstl 0x3C			//>=480us    0x3C
-
-//-------------------------
-
-#define T_SLOT	18			//длительность слота
-#define T_10U	(T_SLOT/6)	//10мкс
-#define T_RSTL	(8*T_SLOT)	//длительность сброса (reset)
-#define T_RELS	(T_SLOT*2/5)//длительность востановления (release)
-#define T_PRES	(4*T_SLOT)	//длительность отклика (presence)
-
-
-
-#define delay_TM(del)	TMR2Delay(del)//задержка
-
-#define TM_PRESNC		0x00	//TM присутствует
-#define TM_SHRT_CRT		0x01	//Линия TM закорочена
-#define TM_ABSNT		0x02	//TM отсутствует
-
-#define TM_CMD_READROM		0x33	//Чтение ПЗУ (ID)
-#define TM_CMD_MATCHROM		0x55	//Обращение по адресу
-#define TM_CMD_SEARCHROM	0xF0	//поиск ПЗУ (ID)
-#define TM_CMD_SKIPROM		0xCC	//пропустить ПЗУ (ID)
-
-//-------------------------
-
-
 class OneWireDevice;
 
+template <class T>
+class OneWirePhy;
 
 /***************************************************
  *  1-Wire
@@ -134,52 +99,6 @@ public:
     // ***********************************************************
     // *          Общие ROM-функции проволоки                    *
     // ***********************************************************
-    /**
-     * @brief reset
-     * @return признак присутствия на шине
-     */
-    // >>> Link Layer
-    LineStatus reset();
-    // <<< Link Layer
-
-    // >>> Network Layer
-    bool readROM(OneWireRomCode *romCode);
-    LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
-    bool matchROM(const OneWireRomCode romCode);
-    bool skipROM();
-    // <<< Network Layer
-
-private:
-    enum Times {
-        // из "Book of iButton Standards (AN937)"
-        TimeSlot = 60,
-        TimePdh = TimeSlot/2,
-        TimePdl = 2*TimeSlot,
-        TimeReset = 8*TimeSlot,
-        // расчётное/подобранное
-        TimeRelease = 2*TimeSlot/5, // 24 мкс, в документации написано 15 мкс - номинал
-        TimePresence = 4*TimeSlot, // Верно ли?
-        TimeSyncro = 2, // 3 мкс
-        Time15 = 15,
-        Time10 = 10
-    };
-
-
-    // Memory function commands - Transport layer
-public:
-    enum MemoryCommands {
-        CommandReadRam = 0xF0,
-        CommandReadEeprom = 0xA5,
-        CommandReadSubkey = 0x66, // для старой таблетки DS1991
-        CommandWriteScratchpad = 0x0F, // 0x96 - для старой таблетки DS1991
-        CommandReadScratchpad = 0xAA, // 0x69 - для старой таблетки DS1991
-        CommandCopyScratchpad = 0x55, // 0x3C - для старой таблетки DS1991
-        CommandWriteSubkey = 0x99, // для старой таблетки DS1991
-        CommandWritePassword = 0x5A, // для старой таблетки DS1991
-        CommandWriteEeprom = 0x0F,
-        CommandWriteStatus = 0x55,
-        CommandReadStatus = 0xAA,
-    };
 
     // >>> Physical Layer
     inline bool pin()
@@ -216,29 +135,43 @@ public:
         pinRelease(); // Line state: 1
     }
 
+    /**
+     * @brief reset
+     * @return признак присутствия на шине
+     */
+    LineStatus reset();
+
+    LineStatus readWriteBit(bool *bit);
+
     // <<< Physical Layer
+
+    // >>> Link Layer
+    LineStatus readWriteByte(unsigned char *byte);
+    // <<< Link Layer
+
+    // >>> Network Layer
+    bool readROM(OneWireRomCode *romCode);
+    LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
+    bool matchROM(const OneWireRomCode romCode);
+    bool skipROM();
+    // <<< Network Layer
+
+
+
+
 
     inline void deleyUs(int us)
     {
         wait_us(us);
     }
 
-    // >>> Link Layer
-    LineStatus readWriteBit(bool *bit);
-    // <<< Link Layer
-
-
-    // >>> Over Link Layer
-    LineStatus readWriteByte(unsigned char *byte);
-    // <<< Over Link Layer
 
 
 
 
 private:
     friend class OneWireDevice;
-
-    DigitalInOut _pin;
+    OneWirePhy _phy;
     LineStatus _status;
 
     YList<OneWireDevice *> _devices;
