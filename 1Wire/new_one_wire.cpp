@@ -9,7 +9,7 @@ extern bool test;
 
 static int returnCounter = 0;
 
-NewOneWire::NewOneWire(DigitalInOut apin)
+NewOneWire::NewOneWire()
     : _pin(apin)
     , _status(StatusUnknown)
     , _devices(16)

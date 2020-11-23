@@ -74,7 +74,6 @@ public:
     };
 
 
-    NewOneWire(DigitalInOut apin);
 
     LineStatus status();
     int errorCode();
@@ -96,58 +95,15 @@ public:
 
 
 public:
-    // ***********************************************************
-    // *          Общие ROM-функции проволоки                    *
-    // ***********************************************************
-
-    // >>> Physical Layer
-    inline bool pin()
-    {
-        return _pin.read();
-    }
-
-    inline void pinLow()
-    {
-        _pin.write(0);
-    }
-
-    inline void pinRelease()
-    {
-        _pin.write(1);
-    }
-
-
-    inline void setStrongPullup(bool strong)
-    {
-        if (strong){
-            _pin.mode(PushPullNoPull);
-            _pin.write(1);
-        }else{
-            pinInit();
-        }
-    }
-
-    inline void pinInit()
-    {
-        // Line state: 1
-        _pin.output();
-        _pin.mode(OpenDrain); // Line state: 0
-        pinRelease(); // Line state: 1
-    }
-
     /**
      * @brief reset
      * @return признак присутствия на шине
      */
     LineStatus reset();
 
-    LineStatus readWriteBit(bool *bit);
-
-    // <<< Physical Layer
-
-    // >>> Link Layer
-    LineStatus readWriteByte(unsigned char *byte);
-    // <<< Link Layer
+    // ***********************************************************
+    // *          Общие ROM-функции проволоки                    *
+    // ***********************************************************
 
     // >>> Network Layer
     bool readROM(OneWireRomCode *romCode);
@@ -157,7 +113,10 @@ public:
     // <<< Network Layer
 
 
-
+private:
+    NewOneWire();
+    NewOneWire(const NewOneWire &other);
+    NewOneWire& operator=(const NewOneWire &other);
 
 
     inline void deleyUs(int us)
@@ -165,11 +124,6 @@ public:
         wait_us(us);
     }
 
-
-
-
-
-private:
     friend class OneWireDevice;
     OneWirePhy _phy;
     LineStatus _status;
