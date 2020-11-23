@@ -4,6 +4,8 @@
 1Wire/one_wire.h
 1Wire/one_wire_device.cpp
 1Wire/one_wire_device.h
+1Wire/one_wire_mbed_pin.cpp
+1Wire/one_wire_mbed_pin.h
 1Wire/one_wire_phy.cpp
 1Wire/one_wire_phy.h
 1Wire/one_wire_rom_code.cpp
