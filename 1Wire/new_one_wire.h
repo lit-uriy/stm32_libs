@@ -74,6 +74,7 @@ public:
     };
 
 
+    NewOneWire();
 
     LineStatus status();
     int errorCode();
@@ -101,20 +102,26 @@ public:
      */
     LineStatus reset();
 
+
+protected:
     // ***********************************************************
     // *          Общие ROM-функции проволоки                    *
     // ***********************************************************
 
+    // >>> Link Layer
+    LineStatus readWriteByte(unsigned char *byte) = 0;
+    LineStatus readWriteBit(bool *bit) = 0;
+
+    void setStrongPullup(bool strong) = 0;
+    // <<< Link Layer
+
     // >>> Network Layer
-    bool readROM(OneWireRomCode *romCode);
-    LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
-    bool matchROM(const OneWireRomCode romCode);
-    bool skipROM();
+    bool readROM(OneWireRomCode *romCode) = 0;
+    LineStatus searchROM(OneWireRomCode *romCode, bool next = true) = 0;
+    bool matchROM(const OneWireRomCode romCode) = 0;
+    bool skipROM() = 0;
     // <<< Network Layer
 
-protected:
-    virtual OneWirePhy* physicalInterface() = 0;
-    NewOneWire();
 
 private:
     NewOneWire(const NewOneWire &other);
@@ -126,8 +133,8 @@ private:
         wait_us(us);
     }
 
+private:
     friend class OneWireDevice;
-    OneWirePhy *_phy;
     LineStatus _status;
 
     YList<OneWireDevice *> _devices;
