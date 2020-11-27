@@ -91,13 +91,6 @@ public:
     YList<OneWireDevice *> devices();
 
 
-public:
-    /**
-     * @brief reset
-     * @return признак присутствия на шине
-     */
-
-
 protected:
     // ***********************************************************
     // *          Общие ROM-функции проволоки                    *
@@ -133,12 +126,6 @@ protected:
 private:
     NewOneWire(const NewOneWire &other);
     NewOneWire& operator=(const NewOneWire &other);
-
-
-    inline void deleyUs(int us)
-    {
-        wait_us(us);
-    }
 
 private:
     friend class OneWireDevice;
