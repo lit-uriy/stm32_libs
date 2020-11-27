@@ -114,64 +114,6 @@ YList<OneWireDevice *> NewOneWire::devices()
     return _devices;
 }
 
-NewOneWire::LineStatus NewOneWire::reset()
-{
-    if (!_phy)
-        _phy = _phy = static_cast<OneWirePhy*>(this);
-
-    _errorCode = ErrorNon;
-    // в начале на шине должна быть "1"
-//    syncroPin.write(1);
-    if (!_phy->pin()){
-        _status = StatusShortCircuit;
-        _errorCode = ErrorBeforeSyncro;
-//        syncroPin.write(0);
-        return _status;
-    }
-
-    // выставляем "Reset pulse"
-    _phy->pinLow();
-    // выдержваем в течении TRSTL
-    _phy->deleyUs(TimeReset);
-
-    // снимаем "Reset pulse"
-    _phy->pinRelease();
-    // ждем возврата линии "0"->"1" (слэйв подождёт TimePdh, а затем выставит Presence на время TimePdl)
-    _phy->deleyUs(Time10); // здесь можно сделать измерение времени восстановления
-    // на шине должна стать "1"
-    if (!_phy->pin()){
-        _status = StatusShortCircuit;
-        _errorCode = ErrorBeforePresence;
-//        syncroPin.write(0);
-        return _status;
-    }
-
-    // подождем время, за которое слэйв гарантировано выставит "Presence pulse"
-    _phy->deleyUs(TimeSlot);
-    // проверим наличие "Presence pulse"
-    if (_phy->pin()){
-        _status = StatusAbsent;
-//        syncroPin.write(0);
-        return _status;
-    }
-
-    //ждем завершения "Presence pulse" "0"->"1"
-    deleyUs(TimePresence);
-    // на шине должна стать "1"
-    if (!_phy->pin()){
-        _status = StatusShortCircuit;
-        _errorCode = ErrorAfterPresence;
-//        syncroPin.write(0);
-        return _status;
-    }
-
-    _phy->deleyUs(TimeReset - TimePresence); // общая выдержка в отпущенном состоянии не менее TimeReset
-
-    // нормальный "Presence pulse" был
-    _status = StatusPresence;
-//    syncroPin.write(0);
-    return _status;
-}
 bool NewOneWire::readROM(OneWireRomCode *romCode)
 {
     unsigned char temp = CommandReadRom;

@@ -103,7 +103,6 @@ public:
      * @brief reset
      * @return признак присутствия на шине
      */
-    LineStatus reset();
 
 
 protected:
@@ -112,6 +111,8 @@ protected:
     // ***********************************************************
 
     // >>> Link Layer
+    virtual LineStatus reset() = 0;
+
     virtual LineStatus readWriteBit(bool *bit) = 0;
     virtual LineStatus readWriteByte(unsigned char *byte) = 0;
 
