@@ -10,6 +10,7 @@
 NewOneWire::NewOneWire()
     : _status(StatusUnknown)
     , _devices(16)
+    , _errorCode(ErrorNon)
     , _phy(0)
 {
 
