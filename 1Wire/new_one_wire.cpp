@@ -42,18 +42,7 @@ OneWireRomCode NewOneWire::findSingleDevice()
     return OneWireRomCode(); // вернём пустышку
 }
 
-bool NewOneWire::findDevices(YList<OneWireRomCode*> *romList)
-{
-    printf("OneWire::findDevices()\n");
-    bool ok = true;
-    NewOneWire::LineStatus status = findMultipleDevices(romList);
-    ok = status != StatusError;
-    printf("\tfindMultipleDevices() = %d\n", status);
-    printf("return from OneWire::findDevices()\n");
-    return ok;
-}
-
-bool NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *romCodes)
+bool NewOneWire::findDevices(YList<OneWireRomCode*> *romCodes)
 {
     printf("OneWire::findMultipleDevices()\n");
     int devCount = 0;

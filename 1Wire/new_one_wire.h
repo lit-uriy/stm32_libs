@@ -87,11 +87,7 @@ public:
 
     // true - если ошибок небыло
     // false - если ошибка произошла, однако какое-то кол-во устройств могло быть найдено без ошибок
-    bool findMultipleDevices(YList<OneWireRomCode*> *romCodes); // по сути Search Rom
-
-    // true - если ошибок небыло
-    // false - если ошибка произошла, однако какое-то кол-во устройств могло быть найдено без ошибок
-    bool findDevices(YList<OneWireRomCode*> *romList);
+    bool findDevices(YList<OneWireRomCode*> *romCodes); // по сути Search Rom
 
 
     // ***********************************************************
