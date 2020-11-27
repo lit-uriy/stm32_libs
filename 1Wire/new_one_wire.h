@@ -7,13 +7,6 @@
 
 class OneWireDevice;
 
-template <class T>
-class OneWirePhy;
-
-/***************************************************
- *  1-Wire
- *
- */
 
 class NewOneWire
 {
