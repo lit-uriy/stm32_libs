@@ -180,12 +180,12 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
     unsigned char crc = 0;
     _errorCode = ErrorNon;
 
-    if (reset() != NewOneWire::StatusPresence){
+    if (reset() != StatusPresence){
         _errorCode = ErrorQueryReadRom | _errorCode;
         return _status;
     }
 
-    if (_phyreadWriteByte(&temp) != StatusPresence){
+    if (readWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQueryReadRom | _errorCode;
         return false; // что-то пошло не так, например, устройство отключили
     }
