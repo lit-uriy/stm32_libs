@@ -65,7 +65,7 @@ NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *r
 
 //        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
 
-        LineStatus status = searchROM(&romCode, next);
+        SearchResult result = searchROM(&romCode, next);
 
         printf("\tsearchROM() = %d\n", status);
 
@@ -75,7 +75,8 @@ NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *r
                     _status);
         }
 
-        if ((status == StatusPresence) || (status == StatusPresenceMulty)){
+        // есть очередной ROM-id
+        if (result & SearchResultHasId) {
             // считаем CRC
             unsigned char crc = 0;
             for (int i = 0; i < 8; ++i) {
@@ -91,12 +92,12 @@ NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *r
             romCodes->append(r);// FIXME: Дубликаты не проверяются!
             devCount++;
 
-            if (status == StatusPresenceMulty)
+            if (result & SearchResultHasNextId)
                 continue;
 
             break;
 
-        }else if (status >= StatusError) {
+        }else if (result & SearchResultError) {
             return StatusError; // но при этом в список уже могли попасть устройства
         }else {// StatusAlarming, StatusAbsent
             break;
