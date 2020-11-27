@@ -3,7 +3,6 @@
 
 #include "mbed.h"
 #include "new_one_wire.h"
-#include "one_wire_phy.h"
 
 //-------------------------
 //  ID термометра: 28 FF 55 9D 6F 14 04 3F
@@ -49,79 +48,9 @@ class OneWireDevice;
  *
  */
 
-class OneWireMbedPin: public NewOneWire, public OneWirePhy
+class OneWireMbedPin: public NewOneWire
 {
 public:
-    enum NewLineStatus {
-        NewStatusUnknown = 0,
-        NewStatusPulledUp,
-        NewStatusShortCircuit,
-        NewStatusNormal = NewStatusPulledUp
-    };
-
-    enum LineStatus {
-        // non-error statuses
-        StatusPresence = 0x01,
-        StatusPresenceMulty = 0x02,
-        StatusAlarming = 0x03,
-        StatusAbsent = 0x04,
-        // error statuses
-        StatusError = 0x81,
-        StatusShortCircuit = 0x82,
-        StatusUnknown = 0x83,
-    };
-
-
-    enum RomCommands {
-        CommandReadRom = 0x33,
-        CommandMatchRom = 0x55,
-        CommandSearchRom = 0xF0,
-        CommandSkipRom = 0xCC,
-    };
-
-    enum ErrorCode {
-        // младшая тетрада - "ЧТО?"
-        ErrorNon = 0x00,
-        ErrorBeforeSyncro,
-        ErrorBeforePresence,
-        ErrorAfterPresence,
-
-        // старшая тетрада - "ГДЕ?"
-        ErrorQueryReadRom = 0x10,
-        ErrorAnswerReadRom = 0x20,
-        ErrorCrcReadRom = 0x30,
-
-        ErrorResetMatchRom = 0x40,
-        ErrorQueryMatchRom = 0x50,
-        ErrorAnswerMatchRom = 0x60,
-        ErrorCrcMatchRom = 0x70,
-
-        ErrorOnReset = 0x80,
-
-        ErrorResetSkipRom = 0x90,
-        ErrorQuerySkipRom = 0xA0,
-
-        ErrorResetSearchRom = 0xB0,
-        ErrorQuerySearchRom = 0xC0,
-        ErrorAnswerSearchRom = 0xD0,
-        ErrorCRCSearchRom = 0xE0,
-    };
-
-
-    OneWireMbedPin(DigitalInOut apin);
-
-    LineStatus status();
-    int errorCode();
-
-    // собирает информацию об устройствах
-    OneWireRomCode findSingleDevice(); // по сути Read Rom
-    LineStatus findMultipleDevices(YList<OneWireRomCode*> *romCodes); // по сути Search Rom
-
-    bool findDevices(YList<OneWireRomCode*> *romList);
-
-    void addDevice(OneWireDevice *dev);
-    void removeDevice(OneWireDevice *dev);
-    YList<OneWireDevice *> devices();
 
 
 public:
@@ -131,14 +60,6 @@ public:
      */
     LineStatus reset();
 
-    bool readROM(OneWireRomCode *romCode);
-    LineStatus searchROM(OneWireRomCode *romCode, bool next = true);
-    bool matchROM(const OneWireRomCode romCode);
-    bool skipROM();
-
-
-protected:
-    virtual OneWirePhy* physicalInterface();
 
 private:
     enum Times {
@@ -156,21 +77,6 @@ private:
     };
 
 
-    // Memory function commands - Transport layer
-public:
-    enum MemoryCommands {
-        CommandReadRam = 0xF0,
-        CommandReadEeprom = 0xA5,
-        CommandReadSubkey = 0x66, // для старой таблетки DS1991
-        CommandWriteScratchpad = 0x0F, // 0x96 - для старой таблетки DS1991
-        CommandReadScratchpad = 0xAA, // 0x69 - для старой таблетки DS1991
-        CommandCopyScratchpad = 0x55, // 0x3C - для старой таблетки DS1991
-        CommandWriteSubkey = 0x99, // для старой таблетки DS1991
-        CommandWritePassword = 0x5A, // для старой таблетки DS1991
-        CommandWriteEeprom = 0x0F,
-        CommandWriteStatus = 0x55,
-        CommandReadStatus = 0xAA,
-    };
 
 
     inline bool pin()
@@ -222,11 +128,6 @@ private:
     friend class OneWireDevice;
 
     DigitalInOut _pin;
-    LineStatus _status;
-
-    YList<OneWireDevice *> _devices;
-
-    int _errorCode;
 };
 
 #endif // ONEWIRE_MBEDPIN_H
