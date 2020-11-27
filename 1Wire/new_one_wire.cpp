@@ -31,8 +31,8 @@ OneWireRomCode NewOneWire::findSingleDevice()
 {
     _errorCode = ErrorNon;
     OneWireRomCode rom;
-    NewOneWire::LineStatus status = reset();
-    if (status != NewOneWire::StatusPresence){
+
+    if (reset() != StatusPresence){
         _errorCode = ErrorOnReset | _errorCode;
         return OneWireRomCode(); // вернём пустышку
     }
