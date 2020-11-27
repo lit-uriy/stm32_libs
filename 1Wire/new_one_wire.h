@@ -112,10 +112,10 @@ protected:
     // ***********************************************************
 
     // >>> Link Layer
-    LineStatus readWriteByte(unsigned char *byte) = 0;
-    LineStatus readWriteBit(bool *bit) = 0;
+    virtual LineStatus readWriteBit(bool *bit) = 0;
+    virtual LineStatus readWriteByte(unsigned char *byte) = 0;
 
-    void setStrongPullup(bool strong) = 0;
+    virtual void setStrongPullup(bool strong) = 0;
     // <<< Link Layer
 
     // >>> Network Layer
