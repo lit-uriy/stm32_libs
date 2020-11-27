@@ -182,7 +182,7 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
 
     if (reset() != StatusPresence){
         _errorCode = ErrorQueryReadRom | _errorCode;
-        return _status;
+        return false;
     }
 
     if (readWriteByte(&temp) != StatusPresence){
