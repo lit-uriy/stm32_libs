@@ -116,10 +116,20 @@ protected:
     // <<< Link Layer
 
     // >>> Network Layer
-    bool readROM(OneWireRomCode *romCode) = 0;
-    LineStatus searchROM(OneWireRomCode *romCode, bool next = true) = 0;
-    bool matchROM(const OneWireRomCode romCode) = 0;
-    bool skipROM() = 0;
+
+    bool readROM(OneWireRomCode *romCode);
+
+    // Результаты поиска по ИЛИ
+    enum SearchResult {
+        SearchResultAbsent = 0,         // Rom-id не содержит новых данных
+        SearchResultHasId = 0x01,       // Rom-id содержит новый id
+        SearchResultHasNextId = 0x02,   // Есть ещё устройства
+        SearchResultError = 0x04,       // Есть ошибка
+    };
+    SearchResult searchROM(OneWireRomCode *romCode, bool next = true);
+
+    bool matchROM(const OneWireRomCode romCode);
+    bool skipROM();
     // <<< Network Layer
 
 

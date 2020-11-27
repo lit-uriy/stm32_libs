@@ -225,7 +225,7 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
     return true;
 }
 
-NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
+NewOneWire::SearchResult NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
     printf("OneWire::searchROM(next=%d)\n", next);
     _errorCode = ErrorNon;
@@ -253,7 +253,7 @@ NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         printf("searchROM done\r\n");
 //        return present;
         returnCounter = 2;
-        return StatusAbsent; // больше нет устройств
+        return SearchResultAbsent; // больше нет устройств
     }
 
     // 1 - The master begins the initialization sequence
@@ -262,7 +262,7 @@ NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         lastConflictPos = 0;
 //        return present;
         returnCounter = 3;
-        return _status; // возможно на линии ни кого нет - надо начинать сначала
+        return SearchResultAbsent; // возможно на линии ни кого нет - надо начинать сначала
     }
 
     // 2 - The master will then issue the Search ROM command on the 1–Wire Bus
@@ -271,7 +271,7 @@ NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     if (readWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQuerySearchRom | _errorCode;
         returnCounter = 4;
-        return _status; // что-то пошло не так, например, устройство отключили - надо начинать сначала
+        return SearchResultAbsent; // что-то пошло не так, например, устройство отключили - надо начинать сначала
     }
 
     conflictPos = 0;
@@ -285,12 +285,12 @@ NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
             returnCounter = 5;
-            return StatusError; // какая-то проблема на линии - надо начинать сначала
+            return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
         if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
             returnCounter = 6;
-            return StatusError; // какая-то проблема на линии - надо начинать сначала
+            return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
 
         romA.setBit(number-1, a);
@@ -333,7 +333,7 @@ NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         if (readWriteBit(&c) != StatusPresence){
             _errorCode = ErrorAnswerSearchRom | _errorCode;
             returnCounter = 8;
-            return _status; // какая-то проблема на линии - надо начинать сначала
+            return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
 //        printf("testCounter: %d\n", testCounter);
 
@@ -354,12 +354,12 @@ NewOneWire::LineStatus NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         present = true;
         returnCounter = 9;
 //        return present;
-        return StatusPresence; // больше нет устройств - надо начинать сначала
+        return SearchResultHasId; // больше нет устройств - надо начинать сначала
     }
 
 //        return present;
     returnCounter = 10;
-    return StatusPresenceMulty; // ещё есть устройства - можно продолжать
+    return SearchResultHasId |SearchResultHasNextId; // ещё есть устройства - можно продолжать
 }
 
 bool NewOneWire::skipROM()
