@@ -53,7 +53,7 @@ bool NewOneWire::findDevices(YList<OneWireRomCode*> *romList)
     return ok;
 }
 
-NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *romCodes)
+bool NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *romCodes)
 {
     printf("OneWire::findMultipleDevices()\n");
     int devCount = 0;
@@ -67,12 +67,11 @@ NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *r
 
         SearchResult result = searchROM(&romCode, next);
 
-        printf("\tsearchROM() = %d\n", status);
+//        printf("\tsearchROM() = %d\n", result);
 
-        if (status >= StatusError){
-            printf("searchROM status=%d, _status=%d\r\n",
-                    status,
-                    _status);
+        if (result & SearchResultError) {
+            printf("searchROM result=%02X, _status=%d\r\n", result, _status);
+            return false; // но при этом в список уже могли попасть устройства
         }
 
         // есть очередной ROM-id
@@ -85,7 +84,7 @@ NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *r
             if (crc){
                 printf("findMultipleDevices(); CRC ERROR: ROM=%s, CRC8=%02X\r\n", romCode.romString(), crc);
                 _errorCode = ErrorCRCSearchRom | _errorCode;
-                return StatusError; // какая-то проблема на линии - надо начинать сначала
+                return false; // какая-то проблема на линии - надо начинать сначала
             }
             OneWireRomCode *r = new OneWireRomCode;
             *r = romCode;
@@ -94,19 +93,14 @@ NewOneWire::LineStatus NewOneWire::findMultipleDevices(YList<OneWireRomCode*> *r
 
             if (result & SearchResultHasNextId)
                 continue;
+            else
+                break;
 
-            break;
-
-        }else if (result & SearchResultError) {
-            return StatusError; // но при этом в список уже могли попасть устройства
-        }else {// StatusAlarming, StatusAbsent
+        }else {// SearchResultAbsent
             break;
         }
     }
-    if (devCount)
-        return StatusPresence;
-
-    return StatusAbsent;
+    return true;
 }
 
 // FIXME: надо проверять сидит ли устройство на другой проволоке или нет
