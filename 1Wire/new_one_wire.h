@@ -122,6 +122,8 @@ protected:
     bool skipROM();
     // <<< Network Layer
 
+    LineStatus _status;
+    int _errorCode;
 
 private:
     NewOneWire(const NewOneWire &other);
@@ -129,11 +131,9 @@ private:
 
 private:
     friend class OneWireDevice;
-    LineStatus _status;
 
     YList<OneWireDevice *> _devices;
 
-    int _errorCode;
 };
 
 #endif // NEW_ONEWIRE_H
