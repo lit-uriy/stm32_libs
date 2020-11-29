@@ -11,24 +11,26 @@ class OneWireDevice;
 class NewOneWire
 {
 public:
-    enum NewLineStatus {
-        NewStatusUnknown = 0,
-        NewStatusPulledUp,
-        NewStatusShortCircuit,
-        NewStatusNormal = NewStatusPulledUp
+    enum LineStatus {
+        StatusUnknown = 0,
+        StatusPresence,
+        StatusAlarming,
+        StatusPulledUp,
+        StatusAbsent = StatusPulledUp,
+        StatusShortCircuit
     };
 
-    enum LineStatus {
-        // non-error statuses
-        StatusPresence = 0x01,
-        StatusPresenceMulty = 0x02,
-        StatusAlarming = 0x03,
-        StatusAbsent = 0x04,
-        // error statuses
-        StatusError = 0x81,
-        StatusShortCircuit = 0x82,
-        StatusUnknown = 0x83,
-    };
+//    enum LineStatus {
+//        // non-error statuses
+//        StatusPresence = 0x01,
+//        StatusPresenceMulty = 0x02,
+//        StatusAlarming = 0x03,
+//        StatusAbsent = 0x04,
+//        // error statuses
+//        StatusError = 0x81,
+//        StatusShortCircuit = 0x82,
+//        StatusUnknown = 0x83,
+//    };
 
 
     enum RomCommands {
