@@ -33,9 +33,9 @@ int main()
     // список с ROM-кодами
     YList<OneWireRomCode*> roms;
 
-    bool ok = wire.findDevices(&roms);
+    bool ok = wire->findDevices(&roms);
     if (!ok){
-        printf("Error ocured during the search 1-Wire devices; ErrorCode: %d\r\n", wire.errorCode());
+        printf("Error ocured during the search 1-Wire devices; ErrorCode: %d\r\n", wire->errorCode());
     }
 
     if (!roms.isEmpty()){
