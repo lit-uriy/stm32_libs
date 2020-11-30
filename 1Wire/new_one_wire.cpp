@@ -165,14 +165,12 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     }
 
     int conflictPos = 0;
-    bool present = false;
 
 
     // Ret = 0
     if (done){
         done = false;
         printf("searchROM done\r\n");
-//        return present;
         return SearchResultAbsent; // больше нет устройств
     }
 
@@ -180,7 +178,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     if (reset() != NewOneWire::StatusPresence){
         _errorCode = ErrorResetSearchRom | _errorCode;
         lastConflictPos = 0;
-//        return present;
         return SearchResultAbsent; // возможно на линии ни кого нет - надо начинать сначала
     }
 
@@ -218,7 +215,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
             _status = StatusAbsent;
             lastConflictPos = 0;
             conflictPos = 0;
-//        return present;
             return SearchResultAbsent;
         }
 
@@ -262,12 +258,9 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     if (!lastConflictPos){
         done = true;
         printf("searchROM Done\r\n");
-        present = true;
-//        return present;
         return SearchResultHasId; // больше нет устройств - надо начинать сначала
     }
 
-//        return present;
     return SearchResultHasId |SearchResultHasNextId; // ещё есть устройства - можно продолжать
 }
 
