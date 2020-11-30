@@ -19,7 +19,7 @@ int main()
 
     // -- программная, через ножку контроллера
 #if (1)
-    DigitalInOut *pin = new DigitalInOut(DATA_PIN); // Mbed-ножка контроллера
+    DigitalInOut pin(DATA_PIN); // Mbed-ножка контроллера
     OneWireMbedPin *oneWireConcrete = new OneWireMbedPin(pin);
 #else
     // -- аппаратная, через USART
