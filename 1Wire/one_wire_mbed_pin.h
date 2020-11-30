@@ -53,14 +53,14 @@ class OneWireMbedPin: public NewOneWire
 public:
 
     OneWireMbedPin(DigitalInOut apin);
-    ~OneWireMbedPin(){}
+    virtual ~OneWireMbedPin(){}
 
 public:
     /**
      * @brief reset
      * @return признак присутствия на шине
      */
-    LineStatus reset();
+    virtual LineStatus reset();
 
 
 private:
