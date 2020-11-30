@@ -1,9 +1,6 @@
 #include "new_one_wire.h"
 
-#include "one_wire_phy.h"
-
 #include "one_wire_device.h"
-
 #include "../utils/crc.h"
 
 
@@ -49,7 +46,6 @@ bool NewOneWire::findDevices(YList<OneWireRomCode*> *romCodes)
     OneWireRomCode romCode;
 
     while (1) {
-        returnCounter = 0;
         bool next = bool(devCount);
 
 //        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
@@ -158,15 +154,12 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
 
     OneWireRomCode romA, romB, romC, romD;
 
-    int testCounter = 0;
-
     static int lastConflictPos = 0;
     static bool done = false;
 
     if (!next){
         lastConflictPos = 0;
         done = false;
-        returnCounter = 1;
     }
 
     int conflictPos = 0;
@@ -178,7 +171,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         done = false;
         printf("searchROM done\r\n");
 //        return present;
-        returnCounter = 2;
         return SearchResultAbsent; // больше нет устройств
     }
 
@@ -187,7 +179,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         _errorCode = ErrorResetSearchRom | _errorCode;
         lastConflictPos = 0;
 //        return present;
-        returnCounter = 3;
         return SearchResultAbsent; // возможно на линии ни кого нет - надо начинать сначала
     }
 
@@ -196,7 +187,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
 
     if (readWriteByte(&temp) != StatusPresence){
         _errorCode = ErrorQuerySearchRom | _errorCode;
-        returnCounter = 4;
         return SearchResultAbsent; // что-то пошло не так, например, устройство отключили - надо начинать сначала
     }
 
@@ -206,16 +196,13 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         bool a = true; //  bit[i]
         bool b = true; // ~bit[i]
         bool c = true; // результирующий бит
-        testCounter = 0;
 
         if (readWriteBit(&a) != StatusPresence){ // устройство выставит bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
-            returnCounter = 5;
             return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
         if (readWriteBit(&b) != StatusPresence){ // устройство выставит ~bit[i]
             _errorCode = ErrorAnswerSearchRom | _errorCode;
-            returnCounter = 6;
             return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
 
@@ -231,11 +218,9 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
             conflictPos = 0;
 //        return present;
             return SearchResultAbsent;
-            returnCounter = 7;
         }
 
         if (conflict){
-            testCounter = 1;
             if (number == lastConflictPos){ // Добрались до предыдущего конфликта
                 c = 1;
             }else if (number > lastConflictPos){ // ушли дальше предыдущего конфликта
@@ -258,10 +243,8 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         romCode->setBit(number-1, c);
         if (readWriteBit(&c) != StatusPresence){
             _errorCode = ErrorAnswerSearchRom | _errorCode;
-            returnCounter = 8;
             return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
-//        printf("testCounter: %d\n", testCounter);
 
     } // for (number: 1 - 64)
 
@@ -278,13 +261,11 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         done = true;
         printf("searchROM Done\r\n");
         present = true;
-        returnCounter = 9;
 //        return present;
         return SearchResultHasId; // больше нет устройств - надо начинать сначала
     }
 
 //        return present;
-    returnCounter = 10;
     return SearchResultHasId |SearchResultHasNextId; // ещё есть устройства - можно продолжать
 }
 
@@ -335,93 +316,6 @@ bool NewOneWire::matchROM(const OneWireRomCode romCode)
     }
 //    syncroPin.write(0);
     return true;
-}
-
-
-
-NewOneWire::LineStatus NewOneWire::readWriteByte(unsigned char *byte)
-{
-    unsigned char j;
-    _errorCode = ErrorNon;
-
-    for(j=0;j<8;j++)
-    {
-        // должна быть "1"
-        if (!pin()) {
-            _errorCode = ErrorBeforeSyncro;
-            _status = StatusShortCircuit;
-            return _status;
-        }
-        //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
-
-        pinLow();
-        deleyUs(TimeSyncro);
-
-        // WR: если "1" в данных, то отпускаем линию, слэйв прочитает "1"
-        // RD: каждый входной бит у byte в "1", соответственно линию отпускаем
-        if((*byte) & 0x01)
-            pinRelease();
-
-        // WR: следующий бит данных
-        // RD: готовим очередной бит для приёма
-        (*byte)>>=1; // (*x) = (*x) >> 1;
-
-        deleyUs(Time10);
-
-        // RD: до сюда должно быть меньше 15 мкс
-
-        // читаем, что нам слэйв выставил, если мы пишем, то слэйв линию не трогает, она в "1"
-        if (pin())
-            (*byte) |=0x80;
-
-        deleyUs(TimeSlot-(TimeSyncro + Time10));
-
-        // если в данных был "0", то линия вернётся в исходное
-        pinRelease();
-
-        deleyUs(Time10);
-    }
-
-    _status = StatusPresence;
-    return _status;
-}
-
-NewOneWire::LineStatus NewOneWire::readWriteBit(bool *bit)
-{
-    _errorCode = ErrorNon;
-
-    // должна быть "1"
-    if (!pin()) {
-        _errorCode = ErrorBeforeSyncro;
-        _status = StatusShortCircuit;
-        return _status;
-    }
-    //выставляем "Синхрофронт" на 10мкс, т.к. через 15 мкс слэйв будет читать данные
-
-    pinLow();
-    deleyUs(TimeSyncro);
-
-    // WR: если "1" в данных, то отпускаем линию, слэйв прочитает "1"
-    // RD: каждый входной бит у byte в "1", соответственно линию отпускаем
-    if(*bit)
-        pinRelease();
-
-    deleyUs(Time10);
-
-    // RD: до сюда должно быть меньше 15 мкс
-
-    // читаем, что нам слэйв выставил, если мы пишем, то слэйв линию не трогает, она в "1"
-    *bit = pin();
-
-    deleyUs(TimeSlot-(TimeSyncro + Time10));
-
-    // если в данных был "0", то линия вернётся в исходное
-    pinRelease();
-
-    deleyUs(Time10);
-
-    _status = StatusPresence;
-    return _status;
 }
 
 
