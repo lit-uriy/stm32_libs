@@ -9,7 +9,6 @@ OneWireMbedPin::OneWireMbedPin(DigitalInOut apin)
     , _devices(16)
 {
     pinInit();
-    syncroPin.write(0);
 }
 
 
