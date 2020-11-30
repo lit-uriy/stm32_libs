@@ -411,7 +411,7 @@
             <File>
               <FileName>mbed_config.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../mbed_config.h</FilePath>
+              <FilePath>../../../mbed_DS1820_HelloWorld/mbed_config.h</FilePath>
             </File>
             <File>
               <FileName>main.cpp</FileName>
