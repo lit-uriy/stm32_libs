@@ -381,31 +381,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>DS1820</GroupName>
-          <Files>
-            <File>
-              <FileName>DS1820.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\DS1820\DS1820.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>DS1820.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\DS1820\DS1820.h</FilePath>
-            </File>
-            <File>
-              <FileName>LinkedList.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\DS1820\LinkedList\LinkedList.h</FilePath>
-            </File>
-            <File>
-              <FileName>LinkedList.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\DS1820\LinkedList\LinkedList.cpp</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>main</GroupName>
           <Files>
             <File>
