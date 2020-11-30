@@ -107,7 +107,12 @@ private:
         }
     }
 
-    inline void deleyUs(int us)
+    void deleyMs(int ms)
+    {
+        wait_ms(ms);
+    }
+
+    void deleyUs(int us)
     {
         wait_us(us);
     }

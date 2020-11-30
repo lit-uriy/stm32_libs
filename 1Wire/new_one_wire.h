@@ -125,6 +125,10 @@ public:
     bool skipROM();
     // <<< Network Layer
 
+    virtual void deleyMs(int ms) = 0;
+    virtual void deleyUs(int us) = 0;
+
+
 protected:
     LineStatus _status;
     int _errorCode;
