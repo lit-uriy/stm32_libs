@@ -94,7 +94,6 @@ public:
     YList<OneWireDevice *> devices();
 
 
-protected:
     // ***********************************************************
     // *          Общие ROM-функции проволоки                    *
     // ***********************************************************
@@ -126,6 +125,7 @@ protected:
     bool skipROM();
     // <<< Network Layer
 
+protected:
     LineStatus _status;
     int _errorCode;
 
