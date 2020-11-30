@@ -54,7 +54,7 @@ bool NewOneWire::findDevices(YList<OneWireRomCode*> *romCodes)
 
 //        printf("findMultipleDevices(); Init ROM=%s\r\n", romCode->romString());
 
-        SearchResult result = searchROM(&romCode, next);
+        int result = searchROM(&romCode, next);
 
 //        printf("\tsearchROM() = %d\n", result);
 
@@ -151,7 +151,7 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
     return true;
 }
 
-NewOneWire::SearchResult NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
+int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
     printf("OneWire::searchROM(next=%d)\n", next);
     _errorCode = ErrorNon;
@@ -230,8 +230,8 @@ NewOneWire::SearchResult NewOneWire::searchROM(OneWireRomCode *romCode, bool nex
             lastConflictPos = 0;
             conflictPos = 0;
 //        return present;
+            return SearchResultAbsent;
             returnCounter = 7;
-            return StatusAbsent;
         }
 
         if (conflict){

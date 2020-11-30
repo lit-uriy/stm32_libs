@@ -119,7 +119,8 @@ protected:
         SearchResultHasNextId = 0x02,   // Есть ещё устройства
         SearchResultError = 0x04,       // Есть ошибка
     };
-    SearchResult searchROM(OneWireRomCode *romCode, bool next = true);
+    // возвращает INT как результат операции ИЛИ для SearchResult
+    int searchROM(OneWireRomCode *romCode, bool next = true);
 
     bool matchROM(const OneWireRomCode romCode);
     bool skipROM();
