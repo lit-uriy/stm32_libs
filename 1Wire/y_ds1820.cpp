@@ -134,7 +134,7 @@ int Yds1820::convertTemperature(NewOneWire *awire)
     // считаем что все устройства с паразитным питанием
     // и им нужна жёсткая подтяжка к питанию, на время преобразования
     awire->setStrongPullup(true);// TODO: это не должно быть функцией проволоки
-    wait_ms(delay_time);
+    awire->deleyMs(delay_time);
     awire->setStrongPullup(false);
     delay_time = 0;
 
@@ -184,7 +184,7 @@ int Yds1820::convertTemperature()
     if (_parasitePower)
         wire()->setStrongPullup(true);
 
-    wait_ms(delay_time);
+    wire()->deleyMs(delay_time);
 
     if (_parasitePower)
         wire()->setStrongPullup(false);
