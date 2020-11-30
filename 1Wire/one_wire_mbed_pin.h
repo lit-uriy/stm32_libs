@@ -52,6 +52,7 @@ class OneWireMbedPin: public NewOneWire
 {
 public:
 
+    OneWireMbedPin(DigitalInOut apin);
 
 public:
     /**
