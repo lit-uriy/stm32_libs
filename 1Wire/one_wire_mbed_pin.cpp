@@ -3,10 +3,7 @@
 
 OneWireMbedPin::OneWireMbedPin(DigitalInOut apin)
     : NewOneWire()
-    , OneWirePhy()
     , _pin(apin)
-    , _status(StatusUnknown)
-    , _devices(16)
 {
     pinInit();
 }
