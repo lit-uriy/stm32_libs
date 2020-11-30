@@ -62,6 +62,13 @@ public:
      */
     virtual LineStatus reset();
 
+    virtual LineStatus readWriteBit(bool *bit);
+    virtual LineStatus readWriteByte(unsigned char *byte);
+
+    virtual void setStrongPullup(bool strong);
+
+    virtual void deleyMs(int ms);
+    virtual void deleyUs(int us);
 
 private:
     enum Times {
@@ -97,26 +104,6 @@ private:
     }
 
 
-    inline void setStrongPullup(bool strong)
-    {
-        if (strong){
-            _pin.mode(PushPullNoPull);
-            _pin.write(1);
-        }else{
-            pinInit();
-        }
-    }
-
-    void deleyMs(int ms)
-    {
-        wait_ms(ms);
-    }
-
-    void deleyUs(int us)
-    {
-        wait_us(us);
-    }
-
     inline void pinInit()
     {
         // Line state: 1
@@ -125,8 +112,6 @@ private:
         pinRelease(); // Line state: 1
     }
 
-    LineStatus readWriteByte(unsigned char *byte);
-    LineStatus readWriteBit(bool *bit);
 
 
 
