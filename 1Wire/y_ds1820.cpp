@@ -2,6 +2,10 @@
 
 #include "../utils/crc.h"
 
+
+#include <math.h>
+#include <stdio.h>
+
 /*
  *
 Button is pressed
