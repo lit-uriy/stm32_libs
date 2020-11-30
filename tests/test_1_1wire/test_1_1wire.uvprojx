@@ -1866,22 +1866,22 @@
             <File>
               <FileName>bin2hex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../utils\bin2hex.c</FilePath>
+              <FilePath>../../../mbed_DS1820_HelloWorld/utils/bin2hex.c</FilePath>
             </File>
             <File>
               <FileName>bin2hex.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../utils\bin2hex.h</FilePath>
+              <FilePath>../../../mbed_DS1820_HelloWorld/utils/bin2hex.h</FilePath>
             </File>
             <File>
               <FileName>crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../utils\crc.c</FilePath>
+              <FilePath>../../../mbed_DS1820_HelloWorld/utils/crc.c</FilePath>
             </File>
             <File>
               <FileName>crc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../utils\crc.h</FilePath>
+              <FilePath>../../../mbed_DS1820_HelloWorld/utils/crc.h</FilePath>
             </File>
           </Files>
         </Group>
