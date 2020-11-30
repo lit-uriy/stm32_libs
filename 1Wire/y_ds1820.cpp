@@ -16,7 +16,6 @@ Device 28FF559D6F14043F, T=26.8, resolution=96
  */
 
 
-extern DigitalOut syncroPin;
 
 Yds1820::Yds1820(OneWireRomCode aRomCode, NewOneWire *awire)
     : OneWireDevice(aRomCode, awire)
