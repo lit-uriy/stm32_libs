@@ -38,14 +38,17 @@ int main()
         printf("Error ocured during the search 1-Wire devices; ErrorCode: %d\r\n", wire->errorCode());
     }
 
-    if (!roms.isEmpty()){
-        printf("Found %d device(s):\r\n", roms.size());
-        for(int i = 0; i < roms.size(); i++){
-            printf("Device #%d: %s\r\n", i, roms.at(i)->romString());
-        }
-    }else{
+    if (roms.isEmpty()){
         printf("No devices found!\r\n");
+        while(1){}
     }
+
+
+    printf("========== Found %d device(s): ==========\r\n", roms.size());
+    for(int i = 0; i < roms.size(); i++){
+        printf("Device #%d: %s\r\n", i, roms.at(i)->romString());
+    }
+
 
 }
 
