@@ -70,6 +70,7 @@ public:
 
 
     NewOneWire();
+    virtual ~NewOneWire(){}
 
     LineStatus status();
     int errorCode();
