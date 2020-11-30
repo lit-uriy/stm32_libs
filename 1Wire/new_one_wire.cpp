@@ -4,6 +4,8 @@
 #include "../utils/crc.h"
 
 
+#include <stdio.h>
+
 NewOneWire::NewOneWire()
     : _status(StatusUnknown)
     , _devices(16)
