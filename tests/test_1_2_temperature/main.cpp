@@ -3,6 +3,7 @@
 #include "ylist.h"
 #include "new_one_wire.h"
 #include "one_wire_mbed_pin.h"
+#include "y_ds1820.h"
 #include "mbed.h"
 
 
@@ -47,10 +48,22 @@ int main()
         while(1){}
     }
 
+    YList<Yds1820*> list;
 
     printf("Found %d device(s):\r\n", roms.size());
     for(int i = 0; i < roms.size(); i++){
-        printf("Device #%d: %s\r\n", i, roms.at(i)->romString());
+        OneWireRomCode *rom = roms.at(i);
+
+        // Создадим термодатчики
+        unsigned char familyCode = rom->familyCode();
+        if ((familyCode == Yds1820::FamilyDs1820) || (familyCode == Yds1820::FamilyDs1822) || (familyCode == Yds1820::FamilyDs18B20)){
+            Yds1820 *dev = new Yds1820(*(roms.at(i)), wire);
+            printf("Device #%d, ROM=%s\r\n", i, rom->romString());
+            printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
+            printf("\tresolution: %d bits\r\n", dev->resolution());
+            printf("\r\n");
+            list.append(dev);
+        }
     }
 
 
