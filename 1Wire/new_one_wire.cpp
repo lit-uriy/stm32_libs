@@ -151,10 +151,7 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
 
 int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
-    printf("OneWire::searchROM(next=%d)\n", next);
     _errorCode = ErrorNon;
-
-    OneWireRomCode romA, romB, romC, romD;
 
     static int lastConflictPos = 0;
     static bool done = false;
@@ -170,7 +167,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     // Ret = 0
     if (done){
         done = false;
-        printf("searchROM done\r\n");
         return SearchResultAbsent; // больше нет устройств
     }
 
@@ -205,9 +201,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
             return SearchResultAbsent; // какая-то проблема на линии - надо начинать сначала
         }
 
-        romA.setBit(number-1, a);
-        romB.setBit(number-1, b);
-
         bool absent = a & b;
         bool conflict = !a & !b;
 
@@ -226,7 +219,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
                 conflictPos = number;
             }else {
                 c = romCode->bit(number-1);
-                romD.setBit(number-1, c);
                 if (!c){ // НЕ добрались до предыдущего конфликта
                     conflictPos = number;
                 }
@@ -234,8 +226,6 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
         }else{
             c = a;
         }
-
-        romC.setBit(number-1, c);
 
         // 4 - The master now decides to write "bit[i]"
         romCode->setBit(number-1, c);
@@ -247,17 +237,10 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     } // for (number: 1 - 64)
 
     // 9 - Все биты ROM-кода известны и
-    //     устройство готово для приёма команд транспортного уровня
-
-    printf("Test ROM A: %s, conflictPos = %d, lastConflictPos = %d\n", romA.romString(), conflictPos, lastConflictPos);
-    printf("Test ROM B: %s\n", romB.romString());
-    printf("Test ROM C: %s\n", romC.romString());
-    printf("Test ROM D: %s\n", romD.romString());
 
     lastConflictPos = conflictPos;
     if (!lastConflictPos){
         done = true;
-        printf("searchROM Done\r\n");
         return SearchResultHasId; // больше нет устройств - надо начинать сначала
     }
 
