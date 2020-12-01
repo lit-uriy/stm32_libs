@@ -43,7 +43,6 @@ OneWireRomCode NewOneWire::findSingleDevice()
 
 bool NewOneWire::findDevices(YList<OneWireRomCode*> *romCodes)
 {
-    printf("OneWire::findMultipleDevices()\n");
     int devCount = 0;
     OneWireRomCode romCode;
 
