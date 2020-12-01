@@ -32,7 +32,7 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, NewOneWire *awire)
 
     readPowerSupply();
     readRam();
-    printf("RAM: config=%d, temp=%d\r\n", _ram.config, _ram.currentTemp);
+//    printf("RAM: config=%d, temp=%d\r\n", _ram.config, _ram.currentTemp);
 }
 
 bool Yds1820::readPowerSupply()
