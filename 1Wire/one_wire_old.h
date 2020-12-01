@@ -50,7 +50,7 @@ class OneWireDevice;
  *
  */
 
-class NewOneWire
+class OneWire
 {
 public:
     enum NewLineStatus {
@@ -109,7 +109,7 @@ public:
     };
 
 
-    NewOneWire(DigitalInOut apin);
+    OneWire(DigitalInOut apin);
 
     LineStatus status();
     int errorCode();

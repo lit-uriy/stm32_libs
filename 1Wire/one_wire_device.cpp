@@ -2,14 +2,13 @@
 
 #include "../utils/crc.h"
 
-extern DigitalOut syncroPin;
 
 OneWireDevice::OneWireDevice(OneWireRomCode aRomCode, OneWire *awire)
     : _valid(true)
     , _romCode(aRomCode)
     , _wire(awire)
 {
-//    syncroPin.write(0);
+
 
 }
 

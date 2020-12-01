@@ -2,6 +2,10 @@
 
 #include "../utils/crc.h"
 
+
+#include <math.h>
+#include <stdio.h>
+
 /*
  *
 Button is pressed
@@ -16,7 +20,6 @@ Device 28FF559D6F14043F, T=26.8, resolution=96
  */
 
 
-extern DigitalOut syncroPin;
 
 Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
     : OneWireDevice(aRomCode, awire)
@@ -29,7 +32,7 @@ Yds1820::Yds1820(OneWireRomCode aRomCode, OneWire *awire)
 
     readPowerSupply();
     readRam();
-    printf("RAM: config=%d, temp=%d\r\n", _ram.config, _ram.currentTemp);
+//    printf("RAM: config=%d, temp=%d\r\n", _ram.config, _ram.currentTemp);
 }
 
 bool Yds1820::readPowerSupply()
@@ -131,7 +134,7 @@ int Yds1820::convertTemperature(OneWire *awire)
     // считаем что все устройства с паразитным питанием
     // и им нужна жёсткая подтяжка к питанию, на время преобразования
     awire->setStrongPullup(true);// TODO: это не должно быть функцией проволоки
-    wait_ms(delay_time);
+    awire->deleyMs(delay_time);
     awire->setStrongPullup(false);
     delay_time = 0;
 
@@ -181,7 +184,7 @@ int Yds1820::convertTemperature()
     if (_parasitePower)
         wire()->setStrongPullup(true);
 
-    wait_ms(delay_time);
+    wire()->deleyMs(delay_time);
 
     if (_parasitePower)
         wire()->setStrongPullup(false);
