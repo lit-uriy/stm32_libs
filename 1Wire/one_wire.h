@@ -1,5 +1,5 @@
-#ifndef NEW_ONEWIRE_H
-#define NEW_ONEWIRE_H
+#ifndef ONEWIRE_H
+#define ONEWIRE_H
 
 
 #include "one_wire_rom_code.h"
@@ -144,4 +144,4 @@ private:
 
 };
 
-#endif // NEW_ONEWIRE_H
+#endif // ONEWIRE_H
