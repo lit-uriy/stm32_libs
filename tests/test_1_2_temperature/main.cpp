@@ -13,7 +13,11 @@
 
 int main()
 {
-    printf("Test with mBed %d.%d.%d\r\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
+    printf("===============================================\r\n");
+    printf("               Test-1.2                        \r\n");
+    printf("Build with mBed %d.%d.%d\r\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
+    printf("===============================================\r\n");
+    printf("\r\n");
 
     // ***** Реализация физического (Physical) уровня и звена данных (Link) 1-Wire
 
@@ -44,7 +48,7 @@ int main()
     }
 
 
-    printf("========== Found %d device(s): ==========\r\n", roms.size());
+    printf("Found %d device(s):\r\n", roms.size());
     for(int i = 0; i < roms.size(); i++){
         printf("Device #%d: %s\r\n", i, roms.at(i)->romString());
     }
