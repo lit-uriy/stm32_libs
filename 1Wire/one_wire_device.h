@@ -2,7 +2,7 @@
 #define ONEWIREDEVICE_H
 
 
-#include "new_one_wire.h"
+#include "one_wire.h"
 
 
 class OneWireDevice

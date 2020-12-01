@@ -1,7 +1,7 @@
 ../../../mbed_DS1820_HelloWorld/mbed/mbed.h
 ../../../mbed_DS1820_HelloWorld/mbed/targets.json
 ../../1Wire/new_one_wire.cpp
-../../1Wire/new_one_wire.h
+../../1Wire/one_wire.h
 ../../1Wire/one_wire_device.cpp
 ../../1Wire/one_wire_device.h
 ../../1Wire/one_wire_mbed_pin.cpp

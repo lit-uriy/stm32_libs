@@ -2,7 +2,7 @@
 #define ONEWIRE_MBEDPIN_H
 
 #include "mbed.h"
-#include "new_one_wire.h"
+#include "one_wire.h"
 
 //-------------------------
 //  ID термометра: 28 FF 55 9D 6F 14 04 3F
