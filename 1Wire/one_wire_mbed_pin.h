@@ -109,7 +109,9 @@ private:
         // Line state: 1
         _pin.output();
         _pin.mode(OpenDrain); // Line state: 0
-        pinRelease(); // Line state: 1
+        pinRelease(); // Line state transit to 1
+        while(!pin()){} // wait 1
+        wait_us(TimePresence);
     }
 
 
