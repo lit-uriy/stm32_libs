@@ -67,5 +67,30 @@ int main()
     }
 
 
+    while (1) {
+        int delay = Yds1820::convertTemperature(wire);
+        wait_ms(delay);
+
+        float maxT = -100;
+        float minT = 100;
+        float meanT = 0;
+        float temp = 0;
+
+        for (int i = 0; i < list.size(); ++i) {
+            float t = list.at(i)->temperature();
+            temp += t;
+            if (t < minT)
+                  minT = t;
+            if (t > maxT)
+                  maxT = t;
+
+            printf("Device #%d returns %3.1f C\r\n", i, t);
+        }
+        meanT = temp/list.size();
+        printf("Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f\r", minT, meanT, maxT);
+        puts("\r\n");
+
+        wait_ms(500);
+    }
 }
 
