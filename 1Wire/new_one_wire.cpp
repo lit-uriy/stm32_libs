@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-NewOneWire::NewOneWire()
+OneWire::OneWire()
     : _status(StatusUnknown)
     , _errorCode(ErrorNon)
     , _devices(16)
@@ -14,18 +14,18 @@ NewOneWire::NewOneWire()
 
 }
 
-NewOneWire::LineStatus NewOneWire::status()
+OneWire::LineStatus OneWire::status()
 {
     return _status;
 }
 
-int NewOneWire::errorCode()
+int OneWire::errorCode()
 {
     return _errorCode;
 }
 
 
-OneWireRomCode NewOneWire::findSingleDevice()
+OneWireRomCode OneWire::findSingleDevice()
 {
     _errorCode = ErrorNon;
     OneWireRomCode rom;
@@ -41,7 +41,7 @@ OneWireRomCode NewOneWire::findSingleDevice()
     return OneWireRomCode(); // вернём пустышку
 }
 
-bool NewOneWire::findDevices(YList<OneWireRomCode*> *romCodes)
+bool OneWire::findDevices(YList<OneWireRomCode*> *romCodes)
 {
     int devCount = 0;
     OneWireRomCode romCode;
@@ -91,13 +91,13 @@ bool NewOneWire::findDevices(YList<OneWireRomCode*> *romCodes)
 
 // FIXME: надо проверять сидит ли устройство на другой проволоке или нет
 // если сидит, то сначала снять
-void NewOneWire::addDevice(OneWireDevice *dev)
+void OneWire::addDevice(OneWireDevice *dev)
 {
     _devices.append(dev);
     dev->_wire = this;
 }
 
-void NewOneWire::removeDevice(OneWireDevice *dev)
+void OneWire::removeDevice(OneWireDevice *dev)
 {
     int index = _devices.indexOf(dev);
     if (index < 0)
@@ -106,12 +106,12 @@ void NewOneWire::removeDevice(OneWireDevice *dev)
     dev->_wire = 0;
 }
 
-YList<OneWireDevice *> NewOneWire::devices()
+YList<OneWireDevice *> OneWire::devices()
 {
     return _devices;
 }
 
-bool NewOneWire::readROM(OneWireRomCode *romCode)
+bool OneWire::readROM(OneWireRomCode *romCode)
 {
     unsigned char temp = CommandReadRom;
     unsigned char i = 0;
@@ -148,7 +148,7 @@ bool NewOneWire::readROM(OneWireRomCode *romCode)
     return true;
 }
 
-int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
+int  OneWire::searchROM(OneWireRomCode *romCode, bool next)
 {
     _errorCode = ErrorNon;
 
@@ -170,7 +170,7 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     }
 
     // 1 - The master begins the initialization sequence
-    if (reset() != NewOneWire::StatusPresence){
+    if (reset() != OneWire::StatusPresence){
         _errorCode = ErrorResetSearchRom | _errorCode;
         lastConflictPos = 0;
         return SearchResultAbsent; // возможно на линии ни кого нет - надо начинать сначала
@@ -246,13 +246,13 @@ int  NewOneWire::searchROM(OneWireRomCode *romCode, bool next)
     return SearchResultHasId |SearchResultHasNextId; // ещё есть устройства - можно продолжать
 }
 
-bool NewOneWire::skipROM()
+bool OneWire::skipROM()
 {
     unsigned char temp = CommandSkipRom;
     _errorCode = ErrorNon;
 
-    NewOneWire::LineStatus status = reset();
-    if (status != NewOneWire::StatusPresence){
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
         _errorCode = ErrorResetSkipRom | _errorCode;
         return false;
     }
@@ -263,29 +263,29 @@ bool NewOneWire::skipROM()
 	return true;
 }
 
-bool NewOneWire::matchROM(const OneWireRomCode romCode)
+bool OneWire::matchROM(const OneWireRomCode romCode)
 {
     int i;
     _errorCode = ErrorNon;
 
 //    syncroPin.write(1);
 
-    NewOneWire::LineStatus status = reset();
-    if (status != NewOneWire::StatusPresence){
+    OneWire::LineStatus status = reset();
+    if (status != OneWire::StatusPresence){
         _errorCode = ErrorResetMatchRom | _errorCode;
 //        syncroPin.write(0);
         return false;
     }
 
-    unsigned char temp = NewOneWire::CommandMatchRom;
-    if (readWriteByte(&temp) != NewOneWire::StatusPresence){
+    unsigned char temp = OneWire::CommandMatchRom;
+    if (readWriteByte(&temp) != OneWire::StatusPresence){
         _errorCode = ErrorQueryMatchRom | _errorCode;
 //        syncroPin.write(0);
         return false; // что-то пошло не так, например, устройство отключили
     }
     for (i=0;i<8;i++) {
         temp = romCode.bytes[i];
-        if (readWriteByte(&temp) != NewOneWire::StatusPresence){
+        if (readWriteByte(&temp) != OneWire::StatusPresence){
             _errorCode = ErrorAnswerMatchRom | _errorCode;
 //            syncroPin.write(0);
             return false; // что-то пошло не так, например, устройство отключили

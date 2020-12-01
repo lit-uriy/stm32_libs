@@ -48,7 +48,7 @@ class OneWireDevice;
  *
  */
 
-class OneWireMbedPin: public NewOneWire
+class OneWireMbedPin: public OneWire
 {
 public:
 

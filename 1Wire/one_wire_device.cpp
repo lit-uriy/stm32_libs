@@ -3,7 +3,7 @@
 #include "../utils/crc.h"
 
 
-OneWireDevice::OneWireDevice(OneWireRomCode aRomCode, NewOneWire *awire)
+OneWireDevice::OneWireDevice(OneWireRomCode aRomCode, OneWire *awire)
     : _valid(true)
     , _romCode(aRomCode)
     , _wire(awire)
@@ -17,7 +17,7 @@ unsigned char OneWireDevice::familyCode()
     return _romCode.bytes[0];
 }
 
-bool OneWireDevice::appliedCommand(unsigned char command, NewOneWire *awire)
+bool OneWireDevice::appliedCommand(unsigned char command, OneWire *awire)
 {
     if (!awire)
         return false;

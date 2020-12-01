@@ -8,7 +8,7 @@
 class OneWireDevice
 {
 public:
-    OneWireDevice(OneWireRomCode aRomCode, NewOneWire *awire = 0);
+    OneWireDevice(OneWireRomCode aRomCode, OneWire *awire = 0);
     virtual ~OneWireDevice(){}
 
     bool isValid(){return _valid;}
@@ -16,7 +16,7 @@ public:
     OneWireRomCode romCode();
     unsigned char familyCode();
 
-    NewOneWire* wire() {return _wire;}
+    OneWire* wire() {return _wire;}
 
 
 public:
@@ -29,7 +29,7 @@ public:
     bool appliedCommand(unsigned char command);
 
     // Прикладная команда всем устройствам на проволоке
-    static bool appliedCommand(unsigned char command, NewOneWire *awire);
+    static bool appliedCommand(unsigned char command, OneWire *awire);
 
 protected:
 
@@ -37,9 +37,9 @@ protected:
     OneWireRomCode _romCode;
 
 private:
-    NewOneWire *_wire;
+    OneWire *_wire;
 
-    friend class NewOneWire;
+    friend class OneWire;
 };
 
 #endif // ONEWIREDEVICE_H

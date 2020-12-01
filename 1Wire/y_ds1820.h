@@ -21,7 +21,7 @@ public:
         FamilyDs1822 = 0x22,
     };
 
-    Yds1820(OneWireRomCode aRomCode, NewOneWire *awire = 0);
+    Yds1820(OneWireRomCode aRomCode, OneWire *awire = 0);
 
     /**
      * Запускает процедуру измерения температуры
@@ -29,7 +29,7 @@ public:
     // на ЭТОМ термометре
     int convertTemperature();
     // на всех термометрах
-    static int convertTemperature(NewOneWire *awire);
+    static int convertTemperature(OneWire *awire);
 
     float temperature(char scale='c');
 
@@ -37,7 +37,7 @@ public:
     bool setResolution(unsigned int res);
 
     bool readPowerSupply();
-    static bool readPowerSupply(NewOneWire *awire);
+    static bool readPowerSupply(OneWire *awire);
     bool isParasitePowered();
 
     bool readRam();

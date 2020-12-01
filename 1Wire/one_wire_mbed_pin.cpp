@@ -2,7 +2,7 @@
 
 
 OneWireMbedPin::OneWireMbedPin(DigitalInOut apin)
-    : NewOneWire()
+    : OneWire()
     , _pin(apin)
 {
     pinInit();
@@ -10,7 +10,7 @@ OneWireMbedPin::OneWireMbedPin(DigitalInOut apin)
 
 
 
-NewOneWire::LineStatus OneWireMbedPin::reset()
+OneWire::LineStatus OneWireMbedPin::reset()
 {
 
     _errorCode = ErrorNon;
@@ -67,7 +67,7 @@ NewOneWire::LineStatus OneWireMbedPin::reset()
     return _status;
 }
 
-NewOneWire::LineStatus OneWireMbedPin::readWriteBit(bool *bit)
+OneWire::LineStatus OneWireMbedPin::readWriteBit(bool *bit)
 {
     _errorCode = ErrorNon;
 
@@ -106,7 +106,7 @@ NewOneWire::LineStatus OneWireMbedPin::readWriteBit(bool *bit)
 
 }
 
-NewOneWire::LineStatus OneWireMbedPin::readWriteByte(unsigned char *byte)
+OneWire::LineStatus OneWireMbedPin::readWriteByte(unsigned char *byte)
 {
 
     unsigned char j;

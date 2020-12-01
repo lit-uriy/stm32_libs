@@ -8,7 +8,7 @@
 class OneWireDevice;
 
 
-class NewOneWire
+class OneWire
 {
 public:
     enum LineStatus {
@@ -69,8 +69,8 @@ public:
     };
 
 
-    NewOneWire();
-    virtual ~NewOneWire(){}
+    OneWire();
+    virtual ~OneWire(){}
 
     LineStatus status();
     int errorCode();
@@ -134,8 +134,8 @@ protected:
     int _errorCode;
 
 private:
-    NewOneWire(const NewOneWire &other);
-    NewOneWire& operator=(const NewOneWire &other);
+    OneWire(const OneWire &other);
+    OneWire& operator=(const OneWire &other);
 
 private:
     friend class OneWireDevice;

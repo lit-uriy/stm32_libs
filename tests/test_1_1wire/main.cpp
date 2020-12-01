@@ -28,7 +28,7 @@ int main()
 #endif
 
     // ***** Собственно проволока 1-Wire
-    NewOneWire *wire = oneWireConcrete;
+    OneWire *wire = oneWireConcrete;
 
     // список с ROM-кодами
     YList<OneWireRomCode*> roms;
