@@ -1,23 +1,26 @@
-== GPIO
+********* Р’ РЅР°С‡Р°Р»Рµ РєРѕРґР° ***********
 
-=== Регистры портов
 
-==== Настроечные
+********* GPIO ***********
+
+=== Р РµРіРёСЃС‚СЂС‹ РїРѕСЂС‚РѕРІ
+
+==== РќР°СЃС‚СЂРѕРµС‡РЅС‹Рµ
 GPIOx_MODER
 GPIOx_OTYPER
 GPIOx_OSPEEDR
 GPIOx_PUPDR
 
-==== Данные
+==== Р”Р°РЅРЅС‹Рµ
 GPIOx_IDR
 GPIOx_ODR
 
-==== Установочный
+==== РЈСЃС‚Р°РЅРѕРІРѕС‡РЅС‹Р№
 GPIOx_BSRR - Bit set and reset register
 
-==== Блокирующий (для Port A и Port B)
+==== Р‘Р»РѕРєРёСЂСѓСЋС‰РёР№ (РґР»СЏ Port A Рё Port B)
 GPIOx_LCKR
 
-==== Выбора альтернативных функций (Port A и Port B, а в STM32F030xB и STM32F030xC для Port C и Port D)
+==== Р’С‹Р±РѕСЂР° Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅС‹С… С„СѓРЅРєС†РёР№ (Port A Рё Port B, Р° РІ STM32F030xB Рё STM32F030xC РґР»СЏ Port C Рё Port D)
 GPIOx_AFRH
 GPIOx_AFRL
