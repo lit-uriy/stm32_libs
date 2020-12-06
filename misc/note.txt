@@ -9,3 +9,22 @@ HAL
 LL
 
 CUBE
+
+
+stm32f0xx.h - Описание регистров контроллера;
+
+system_stm32f0xx.c - CMSIS Cortex-M0 Device Peripheral Access Layer System Source File
+    - Похоже он чем-то генерится, под конкретные задачи (использование перферии)
+        т.к. содержит условную компиляуию в зависимости от контроллера
+        
+        - SystemInit(): This function is called at startup just after reset and 
+                        before branch to main program. This call is made inside
+                        the "startup_stm32f0xx.s" file.
+  
+        - SystemCoreClock variable: Contains the core clock (HCLK), it can be used
+                                    by the user application to setup the SysTick
+                                    timer or configure other parameters.
+  
+        - SystemCoreClockUpdate(): Updates the variable SystemCoreClock and must
+                                   be called whenever the core clock is changed
+                                   during program execution.
