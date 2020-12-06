@@ -10,6 +10,7 @@ LL
 
 CUBE
 
+MSP = MCU Support package
 
 stm32f0xx.h - Описание регистров контроллера;
 
@@ -28,3 +29,5 @@ system_stm32f0xx.c - CMSIS Cortex-M0 Device Peripheral Access Layer System Sourc
         - SystemCoreClockUpdate(): Updates the variable SystemCoreClock and must
                                    be called whenever the core clock is changed
                                    during program execution.
+
+stm32f0xx_hal_msp.c - 
