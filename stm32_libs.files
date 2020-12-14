@@ -14,6 +14,7 @@
 1Wire/y_ds1820.h
 Containers/ylist.cpp
 Containers/ylist.h
+drafts/draft_1.cpp
 note.txt
 stm-32.txt
 tests/test_1_1wire/main.cpp
