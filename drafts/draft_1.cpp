@@ -55,15 +55,28 @@ int main() {
     YTextCodec *codec = YTextCodec::codecForName("utf-8");
 
     YSerialPort port(GpioPinName(USBTX), GpioPinName(USBRX));
+    port.setBoderate(9600);
+    port.setBits(8);
+    port.setParity(YSerialPort::ParityNone);
+    port.setStops(1.0);
 
     YTextStream out(&port); // YTextStream(YIODevice *device)
     out.setCodec(codec);
 
-    YIOPort lcdport(GpioPortName(GPIOA), 0x000F);
-    Lcd lcd(lcdport);
+    if (!port.open(YIODevice::ReadOnly | YIODevice::Text)){
+        return;
+    }
+
+    const uint16 lcdPortMask = 0x000F;
+    YIOPort lcdPort(GpioPortName(GPIOA), lcdPortMask);
+    Lcd lcd(lcdPort);
 
     YTextStream lcdout(&lcd); // YTextStream(YIODevice *device)
     lcdout.setCodec(codec);
+
+    if (!lcdPort.open(YIODevice::ReadOnly | YIODevice::Text)){
+        return;
+    }
 
     port.attach(&onSerialInput, Serial::RxIrq);
 
@@ -93,7 +106,11 @@ int main() {
         }
 
         if (command == CommandTest1){
-            port.puts("Command test1(): Finding multiple Yds1820 devices...\r\n");
+            out << "Command test1(): Finding multiple Yds1820 devices...\r\n";
+
+            lcdout << Lcd::clear;
+            lcdout << "Command test1()";
+
             newCommand = false;
 
             float minT = 0;
@@ -104,7 +121,11 @@ int main() {
 
             bool ok = wire.findDevices(&roms);
             if (!ok){
-                printf("Error ocured during the search; ErrorCode: %d\r\n\n", wire.errorCode());
+                out << "Error ocured during the search; ErrorCode:";
+                out << wire.errorCode();
+                out << "\r\n\n";
+
+                lcdout << Lcd::row(2) << Lcd::col(1) << "Search error " << wire.errorCode();
             }
 
             if (!roms.isEmpty()){
@@ -118,7 +139,9 @@ int main() {
             }
 
             if (probes2.size()){
-                port.printf("Found %d device(s)\r\n\n", probes2.size());
+                out << "Found " << probes2.size() << " device(s)\r\n";
+
+                lcdout << Lcd::row(2) << Lcd::col(1) << "Found " << probes2.size() << " device(s)";
 
                 while(1) {
                     convertTemperature1(&wire);
@@ -136,8 +159,13 @@ int main() {
                         printTemperature(t, i+1);
                     }
                     meanT = temp/probes2.size();
-                    port.printf("Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f\r", minT, meanT, maxT);
-                    port.puts("\r\n");
+
+                    // ?????????????????
+                    YString msg = "Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f";
+                    msg = msg.arg(minT).arg(minT).arg(minT);
+                    out << msg << endl;
+
+                    lcdout << Lcd::row(2) << Lcd::col(1) << msg;
 
                     if (newCommand){
                         break;
@@ -149,7 +177,11 @@ int main() {
             }
 
         }else if (command == CommandTest2){
-            port.puts("Command test2(): Finding single Yds1820 devices...\r\n");
+            out << "Command test2(): Finding single Yds1820 devices...\r\n";
+
+            lcdout << Lcd::clear;
+            lcdout << "Command test2()";
+
             newCommand = false;
 
             // 28FF2BA36B180141
@@ -159,6 +191,7 @@ int main() {
             // 28FFE88E601802E3
             // 28FFF5EC6718017C
             // 28FF63C16B180101
+
             Yds1820 *dev = makeDevice2(stringToRomCode("28FFE88E601802E3"), &wire, 1);
             probes2.append(dev);
 
@@ -166,10 +199,14 @@ int main() {
             wire.reset();
             bool ok = wire.readROM(&rom);
             if (ok){
-                port.printf("Found device with ROM: %s\n", rom.romString());
-            }else{
+                out << "Found device with ROM: " << rom.romString() << "\n";
 
-                port.printf("Found device with ROM: %s, Error code=%02X\n", rom.romString(), wire.errorCode());
+                lcdout << Lcd::row(2) << Lcd::col(1) << "Found ROM: " << rom.romString();
+            }else{
+                out << "Found device with ROM: " << rom.romString();
+                out << ", Error code=" << hex << wire.errorCode();
+
+                lcdout << Lcd::row(2) << Lcd::col(1) << "Found ROM: " << rom.romString();
             }
 
             while(1) {
@@ -180,55 +217,12 @@ int main() {
                 if (newCommand)
                     break;
             }
-        }else if (command == CommandTest3){
-            port.puts("Command test3(): Finding multiple DS1820 devices...\r\n");
-            newCommand = false;
-
-                        float minT = 0;
-                        float maxT = 0;
-                        float meanT = 0;
-
-            // Initialize the probe array to DS1820 objects
-            while(DS1820::unassignedProbe(DATA_PIN)) {
-                DS1820 *dev = makeDevice(DATA_PIN, probes.size());
-                probes.append(dev);
-                if (probes.size() == MAX_PROBES)
-                    break;
-            }
-            if (probes.size()){
-                port.printf("\n");
-                port.printf("----------------------------------------\n");
-                port.printf("Found %d device(s)\r\n\n", probes.size());
-
-                while(1) {
-                    convertTemperature(probes.at(0), 0);
-                    maxT = -100;
-                    minT = 100;
-                    meanT = 0;
-                    float temp = 0;
-                    for (int i = 0; i < probes.size(); i++){
-                        float t = probes.at(i)->temperature();
-                        temp += t;
-                        if (t < minT)
-                              minT = t;
-                        if (t > maxT)
-                              maxT = t;
-                        printTemperature(t, i+1);
-                    }
-                    meanT = temp/probes.size();
-                    port.printf("Temperature: Min:%3.1f | Mean:%3.1f | Max:%3.1f\r", minT, meanT, maxT);
-                    port.puts("\r\n");
-
-                    if (newCommand){
-                        break;
-                    }
-                }
-            }else{
-//                error("No devices!\r\n");
-                port.printf("No devices!\r\n");
-            }
         }else if (command == CommandReset){
-            port.printf("Command reset(): deleting %d devices from list\r\n", probes2.size());
+            out << "Command reset(): deleting " << probes2.size() << " devices from list\r\n";
+
+            lcdout << Lcd::clear;
+            lcdout << "Command reset(): deleting " << probes2.size() << " devices from list\r\n";
+
             for (int i = 0; i < probes2.size(); ++i) {
                 Yds1820 *dev = probes2.at(i);
                 delete dev;
