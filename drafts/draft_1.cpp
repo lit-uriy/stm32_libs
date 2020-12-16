@@ -65,7 +65,7 @@ int main() {
     YTextStream out(&port); // YTextStream(YIODevice *device)
     out.setCodec(codec);
 
-    if (!port.open(YIODevice::ReadOnly | YIODevice::Text)){
+    if (!port.open(YIODevice::ReadWrite | YIODevice::Text)){
         return;
     }
 
