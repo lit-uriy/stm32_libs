@@ -54,6 +54,7 @@ volatile int command = CommandUnknown;
 int main() {
     YTextCodec *codec = YTextCodec::codecForName("utf-8");
 
+    // UART
     YSerialPort port(GpioPinName(USBTX), GpioPinName(USBRX));
     port.setBoderate(9600);
     port.setBits(8);
@@ -68,6 +69,7 @@ int main() {
         return;
     }
 
+    // LCD
     const uint16 lcdPortMask = 0x000F;
     YIOPort lcdPort(GpioPortName(GPIOA), lcdPortMask);
     Lcd lcd(lcdPort);
