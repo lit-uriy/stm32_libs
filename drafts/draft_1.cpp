@@ -24,7 +24,7 @@ DigitalOut syncroPin(NC);
 DigitalOut led(LED2);
 //bool test = false;
 
-Yds1820* makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices);
+Yds1820* makeDevice2(YTextStream *out, OneWireRomCode romCode, OneWire *awire, int num_devices);
 
 OneWireRomCode stringToRomCode(const char *string);
 
@@ -132,7 +132,8 @@ int main() {
                 for(int i = 0; i < roms.size(); i++){
                     unsigned char familyCode = roms.at(i)->familyCode();
                     if ((familyCode == Yds1820::FamilyDs1820) || (familyCode == Yds1820::FamilyDs1822) || (familyCode == Yds1820::FamilyDs18B20)){
-                        Yds1820 *dev = makeDevice2(*(roms.at(i)), &wire, 1);
+                        OneWireRomCode *romCode = roms.at(i);
+                        Yds1820 *dev = makeDevice2(out, *romCode, &wire, i+1);
                         probes2.append(dev);
                     }
                 }
@@ -192,7 +193,7 @@ int main() {
             // 28FFF5EC6718017C
             // 28FF63C16B180101
 
-            Yds1820 *dev = makeDevice2(stringToRomCode("28FFE88E601802E3"), &wire, 1);
+            Yds1820 *dev = makeDevice2(out, stringToRomCode("28FFE88E601802E3"), &wire, 1);
             probes2.append(dev);
 
             OneWireRomCode rom;
@@ -309,17 +310,12 @@ OneWireRomCode stringToRomCode(const char *string)
 }
 
 
-Yds1820 *makeDevice2(OneWireRomCode romCode, OneWire *awire, int num_devices)
+Yds1820 *makeDevice2(YTextStream *out, OneWireRomCode romCode, OneWire *awire, int num_devices)
 {
     Yds1820 *dev = new Yds1820(romCode, awire);
-    port.printf("Found %d device, ROM=%s\r\n", num_devices, romCode.romString());
-    port.printf("\tparasite powered: %s\r\n", dev->isParasitePowered()? "Yes": "No");
-//    char ramString[2*9+1]; // в два раза больше символов + замыкающий нуль
-//    dev->ramToHex(ramString);
-//    port.printf("\tRAM: %s\r\n", ramString);
-    port.printf("\tresolution: %d bits\r\n", dev->resolution());
-    port.printf("\r\n");
-
+    out << "Found " << num_devices << " device, ROM=" << romCode->romString() << "\r\n";
+    out << "\tparasite powered: " << (dev->isParasitePowered()? "Yes": "No") << "\r\n";
+    out << "\tresolution: " << dev->resolution() << " bits\r\n";
     return dev;
 }
 
