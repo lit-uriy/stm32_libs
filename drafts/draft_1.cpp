@@ -174,8 +174,9 @@ int main() {
                     }
                 }
             }else{
-//                error("No devices!\r\n");
-                port.printf("No devices!\r\n");
+                out << "No devices!\r\n";
+
+                lcdout << Lcd::row(2) << Lcd::col(1) << "No devices!";
             }
 
         }else if (command == CommandTest2){
@@ -214,7 +215,7 @@ int main() {
             while(1) {
                 convertTemperature2(dev);
                 printTemperature(dev->temperature(), 1);
-                port.puts("\r\n");
+                out << endl;
 
                 if (newCommand)
                     break;
@@ -230,14 +231,21 @@ int main() {
                 delete dev;
             }
             probes2.clear();
-            port.printf("\t left %d devices in list\r\n", probes2.size());
+
+            out << "\t left" << probes2.size() << "devices in list" << "\r\n";
+            lcdout << Lcd::row(2) << Lcd::col(1) << "left" << probes2.size() << "devices in list" << "\r\n";
+
             newCommand = false;
         }else{
-            port.printf("Unknown command: %s\r\n", commandBuffer);
+            out << "Unknown command: " << commandBuffer << "\r\n";
+
+            lcdout << Lcd::clear;
+            lcdout << "Unknown command: " << commandBuffer << "\r\n";
+
             newCommand = false;
         }
 
-        port.puts("\r\n------------ Ready ----------------\r\n");
+        out << "\r\n------------ Ready ----------------\r\n";
     }
 }
 
@@ -272,7 +280,7 @@ OneWireRomCode stringToRomCode(const char *string)
     do {
         c = string[i];
         if (c == 0){ // Меньше чем надо
-            printf("stringToRomCode(); Less (%d) chars then required (%d)\n", i, goodSize);
+            out << "stringToRomCode(); Less (" << i << ") chars then required (" << goodSize << ")\r\n";
             return out;
         }
         ++i;
@@ -281,7 +289,7 @@ OneWireRomCode stringToRomCode(const char *string)
     // здесь i = goodSize
     c = string[i];
     if (c != 0){ // Больше чем надо
-        printf("stringToRomCode(); More (%d) chars then required (%d)\n", i, goodSize);
+        out << "stringToRomCode(); More (" << i << ") chars then required (" << goodSize << ")\r\n";
         return out;
     }
 
@@ -339,7 +347,6 @@ void convertTemperature2(Yds1820 *dev)
 
 void printTemperature(float temp, int num_devices)
 {
-    char celsius = (char)(7); // 176
-    port.printf("Device %d returns %3.1f %cC\r\n", num_devices, temp, celsius);
+    out << "Device " << num_devices << " returns " << temp << " C\r\n";
 }
 
