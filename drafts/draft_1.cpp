@@ -33,7 +33,7 @@ void convertTemperature2(Yds1820 *dev);
 
 void printTemperature(float temp, int num_devices);
 
-void onSerialInput();
+void onSerialInput(YIODevice *device);
 
 
 volatile bool newCommand = false;
@@ -59,6 +59,7 @@ int main() {
     port.setBits(8);
     port.setParity(YSerialPort::ParityNone);
     port.setStops(1.0);
+    port.setCallback(YSerialPort::ReadyRead, onSerialInput);
 
     YTextStream out(&port); // YTextStream(YIODevice *device)
     out.setCodec(codec);
@@ -242,10 +243,11 @@ int main() {
 
 
 
-void onSerialInput()
+void onSerialInput(YIODevice *device)
 {
     do{
-        char c = port.getc();
+        char c = 0;
+        device.read(&c, 1);
         if ((receivedBytes >= Size) || newCommand){
             continue;
         }else if ((c == '\n') || (c == '\r')){
@@ -255,7 +257,7 @@ void onSerialInput()
             break;
         }
         commandBuffer[receivedBytes++] = c;
-    }while(port.readable());
+    }while(!device.atEnd());
 }
 
 
