@@ -81,8 +81,6 @@ int main() {
         return;
     }
 
-    port.attach(&onSerialInput, Serial::RxIrq);
-
     out << "\r\n------------ Ready (Готов) ----------------\r\n";
     lcdout << "Ready (Готов)";
 
