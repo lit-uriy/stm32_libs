@@ -94,8 +94,11 @@ int main() {
 #else
     // -- програмная, через мой Pin
     YIOPin pin(GpioPinName(A0)); // Mbed-ножка контроллера
-    OneWireMbedPin *oneWireConcrete = new OneWireMbedPin(pin);
+    OneWireYPin *oneWireConcrete = new OneWireYPin(pin);
 #endif
+
+    // ***** Собственно проволока 1-Wire
+    OneWire *wire = oneWireConcrete;
 
     YList<Yds1820*> probes2;
 
@@ -133,7 +136,7 @@ int main() {
 
             YList<OneWireRomCode*> roms;
 
-            bool ok = wire.findDevices(&roms);
+            bool ok = wire->findDevices(&roms);
             if (!ok){
                 out << "Error ocured during the search; ErrorCode:";
                 out << wire.errorCode();
