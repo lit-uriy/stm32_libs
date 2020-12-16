@@ -14,8 +14,6 @@
 
 
 
-DigitalInOut pin(DATA_PIN);
-OneWire wire(pin);
 
 DigitalIn mybutton(USER_BUTTON);
 //bool mybutton = true;
@@ -83,6 +81,21 @@ int main() {
 
     out << "\r\n------------ Ready (Готов) ----------------\r\n";
     lcdout << "Ready (Готов)";
+
+    // 1-Wire
+#if (ONEWIRE_MBED_PIN)
+    // -- програмная, через Mbed-Pin
+    DigitalInOut pin(DATA_PIN); // Mbed-ножка контроллера
+    OneWireMbedPin *oneWireConcrete = new OneWireMbedPin(pin);
+#elif (ONEWIRE_MBED_UART)
+    // -- аппаратная, через USART
+    Serial port(USBTX, USBRX); // Mbed-USART
+    OneWireMbedSerial *oneWireConcrete = new OneWireMbedSerial(port);
+#else
+    // -- програмная, через мой Pin
+    YIOPin pin(GpioPinName(A0)); // Mbed-ножка контроллера
+    OneWireMbedPin *oneWireConcrete = new OneWireMbedPin(pin);
+#endif
 
     YList<Yds1820*> probes2;
 
