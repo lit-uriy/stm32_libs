@@ -18,3 +18,5 @@ drafts/draft_1.cpp
 note.txt
 stm-32.txt
 tests/test_1_1wire/main.cpp
+ybase/corelib/yiopin.cpp
+ybase/corelib/yiopin.h
