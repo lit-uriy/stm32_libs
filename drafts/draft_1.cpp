@@ -91,10 +91,14 @@ int main() {
     // -- аппаратная, через USART
     Serial port(USBTX, USBRX); // Mbed-USART
     OneWireMbedSerial *oneWireConcrete = new OneWireMbedSerial(port);
-#else
+#elif (ONEWIRE_Y_PIN)
     // -- програмная, через мой Pin
-    YIOPin pin(GpioPinName(A0)); // Mbed-ножка контроллера
+    YIOPin pin(GpioPinName(A0)); // моя ножка контроллера
     OneWireYPin *oneWireConcrete = new OneWireYPin(pin);
+#else // (ONEWIRE_Y_UART)
+    // -- програмная, через мой UART
+    YUart port(GpioPinName(USBTX), GpioPinName(USBRX)); // мой USART
+    OneWireYPin *oneWireConcrete = new OneWireYPin(port);
 #endif
 
     // ***** Собственно проволока 1-Wire
